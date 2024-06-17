@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={clsx(
-          `custom-bg h-screen overscroll-y-none`,
+          `custom-bg h-screen overscroll-y-none overscroll-x-none`,
           inter.className
         )}
       >
