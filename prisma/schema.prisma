@@ -19,7 +19,7 @@ model User {
   createdAt             DateTime  @default(now()) @map(name: "created_at")
   updatedAt             DateTime  @updatedAt @map(name: "updated_at")
 
-  usersAhpResult         UsersAhpResult[]
+  usersAhpForm           UsersAhpForm[]
   usersMaturity          UsersMaturity[]
   usersProgressMaturity  UsersProgressMaturity[]
 
@@ -33,24 +33,34 @@ model Category{
   createdAt           DateTime  @default(now()) @map(name: "created_at")
   updatedAt           DateTime  @updatedAt @map(name: "updated_at")
 
-  usersAhpResult      UsersAhpResult[]
+  ahpResult           AhpResult[]
   questionMaturity    QuestionMaturity[]
 
   @@map(name:"category")
 }
 
-model UsersAhpResult {
+model UsersAhpForm {
   id                    String      @default(cuid()) @id
   user_id               String
+  value                 Json
+  createdAt             DateTime    @default(now()) @map(name: "created_at")
+  updatedAt             DateTime    @updatedAt @map(name: "updated_at")
+
+  users                 User?       @relation(fields: [user_id], references: [id])
+
+  @@map(name:"users-ahp-form")
+}
+
+model AhpResult {
+  id                    String      @default(cuid()) @id
   category_id           String
   value                 Float
   createdAt             DateTime    @default(now()) @map(name: "created_at")
   updatedAt             DateTime    @updatedAt @map(name: "updated_at")
 
-  users                 User?       @relation(fields: [user_id], references: [id])
   category              Category?   @relation(fields: [category_id], references: [id])
 
-  @@map(name:"users-ahp-result")
+  @@map(name:"ahp-result")
 }
 
 model QuestionMaturity{

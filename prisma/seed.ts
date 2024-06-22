@@ -12,9 +12,19 @@ async function main() {
         jabatan: "Admin",
       },
       {
-        email: "user@mail.com",
+        email: "user_one@mail.com",
         password: await bcrypt.hash("password", 10),
         name: "User One",
+      },
+      {
+        email: "user_two@mail.com",
+        password: await bcrypt.hash("password", 10),
+        name: "User Two",
+      },
+      {
+        email: "user_three@mail.com",
+        password: await bcrypt.hash("password", 10),
+        name: "User Three",
       },
     ],
   });
@@ -54,7 +64,7 @@ async function main() {
   });
 
   //   get the ID
-  const [user1, user2] = await prisma.user.findMany();
+  const [user1, user2, user3, user4] = await prisma.user.findMany();
   const [
     category1,
     category2,
@@ -66,47 +76,106 @@ async function main() {
   ] = await prisma.category.findMany();
 
   //   Create users-ahp-result
-  const usersAhpResult = await prisma.usersAhpResult.createMany({
+  const usersAhpForm = await prisma.usersAhpForm.createMany({
     data: [
       {
         user_id: user2.id,
+        value: {
+          section_one: [0.5, 2.0, 1.0, 4.0, 1.0, 1.0],
+          section_two: [
+            0.5, 2, 2, 1, 1, 1, 3, 1, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 1, 4, 4, 1,
+            0.5, 3, 1,
+          ],
+          section_three: [
+            4, 0.333333333, 0.333333333, 3, 0.5, 2, 0.333333333, 0.5, 1, 0.5, 1,
+            3, 3, 0.5, 3, 2, 0.5, 1, 0.5, 2, 3,
+          ],
+          section_four: [
+            3, 0.5, 0.5, 1, 0.5, 1, 0.5, 0.5, 2, 1, 1, 0.5, 2, 1, 1, 3, 0.5, 1,
+            2, 1, 3,
+          ],
+          section_five: [
+            2, 3, 3, 2, 2, 3, 0, 5, 0, 5, 1, 1, 1, 2, 1, 2, 1, 3, 3, 2, 0, 5, 1,
+            2,
+          ],
+        },
+      },
+      {
+        user_id: user3.id,
+        value: {
+          section_one: [0.5, 1, 1, 3, 3, 2],
+          section_two: [
+            0.5, 2, 2, 3, 3, 4, 5, 5, 3, 3, 3, 1, 1, 1, 1, 4, 3, 0.5, 1, 1, 1,
+          ],
+          section_three: [
+            0.5, 2, 2, 1, 2, 3, 2, 2, 1, 2, 1, 2, 1, 1, 0.5, 2, 0.5, 1, 1, 2, 2,
+          ],
+          section_four: [
+            0.5, 3, 3, 1, 1, 0.5, 3, 3, 3, 3, 3, 2, 1, 1, 1, 1, 2, 2, 0.5, 0.5,
+            0.5,
+          ],
+          section_five: [
+            0.5, 1, 0.333333333, 0.5, 1, 0.5, 1, 1, 1, 0.5, 0.5, 2, 1, 0.5, 1,
+            2, 2, 1, 1, 1, 1,
+          ],
+        },
+      },
+      {
+        user_id: user4.id,
+        value: {
+          section_one: [3, 3, 3, 2, 3, 2],
+          section_two: [
+            3, 4, 4, 3, 3, 4, 3, 3, 4, 4, 4, 3, 4, 3, 4, 3, 3, 3, 3, 4, 4,
+          ],
+          section_three: [
+            3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 3, 4, 4, 4, 3,
+          ],
+          section_four: [
+            3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2, 2, 3, 3,
+          ],
+          section_five: [
+            2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3,
+          ],
+        },
+      },
+    ],
+  });
+
+  //   Create users-ahp-result
+  const ahpResult = await prisma.ahpResult.createMany({
+    data: [
+      {
         category_id: category1.id,
         value: 0.2056,
       },
       {
-        user_id: user2.id,
         category_id: category2.id,
         value: 0.188,
       },
       {
-        user_id: user2.id,
         category_id: category3.id,
         value: 0.1544,
       },
       {
-        user_id: user2.id,
         category_id: category4.id,
         value: 0.1462,
       },
       {
-        user_id: user2.id,
         category_id: category5.id,
         value: 0.1075,
       },
       {
-        user_id: user2.id,
         category_id: category6.id,
         value: 0.1148,
       },
       {
-        user_id: user2.id,
         category_id: category7.id,
         value: 0.0835,
       },
     ],
   });
 
-  console.log({ users, category, usersAhpResult });
+  console.log({ users, category, usersAhpForm, ahpResult });
 }
 
 main()
