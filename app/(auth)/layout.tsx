@@ -7,7 +7,7 @@ import clsx from "clsx";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Pendukung Keputusan",
+  title: "Sistem Pendukung Keputusan",
   description: "Dibuat dengan Next.js",
 };
 
@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={clsx(
-          `custom-bg h-screen overscroll-y-none overscroll-x-none`,
+          `bg-primary h-screen overscroll-y-none overscroll-x-none`,
           inter.className
         )}
       >

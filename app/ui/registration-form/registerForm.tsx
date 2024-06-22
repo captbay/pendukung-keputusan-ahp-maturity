@@ -10,7 +10,7 @@ export default function RegisterForm() {
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   return (
-    <section className="rounded-lg bg-white p-8">
+    <section className="rounded-lg bg-white p-12">
       <h1 className="text-2xl text-center mb-4">Register Your Account</h1>
       <form onSubmit={(e) => e.preventDefault()}>
         <Input

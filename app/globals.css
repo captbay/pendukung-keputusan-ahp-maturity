@@ -3,6 +3,6 @@
 @tailwind utilities;
 
 .custom-bg {
-  background-image: url("images/bg.jpg");
+  background-image: url("images/gedung-telkom-university.jpg");
   background-size: cover;
 }

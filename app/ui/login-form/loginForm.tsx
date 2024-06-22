@@ -4,13 +4,36 @@ import { Button, Input } from "@nextui-org/react";
 import { EyeFilledIcon } from "@/app/icon/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "@/app/icon/EyeSlashFilledIcon";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Cookies from 'js-cookie'
 
 export default function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
+  const router = useRouter();
+
+  const handleLogin = () => {
+    const dummyAdmin = {
+      jabatan: "admin",
+    }
+
+    const dummyUser = {
+      jabatan: "user",
+    }
+
+    if(email === "user"){
+      Cookies.set("user", JSON.stringify(dummyUser))
+      router.push('/dashboard');
+    } else if(email === "admin"){
+      Cookies.set("user", JSON.stringify(dummyAdmin))
+      router.push('/dashboard-admin');
+    }
+  };
 
   return (
-    <section className="rounded-lg bg-white p-8">
+    <section className="rounded-lg bg-white p-12">
       <h1 className="text-2xl text-center mb-4">Login Your Account</h1>
       <form onSubmit={(e) => e.preventDefault()}>
         <Input
@@ -19,6 +42,8 @@ export default function LoginForm() {
           placeholder="Enter your email"
           variant="bordered"
           className="mb-4"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <Input
           label="Password"
@@ -39,8 +64,15 @@ export default function LoginForm() {
           }
           type={isVisible ? "text" : "password"}
           className="mb-4"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
-        <Button type="submit" color="primary" className="w-full">
+        <Button 
+          onPress={() => {handleLogin()}}
+          type="submit" 
+          color="primary" 
+          className="w-full"
+        >
           Login
         </Button>
       </form>

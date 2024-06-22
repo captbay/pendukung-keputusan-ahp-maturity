@@ -9,14 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@next/font": "^14.2.4",
     "@nextui-org/react": "^2.4.2",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.2.10",
+    "framer-motion": "^11.2.11",
+    "js-cookie": "^3.0.5",
     "next": "14.2.4",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

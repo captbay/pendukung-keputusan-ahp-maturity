@@ -6,7 +6,7 @@ import { NextUIProvider } from "@nextui-org/react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Pendukung Keputusan",
+  title: "Sistem Pendukung Keputusan",
   description: "Dibuat dengan Next.js",
 };
 
