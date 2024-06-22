@@ -1,0 +1,101 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id                    String    @default(cuid()) @id
+  email                 String    @unique
+  password              String
+  name                  String
+  jabatan               String?
+  createdAt             DateTime  @default(now()) @map(name: "created_at")
+  updatedAt             DateTime  @updatedAt @map(name: "updated_at")
+
+  usersAhpResult         UsersAhpResult[]
+  usersMaturity          UsersMaturity[]
+  usersProgressMaturity  UsersProgressMaturity[]
+
+  @@map(name: "users")
+}
+
+model Category{
+  id                  String    @default(cuid()) @id
+  key                 String    @unique
+  value               String
+  createdAt           DateTime  @default(now()) @map(name: "created_at")
+  updatedAt           DateTime  @updatedAt @map(name: "updated_at")
+
+  usersAhpResult      UsersAhpResult[]
+  questionMaturity    QuestionMaturity[]
+
+  @@map(name:"category")
+}
+
+model UsersAhpResult {
+  id                    String      @default(cuid()) @id
+  user_id               String
+  category_id           String
+  value                 Float
+  createdAt             DateTime    @default(now()) @map(name: "created_at")
+  updatedAt             DateTime    @updatedAt @map(name: "updated_at")
+
+  users                 User?       @relation(fields: [user_id], references: [id])
+  category              Category?   @relation(fields: [category_id], references: [id])
+
+  @@map(name:"users-ahp-result")
+}
+
+model QuestionMaturity{
+  id                    String  @default(cuid()) @id
+  category_id           String
+  level                 Int
+  question              String
+  createdAt             DateTime  @default(now()) @map(name: "created_at")
+  updatedAt             DateTime  @updatedAt @map(name: "updated_at")
+
+  usersMaturity         UsersMaturity[]
+
+  category              Category?  @relation(fields: [category_id], references: [id]) 
+
+  @@map("question-maturity")
+}
+
+model UsersMaturity {
+  id                    String      @default(cuid()) @id
+  user_id               String
+  question_maturity_id  String
+  answer                String
+  evidence              String
+  createdAt             DateTime    @default(now()) @map(name: "created_at")
+  updatedAt             DateTime    @updatedAt @map(name: "updated_at")
+
+  usersProgressMaturity UsersProgressMaturity[]
+
+  users                 User?       @relation(fields: [user_id], references: [id])
+  questionMaturity      QuestionMaturity?   @relation(fields: [question_maturity_id], references: [id])
+
+  @@map(name:"users-maturity")
+}
+
+
+model UsersProgressMaturity {
+  id                    String     @default(cuid()) @id
+  user_id               String
+  user_maturity_id      String
+  level                 Int
+  isAccepted            Boolean    @map(name:"is_accepted")
+  createdAt             DateTime  @default(now()) @map(name: "created_at")
+  updatedAt             DateTime  @updatedAt @map(name: "updated_at")
+
+  users                 User?   @relation(fields: [user_id], references: [id])
+  usersMaturity         UsersMaturity?   @relation(fields: [user_maturity_id], references: [id])
+  @@map(name:"users-progress-maturity")
+}

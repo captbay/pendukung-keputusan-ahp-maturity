@@ -2,6 +2,9 @@
   "name": "pendukung-keputusan-ta-citra",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,22 +14,29 @@
   "dependencies": {
     "@next/font": "^14.2.4",
     "@nextui-org/react": "^2.4.2",
+    "@prisma/client": "^5.15.1",
+    "@vercel/postgres": "^0.8.0",
+    "bcrypt": "^5.1.1",
     "clsx": "^2.1.1",
     "framer-motion": "^11.2.11",
     "js-cookie": "^3.0.5",
     "next": "14.2.4",
+    "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^20",
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.14.8",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
     "postcss": "^8",
+    "prisma": "^5.15.1",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
   }
 }
