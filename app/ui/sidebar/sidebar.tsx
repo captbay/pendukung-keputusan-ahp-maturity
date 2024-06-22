@@ -1,15 +1,16 @@
-"use client"
+"use client";
 
-import { DashboardIcon } from '@/app/icon/DashboardIcon';
-import { HierarchyIcon } from '@/app/icon/HierarchyIcon';
-import { LogoutIcon } from '@/app/icon/LogoutIcon';
-import { MaturityIcon } from '@/app/icon/MaturityIcon';
-import { Button, Divider, Spacer } from '@nextui-org/react';
-import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import ConfirmationModal from '../confirmation-modal/confirmationModal';
-import Cookie from 'js-cookie';
+import { DashboardIcon } from "@/app/icon/DashboardIcon";
+import { HierarchyIcon } from "@/app/icon/HierarchyIcon";
+import { LogoutIcon } from "@/app/icon/LogoutIcon";
+import { MaturityIcon } from "@/app/icon/MaturityIcon";
+import { Button, Divider, Spacer } from "@nextui-org/react";
+import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import ConfirmationModal from "../confirmation-modal/confirmationModal";
+import Cookie from "js-cookie";
+import { logout } from "@/lib/authentication";
 
 interface SidebarProps {
   isAdmin: boolean;
@@ -23,92 +24,118 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin }) => {
   const [user, setUser] = useState<any>({});
 
   useEffect(() => {
-    const user = Cookie.get('user');
+    const user = Cookie.get("user");
     if (user) {
       setUser(JSON.parse(user));
     }
-  }, [])
+  }, []);
 
   const handleButtonClick = (item: string) => {
     router.push(`/${item}`);
   };
 
   const handleLogoutClicked = () => {
-    setIsConfirmationModalOpen(false);
-    Cookie.remove('user');
-    router.push('/');
+    logout();
   };
 
   const isActive = (path: string) => pathname === path;
 
   return (
     <>
-      <div style={{ transform: `translateX(${isOpen ? 0 : "-250px"})`, transition: "transform 0.3s ease", zIndex: 100, position: 'fixed' }}>
-        <div style={{
-          width: '250px',
-          height: '100vh',
-          backgroundColor: 'primary',
-          padding: '8px',
-          position: 'fixed',
-          top: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          boxShadow: '2px 0 5px rgba(0, 0, 0, 0.1)',
-          transition: 'left 0.3s ease',
-        }} className='bg-primary'>
-          <div className='flex flex-row gap-4 items-center p-4'>
-            <Image 
-              src='https://i.pravatar.cc/201' 
-              alt='Photo Profile' 
-              width={60} 
-              height={60} 
-              className='rounded-full'
+      <div
+        style={{
+          transform: `translateX(${isOpen ? 0 : "-250px"})`,
+          transition: "transform 0.3s ease",
+          zIndex: 100,
+          position: "fixed",
+        }}
+      >
+        <div
+          style={{
+            width: "250px",
+            height: "100vh",
+            backgroundColor: "primary",
+            padding: "8px",
+            position: "fixed",
+            top: 0,
+            display: "flex",
+            flexDirection: "column",
+            boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
+            transition: "left 0.3s ease",
+          }}
+          className="bg-primary"
+        >
+          <div className="flex flex-row gap-4 items-center p-4">
+            <Image
+              src="https://i.pravatar.cc/201"
+              alt="Photo Profile"
+              width={60}
+              height={60}
+              className="rounded-full"
             />
             <div className="flex flex-col">
-              <p className='text-lg text-secondary font-bold'>Name here</p>
-              <p className='text-sm text-secondary'>Logged as {user.jabatan}</p>
+              <p className="text-lg text-secondary font-bold">Name here</p>
+              <p className="text-sm text-secondary">Logged as {user.jabatan}</p>
             </div>
           </div>
-          <div className=''>
+          <div className="">
             <Spacer y={2} />
             <Divider />
             <Spacer y={2} />
-            <Button 
-              onClick={() => handleButtonClick(isAdmin ? "dashboard-admin" : "dashboard")} 
-              className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${isAdmin ? isActive('/dashboard-admin') ? 'bg-red-700 text-white' : '' : isActive('/dashboard') ? 'bg-red-700 text-white' : ''}`}
+            <Button
+              onClick={() =>
+                handleButtonClick(isAdmin ? "dashboard-admin" : "dashboard")
+              }
+              className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${
+                isAdmin
+                  ? isActive("/dashboard-admin")
+                    ? "bg-red-700 text-white"
+                    : ""
+                  : isActive("/dashboard")
+                  ? "bg-red-700 text-white"
+                  : ""
+              }`}
               shadow-md
             >
               <DashboardIcon />
-              <h2 className='text-secondary'>{isAdmin ? "Dashboard Admin" : "Dashboard"}</h2>
+              <h2 className="text-secondary">
+                {isAdmin ? "Dashboard Admin" : "Dashboard"}
+              </h2>
             </Button>
 
             {isAdmin ? (
-              <Button 
-                onClick={() => handleButtonClick('result-recap')} 
-                className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${isActive('/result-recap') ? 'bg-red-700 text-white' : ''}`}
+              <Button
+                onClick={() => handleButtonClick("result-recap")}
+                className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${
+                  isActive("/result-recap") ? "bg-red-700 text-white" : ""
+                }`}
                 shadow-md
               >
                 <HierarchyIcon />
-                <h2 className='text-secondary'>Result Recap</h2>
+                <h2 className="text-secondary">Result Recap</h2>
               </Button>
             ) : (
               <>
-                <Button 
-                  onClick={() => handleButtonClick('ahp')} 
-                  className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${isActive('/ahp') ? 'bg-red-700 text-white' : ''}`}
+                <Button
+                  onClick={() => handleButtonClick("ahp")}
+                  className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${
+                    isActive("/ahp") ? "bg-red-700 text-white" : ""
+                  }`}
                   shadow-md
                 >
                   <HierarchyIcon />
-                  <h2 className='text-secondary'>AHP</h2>
+                  <h2 className="text-secondary">AHP</h2>
                 </Button>
 
-                <Button 
-                  onClick={() => handleButtonClick('maturity')} 
-                  className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${isActive('/maturity') ? 'bg-red-700 text-white' : ''}`}
+                <Button
+                  onClick={() => handleButtonClick("maturity")}
+                  className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${
+                    isActive("/maturity") ? "bg-red-700 text-white" : ""
+                  }`}
                   shadow-md
                 >
                   <MaturityIcon />
-                  <h2 className='text-secondary'>Maturity</h2>
+                  <h2 className="text-secondary">Maturity</h2>
                 </Button>
               </>
             )}
@@ -116,11 +143,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin }) => {
             <Divider />
             <Button
               onClick={() => setIsConfirmationModalOpen(true)}
-              className='text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white'
+              className="text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white"
               shadow-md
             >
               <LogoutIcon />
-              <h2 className='text-secondary'>Logout</h2>
+              <h2 className="text-secondary">Logout</h2>
             </Button>
           </div>
           <ConfirmationModal
@@ -131,12 +158,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin }) => {
             message="Are you sure you want to logout?"
           />
         </div>
-        <div className='flex ml-[230px] z-0'>
-          <Button 
+        <div className="flex ml-[230px] z-0">
+          <Button
             onClick={() => setIsOpen(!isOpen)}
-            className='bg-primary text-secondary text-right mt-4'
+            className="bg-primary text-secondary text-right mt-4"
           >
-            <p className='text-right ml-4'>{isOpen ? "✖" : "☰"}</p>
+            <p className="text-right ml-4">{isOpen ? "✖" : "☰"}</p>
           </Button>
         </div>
       </div>
