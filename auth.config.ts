@@ -33,15 +33,28 @@ export const authConfig = {
       };
     },
     authorized({ auth, request: { nextUrl } }) {
-      console.log("authorized callback", auth?.user.jabatan);
+      console.log("authorized callback", auth?.user?.jabatan);
       const isLoggedIn = !!auth?.user;
       const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
-      if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL("/dashboard", nextUrl));
+      const isAdminDashboard = nextUrl.pathname.startsWith("/dashboard-admin");
+
+      if (isLoggedIn) {
+        const userJabatan = auth?.user?.jabatan;
+
+        if (userJabatan === "Admin" && !isAdminDashboard) {
+          return Response.redirect(new URL("/dashboard-admin", nextUrl));
+        } else if (userJabatan == null && !isOnDashboard) {
+          return Response.redirect(new URL("/dashboard", nextUrl));
+        } else if (nextUrl.pathname === "/") {
+          return true; // Allow access to the root route if logged in
+        }
       }
+
+      if (isOnDashboard || isAdminDashboard) {
+        if (isLoggedIn) return true;
+        return Response.redirect(new URL("/login", nextUrl)); // Redirect unauthenticated users to login page
+      }
+
       return true;
     },
   },
