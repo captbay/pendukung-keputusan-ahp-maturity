@@ -25,8 +25,20 @@ export default function LoginForm() {
           label="Email"
           placeholder="Enter your email"
           variant="bordered"
-          className="mb-4"
         />
+        <div
+          className="flex items-end space-x-1 mb-4"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {errorMessage && (
+            <>
+              <p className="text-sm text-red-500">
+                {errorMessage.errors?.email}
+              </p>
+            </>
+          )}
+        </div>
         <Input
           id="password"
           name="password"
@@ -47,8 +59,20 @@ export default function LoginForm() {
             </button>
           }
           type={isVisible ? "text" : "password"}
-          className="mb-4"
         />
+        <div
+          className="flex items-end space-x-1 mb-4"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {errorMessage && (
+            <>
+              <p className="text-sm text-red-500">
+                {errorMessage.errors?.password}
+              </p>
+            </>
+          )}
+        </div>
         <Button
           type="submit"
           color="primary"
@@ -64,7 +88,7 @@ export default function LoginForm() {
         >
           {errorMessage && (
             <>
-              <p className="text-sm text-red-500">{errorMessage}</p>
+              <p className="text-sm text-red-500">{errorMessage?.message}</p>
             </>
           )}
         </div>

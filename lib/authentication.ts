@@ -7,8 +7,34 @@ import { z } from "zod";
 import bcrypt from "bcrypt";
 import { Prisma } from "@prisma/client";
 
+export type State = {
+  errors?: {
+    name?: string[];
+    email?: string[];
+    password?: string[];
+  };
+  message?: string | null;
+};
+
 // login
-export async function login(prevState: string | undefined, formData: FormData) {
+const FormLoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+export async function login(prevState: State | undefined, formData: FormData) {
+  const validatedFields = FormLoginSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Something went wrong.",
+    };
+  }
+
   try {
     await signIn("credentials", formData);
   } catch (error) {
@@ -16,9 +42,13 @@ export async function login(prevState: string | undefined, formData: FormData) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CallbackRouteError":
-          return "Invalid credentials.";
+          return {
+            message: "Invalid credentials.",
+          };
         default:
-          return "Something went wrong.";
+          return {
+            message: "Something went wrong.",
+          };
       }
     }
     throw error;
@@ -40,15 +70,6 @@ const FormRegisterSchema = z.object({
   password: z.string().min(6),
   name: z.string().min(1),
 });
-
-export type State = {
-  errors?: {
-    name?: string[];
-    email?: string[];
-    password?: string[];
-  };
-  message?: string | null;
-};
 
 export async function register(prevState: State, formData: FormData) {
   const validatedFields = FormRegisterSchema.safeParse({
