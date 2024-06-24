@@ -31,7 +31,7 @@ export async function login(prevState: State | undefined, formData: FormData) {
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "Something went wrong.",
+      // message: "Something went wrong.",
     };
   }
 

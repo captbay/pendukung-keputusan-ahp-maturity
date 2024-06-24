@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import { login } from "@/lib/authentication";
 import { useRouter } from "next/navigation";
+import { Toaster, toast } from "sonner";
 
 export default function LoginForm() {
   const [isVisible, setIsVisible] = useState(false);
@@ -108,6 +109,11 @@ export default function LoginForm() {
           Register here
         </Link>
       </p>
+      <Toaster 
+        expand={true} 
+        richColors 
+        position="top-center"
+      />
     </section>
   );
 }

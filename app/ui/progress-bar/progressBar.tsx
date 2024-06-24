@@ -14,19 +14,18 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress, totalCheckpoint, cu
     <div className="relative w-full z-0 mt-20">
       <Progress value={progress} size="lg" color="primary" className="rounded-md" />
       {Array.from({ length: totalCheckpoint }).map((_, index) => (
-        <Tooltip content={`Level: ${icons[index]}`} key={index}>
+        <Tooltip content={`Bagian: ${icons[index]}`} key={index}>
           <div
             className="absolute top-[-10%] lg:top-[-35%]"
             style={{
               left: `${((index) / (totalCheckpoint - 1)) * 100}%`,
-              // top: '-35%',  // Adjust top positioning for better visibility
               transform: 'translateX(-50%)',
               cursor: index + 1 <= currentCheckpoint ? 'pointer' : 'default',
             }}
             onClick={() => onClickCheckpoint(index)}
           >
             <div
-              className={`w-6 h-6 lg:w-8 lg:h-8 rounded-full border-2 border-primary lg:p-0.5 text-center ${
+              className={`w-6 h-6 lg:w-8 lg:h-8 rounded-full border-2 border-primary text-center ${
                 index < currentCheckpoint ? "bg-primary" : "bg-secondary"
               }`}
             >

@@ -30,13 +30,23 @@ export async function submitAhp(
   prevState: StateAhp,
   formData: FormData
 ) {
-  const validatedFields = FormAhpSchema.safeParse({
-    section_one: formData.get("section_one"),
-    section_two: formData.get("section_two"),
-    section_three: formData.get("section_three"),
-    section_four: formData.get("section_four"),
-    section_five: formData.get("section_five"),
-  });
+  // const validatedFields = FormAhpSchema.safeParse({
+  //   section_one: formData.get("section_one"),
+  //   section_two: formData.get("section_two"),
+  //   section_three: formData.get("section_three"),
+  //   section_four: formData.get("section_four"),
+  //   section_five: formData.get("section_five"),
+  // });
+
+  const parsedData = {
+    section_one: JSON.parse(formData.get("section_one") as string),
+    section_two: JSON.parse(formData.get("section_two") as string),
+    section_three: JSON.parse(formData.get("section_three") as string),
+    section_four: JSON.parse(formData.get("section_four") as string),
+    section_five: JSON.parse(formData.get("section_five") as string),
+  };
+
+  const validatedFields = FormAhpSchema.safeParse(parsedData);
 
   if (!validatedFields.success) {
     return {
