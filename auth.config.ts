@@ -33,30 +33,25 @@ export const authConfig = {
       };
     },
     authorized({ auth, request: { nextUrl } }) {
-      console.log("authorized callback", auth?.user?.jabatan);
       const isLoggedIn = !!auth?.user;
-      const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
-      const isAdminDashboard = nextUrl.pathname.startsWith("/dashboard-admin");
-
+      const isAdmin = auth?.user?.jabatan === "Admin";
+    
       if (isLoggedIn) {
-        const userJabatan = auth?.user?.jabatan;
-
-        if (userJabatan === "Admin" && !isAdminDashboard) {
-          return Response.redirect(new URL("/dashboard-admin", nextUrl));
-        } else if (userJabatan == null && !isOnDashboard) {
-          return Response.redirect(new URL("/dashboard", nextUrl));
-        } else if (nextUrl.pathname === "/") {
-          return true; // Allow access to the root route if logged in
+        if (isAdmin) {
+          if (nextUrl.pathname !== "/dashboard-admin" && nextUrl.pathname !== "/result-recap") {
+            return Response.redirect(new URL("/dashboard-admin", nextUrl)); // Redirect Admin to /dashboard-admin
+          }
+        } else {
+          if (nextUrl.pathname !== "/dashboard" && nextUrl.pathname !== "/ahp" && nextUrl.pathname !== "/maturity") {
+            return Response.redirect(new URL("/dashboard", nextUrl)); // Redirect non-Admin to /dashboard
+          }
         }
+    
+        return true; // Allow access to the requested route for authenticated users
       }
-
-      if (isOnDashboard || isAdminDashboard) {
-        if (isLoggedIn) return true;
-        return Response.redirect(new URL("/login", nextUrl)); // Redirect unauthenticated users to login page
-      }
-
-      return true;
-    },
+    
+      return false; // Deny access for unauthenticated users
+    },    
   },
   providers: [], // Add providers with an empty array for now
 } satisfies NextAuthConfig;

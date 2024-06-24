@@ -14,9 +14,10 @@ import { logout } from "@/lib/authentication";
 
 interface SidebarProps {
   isAdmin: boolean;
+  session: any;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isAdmin }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isAdmin, session }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -74,8 +75,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin }) => {
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <p className="text-lg text-secondary font-bold">Name here</p>
-              <p className="text-sm text-secondary">Logged as {user.jabatan}</p>
+              <p className="text-lg text-secondary font-bold">{session?.user.name}</p>
+              <p className="text-sm text-secondary">{session?.user.jabatan}</p>
             </div>
           </div>
           <div className="">
@@ -163,7 +164,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin }) => {
             onClick={() => setIsOpen(!isOpen)}
             className="bg-primary text-secondary text-right mt-4"
           >
-            <p className="text-right ml-4">{isOpen ? "✖" : "☰"}</p>
+            <p className="text-right ml-4 text-secondary">{isOpen ? "✖" : "☰"}</p>
           </Button>
         </div>
       </div>

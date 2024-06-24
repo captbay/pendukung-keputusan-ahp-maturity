@@ -1,11 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import { EyeFilledIcon } from "@/app/icon/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "@/app/icon/EyeSlashFilledIcon";
 import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import { login } from "@/lib/authentication";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [isVisible, setIsVisible] = useState(false);
@@ -13,6 +14,11 @@ export default function LoginForm() {
 
   const { pending } = useFormStatus();
   const [errorMessage, dispatch] = useFormState(login, undefined);
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/login");
+  }, []);
 
   return (
     <section className="rounded-lg bg-white p-12">
