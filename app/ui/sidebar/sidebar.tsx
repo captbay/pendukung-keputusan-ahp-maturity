@@ -21,7 +21,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, session }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [user, setUser] = useState<any>({});
 
   useEffect(() => {
@@ -113,7 +113,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, session }) => {
                 shadow-md
               >
                 <HierarchyIcon />
-                <h2 className="text-secondary">Result Recap</h2>
+                <h2 className="text-secondary">Maturity Recap</h2>
               </Button>
             ) : (
               <>

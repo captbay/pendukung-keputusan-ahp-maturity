@@ -26,6 +26,14 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
 
   const scales = [9, 8, 7, 6, 5, 4, 3, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
+  const tableKeyHeader = [
+    "Perbandingan Berpasangan Tingkat Kepentingan Antar Kriteria",
+    "Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Size",
+    "Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Complexity",
+    "Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Importance",
+    "Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Approach"
+  ]
+
   const handleCheckpointClick = (index: number) => {
     if (index + 1 > currentCheckpoint) return;
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -101,6 +109,7 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
     <main className="flex w-full min-h-screen bg-secondary z-0 justify-center items-center">
       <div className="flex flex-col lg:flex-row bg-secondary p-14 rounded-lg w-full lg:w-[80%]">
         <div className="flex flex-col w-full h-full justify-center items-center">
+          <h1 className="text-xl lg:text-2xl font-bold text-center">Analytical Hierarchy Process</h1>
           <ProgressBar
             progress={(currentCheckpoint - 1) / (totalCheckpoint - 1) * 100}
             totalCheckpoint={totalCheckpoint}
@@ -108,9 +117,9 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
             icons={Array.from({ length: totalCheckpoint }, (_, i) => String(i + 1))}
             onClickCheckpoint={handleCheckpointClick}
           />
-          <Spacer y={4} />
-          <h1 className="text-xl lg:text-3xl font-bold text-center">Analytical Hierarchy Process</h1>
-          <h1 className="text-md lg:text-xl p-2 text-center">Pilih skala yang sesuai dengan kecondongan kriteria.</h1>
+          <Spacer y={8} />
+          <h1 className="text-md lg:text-lg font-semibold text-center">{tableKeyHeader[currentCheckpoint]}</h1>
+          <h1 className="text-sm lg:text-md p-2 text-center">*Pilih skala yang sesuai dengan kecondongan kriteria.</h1>
           <AHPTable
             selections={selections}
             currentCheckpoint={currentCheckpoint - 1}

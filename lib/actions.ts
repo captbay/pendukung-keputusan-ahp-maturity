@@ -112,3 +112,41 @@ export async function submitAhp(
     }
   }
 }
+
+export async function getAhpData() {
+  const data = await prisma.ahpResult.findMany({
+    include: {
+      category: true
+    }
+  });
+
+  if(!data){
+    return {
+      success: false,
+      message: "Data not found",
+    }
+  }
+
+  return {
+    success: true,
+    data: data,
+    message: "Data found",
+  };
+}
+
+export async function getAllUser() {
+  const data = await prisma.user.findMany({});
+
+  if(!data){
+    return {
+      success: false,
+      message: "There is no user registered",
+    }
+  }
+
+  return {
+    success: true,
+    data: data,
+    message: "Data found",
+  };
+}

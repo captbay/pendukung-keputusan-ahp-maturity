@@ -28,9 +28,6 @@ export default async function RootLayout({
         <Sidebar
           isAdmin={false}
           session={session}
-          // isOpen={isOpen}
-          // activeItem={activeItem}
-          // setActiveItem={setActiveItem}
         />
         {children}
       </body>

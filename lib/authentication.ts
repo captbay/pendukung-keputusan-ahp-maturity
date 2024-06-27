@@ -31,7 +31,7 @@ export async function login(prevState: State | undefined, formData: FormData) {
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      // message: "Something went wrong.",
+      message: "Something went wrong.",
     };
   }
 
@@ -69,13 +69,15 @@ const FormRegisterSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   name: z.string().min(1),
+  jabatan: z.string().min(1),
 });
 
-export async function register(prevState: State, formData: FormData) {
+export async function register(prevState: State | undefined, formData: FormData) {
   const validatedFields = FormRegisterSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
     name: formData.get("name"),
+    jabatan: formData.get("jabatan"),
   });
 
   if (!validatedFields.success) {
@@ -85,7 +87,7 @@ export async function register(prevState: State, formData: FormData) {
     };
   }
 
-  const { email, password, name } = validatedFields.data;
+  const { email, password, name, jabatan } = validatedFields.data;
 
   try {
     await prisma.user.create({
@@ -93,6 +95,7 @@ export async function register(prevState: State, formData: FormData) {
         email,
         password: await bcrypt.hash(password, 10),
         name,
+        jabatan,
       },
     });
 

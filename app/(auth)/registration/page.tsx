@@ -3,7 +3,7 @@ import React from "react";
 
 export default function page() {
   return (
-    <main className="flex min-h-screen justify-center items-center">
+    <main className="bg-primary flex min-h-screen justify-center items-center">
       <RegisterForm />
     </main>
   );

@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "../globals.css";
 import Sidebar from "../ui/sidebar/sidebar";
 import { useState } from "react";
+import { auth } from '@/auth';
 
 const poppins = Poppins({ 
   subsets: ["latin"],
@@ -14,18 +15,15 @@ export const metadata: Metadata = {
   description: "Analytical Hierarchy Process & Project Management Maturity Measurement",
 };
 
-export default function RootLayout({ children }: {children: React.ReactNode}) {
-  // const [isOpen, setIsOpen] = useState(true);
-  // const [activeItem, setActiveItem] = useState('dashboard');
+export default async function RootLayout({ children }: {children: React.ReactNode}) {
+  const session = await auth();
   
   return (
     <html lang="en">
       <body className={poppins.className}>
         <Sidebar 
           isAdmin={true}
-          // isOpen={isOpen} 
-          // activeItem={activeItem} 
-          // setActiveItem={setActiveItem} 
+          session={session}
         />
         {children}
       </body>

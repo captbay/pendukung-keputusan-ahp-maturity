@@ -49,6 +49,9 @@ export const authConfig = {
     
         return true; // Allow access to the requested route for authenticated users
       }
+      if (nextUrl.pathname === "/login" || nextUrl.pathname === "/registration") {
+        return true;
+      }
     
       return false; // Deny access for unauthenticated users
     },    

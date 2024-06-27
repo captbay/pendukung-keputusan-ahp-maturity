@@ -18,27 +18,19 @@ const AHPTable: React.FC<AHPTableProps> = ({ selections, setSelections, criteria
     setSelections(newSelections);
   };
 
-  const getScore = (rowIndex: number, scaleIndex: number) => {
-    if (scaleIndex < 8) {
-      return scales[scaleIndex];
-    } else {
-      return 1 / scales[scaleIndex];
-    }
-  };
-
   return (
     <div className="lg:flex justify-center items-center max-lg:overflow-x-auto w-full">
       <table className="border-collapse border border-gray-400 min-w-[600px] sm:min-w-full">
         {/* the thead can be sticky */}
       <thead className="bg-primary top-0 z-10">
           <tr>
-            <th className="border border-gray-400 px-4 py-2 text-secondary" rowSpan={2}>Kriteria</th>
-            <th className="border border-gray-400 px-4 py-2 text-secondary" colSpan={scales.length}>Skala</th>
-            <th className="border border-gray-400 px-4 py-2 text-secondary" rowSpan={2}>Kriteria</th>
+            <th className="border border-amber-700 px-4 py-2 text-secondary" rowSpan={2}>Kriteria</th>
+            <th className="border border-amber-700 px-4 py-2 text-secondary" colSpan={scales.length}>Skala</th>
+            <th className="border border-amber-700 px-4 py-2 text-secondary" rowSpan={2}>Kriteria</th>
           </tr>
           <tr>
             {scales.map((scale, index) => (
-              <th key={index} className="border border-gray-400 px-4 py-2 text-secondary">{scale}</th>
+              <th key={index} className="border border-amber-700 px-4 py-2 text-secondary">{scale}</th>
             ))}
           </tr>
         </thead>

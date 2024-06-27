@@ -88,17 +88,19 @@ export default function LoginForm() {
         >
           Login
         </Button>
-        <div
-          className="flex h-8 items-end space-x-1"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          {errorMessage && (
-            <>
-              <p className="text-sm text-red-500">{errorMessage?.message}</p>
-            </>
-          )}
-        </div>
+        {errorMessage?.message && (
+          <div
+            className="flex h-8 items-end space-x-1"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {errorMessage && (
+              <>
+                <p className="text-sm text-red-500">{errorMessage?.message}</p>
+              </>
+            )}
+          </div>
+        )}
       </form>
       <p className="text-sm font-light text-center mt-4">
         Don&apos;t have an account?{" "}
