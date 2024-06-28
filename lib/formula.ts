@@ -333,7 +333,136 @@ export async function applyFormulaAhp() {
       printMatrix(matrix_four, "section_four_bobot");
       console.log("section_five_bobot", section_five_bobot);
       printMatrix(matrix_five, "section_five_bobot");
+
+      console.log(matrix_one);
+      console.log(matrix_two);
+      console.log(matrix_three);
+      console.log(matrix_four);
+      console.log(matrix_five);
+
+      const sumMatrixOne = sumPerColumn(matrix_one);
+      const sumMatrixTwo = sumPerColumn(matrix_two);
+      const sumMatrixThree = sumPerColumn(matrix_three);
+      const sumMatrixFour = sumPerColumn(matrix_four);
+      const sumMatrixFive = sumPerColumn(matrix_five);
+
+      console.log(sumMatrixOne);
+      console.log(sumMatrixTwo);
+      console.log(sumMatrixThree);
+      console.log(sumMatrixFour);
+      console.log(sumMatrixFive);
+
+      const normalizeMatrixOne = normalizeMatrix(matrix_one, sumMatrixOne);
+      const normalizeMatrixTwo = normalizeMatrix(matrix_two, sumMatrixTwo);
+      const normalizeMatrixThree = normalizeMatrix(
+        matrix_three,
+        sumMatrixThree
+      );
+      const normalizeMatrixFour = normalizeMatrix(matrix_four, sumMatrixFour);
+      const normalizeMatrixFive = normalizeMatrix(matrix_five, sumMatrixFive);
+
+      console.log(normalizeMatrixOne);
+      printMatrix(normalizeMatrixOne, "normalisasi one");
+      console.log(normalizeMatrixTwo);
+      printMatrix(normalizeMatrixTwo, "normalisasi two");
+      console.log(normalizeMatrixThree);
+      printMatrix(normalizeMatrixThree, "normalisasi three");
+      console.log(normalizeMatrixFour);
+      printMatrix(normalizeMatrixFour, "normalisasi four");
+      console.log(normalizeMatrixFive);
+      printMatrix(normalizeMatrixFive, "normalisasi five");
+
+      const priorityVectorOne = calculateRowAverages(normalizeMatrixOne);
+      console.log(priorityVectorOne);
+
+      const priorityVectorTwo = calculateRowAverages(normalizeMatrixTwo);
+      console.log(priorityVectorTwo);
+      const priorityVectorThree = calculateRowAverages(normalizeMatrixThree);
+      console.log(priorityVectorThree);
+      const priorityVectorFour = calculateRowAverages(normalizeMatrixFour);
+      console.log(priorityVectorFour);
+      const priorityVectorFive = calculateRowAverages(normalizeMatrixFive);
+      console.log(priorityVectorFive);
+
+      const matrixKriteria = priorityVectorOne;
+      const matrixAlternatifKriteria = mergeArraysIntoMatrix([
+        priorityVectorTwo,
+        priorityVectorThree,
+        priorityVectorFour,
+        priorityVectorFive,
+      ]);
+
+      console.log(matrixKriteria);
+      console.log(matrixAlternatifKriteria);
+
+      const result = mmult(matrixAlternatifKriteria, matrixKriteria);
+      console.log(result);
+
+      const plan_risk_management = result[0];
+      const identify_risks = result[1];
+      const perform_qualitative_risk_analysis = result[2];
+      const perform_quantitative_qisk_analysis = result[3];
+      const plan_risk_responses = result[4];
+      const implement_risk_responses = result[5];
+      const monitor_risks = result[6];
+
+      console.log(plan_risk_management);
+      console.log(identify_risks);
+      console.log(perform_qualitative_risk_analysis);
+      console.log(perform_quantitative_qisk_analysis);
+      console.log(plan_risk_responses);
+      console.log(implement_risk_responses);
+      console.log(monitor_risks);
+
+      try {
+        const category = await prisma.category.findMany({});
+
+        if (!category) {
+          console.log("No data found for user.");
+          throw new Error("No data found for user.");
+        }
+
+        await prisma.ahpResult.deleteMany({});
+
+        await prisma.ahpResult.createMany({
+          data: [
+            {
+              category_id: category[0].id,
+              value: plan_risk_management,
+            },
+            {
+              category_id: category[1].id,
+              value: identify_risks,
+            },
+            {
+              category_id: category[2].id,
+              value: perform_qualitative_risk_analysis,
+            },
+            {
+              category_id: category[3].id,
+              value: perform_quantitative_qisk_analysis,
+            },
+            {
+              category_id: category[4].id,
+              value: plan_risk_responses,
+            },
+            {
+              category_id: category[5].id,
+              value: implement_risk_responses,
+            },
+            {
+              category_id: category[6].id,
+              value: monitor_risks,
+            },
+          ],
+        });
+      } catch (error) {
+        console.log(error);
+      }
+
+      return result;
     } else {
+      console.log("No data found for user.");
       throw new Error("No data found for user.");
     }
   } catch (e) {
@@ -353,13 +482,13 @@ export async function applyFormulaAhp() {
  */
 function geometricMean(numbers: number[]): number {
   if (numbers.length === 0) {
-    throw new Error("Array must contain at least one number.");
+    console.log("error");
   }
 
   // Ensure all numbers are non-negative
   for (const number of numbers) {
     if (number < 0) {
-      throw new Error("Geometric mean is not defined for negative numbers.");
+      console.log("error");
     }
   }
 
@@ -388,19 +517,19 @@ function createPairwiseComparisonMatrixSectionOne(
         row.push(1);
       } else if (i - j > 0) {
         if (j == 0) {
-          row.push(1 / section[i - 1]);
+          row.push(Math.round((1 / section[i - 1]) * 100) / 100);
         } else if (j == 1 || j == 2) {
-          row.push(1 / section[i + j]);
+          row.push(Math.round((1 / section[i + j]) * 100) / 100);
         } else {
-          row.push(1 / section[i]);
+          row.push(Math.round((1 / section[i]) * 100) / 100);
         }
       } else {
         if (i == 0) {
-          row.push(section[j - 1]);
+          row.push(Math.round(section[j - 1] * 100) / 100);
         } else if (i == 1 || i == 2) {
-          row.push(section[i + j]);
+          row.push(Math.round(section[i + j] * 100) / 100);
         } else {
-          row.push(section[j]);
+          row.push(Math.round(section[j] * 100) / 100);
         }
       }
     }
@@ -421,35 +550,35 @@ function createPairwiseComparisonMatrix(
         row.push(1);
       } else if (i - j > 0) {
         if (j == 0) {
-          row.push(1 / section[i - 1]);
+          row.push(Math.round((1 / section[i - 1]) * 100) / 100);
         } else if (j == 1) {
-          row.push(1 / section[i + j + 3]);
+          row.push(Math.round((1 / section[i + j + 3]) * 100) / 100);
         } else if (j == 2) {
-          row.push(1 / section[i + j + 6]);
+          row.push(Math.round((1 / section[i + j + 6]) * 100) / 100);
         } else if (j == 3) {
-          row.push(1 / section[i + j + 8]);
+          row.push(Math.round((1 / section[i + j + 8]) * 100) / 100);
         } else if (j == 4) {
-          row.push(1 / section[i + j + 9]);
+          row.push(Math.round((1 / section[i + j + 9]) * 100) / 100);
         } else if (j == 5) {
-          row.push(1 / section[i + j + 9]);
+          row.push(Math.round((1 / section[i + j + 9]) * 100) / 100);
         } else {
-          row.push(section[i]);
+          row.push(Math.round(section[i] * 100) / 100);
         }
       } else {
         if (i == 0) {
-          row.push(section[j - 1]);
+          row.push(Math.round(section[j - 1] * 100) / 100);
         } else if (i == 1) {
-          row.push(section[i + j + 3]);
+          row.push(Math.round(section[i + j + 3] * 100) / 100);
         } else if (i == 2) {
-          row.push(section[i + j + 6]);
+          row.push(Math.round(section[i + j + 6] * 100) / 100);
         } else if (i == 3) {
-          row.push(section[i + j + 8]);
+          row.push(Math.round(section[i + j + 8] * 100) / 100);
         } else if (i == 4) {
-          row.push(section[i + j + 9]);
+          row.push(Math.round(section[i + j + 9] * 100) / 100);
         } else if (i == 5) {
-          row.push(section[i + j + 9]);
+          row.push(Math.round(section[i + j + 9] * 100) / 100);
         } else {
-          row.push(section[j]);
+          row.push(Math.round(section[j] * 100) / 100);
         }
       }
     }
@@ -464,4 +593,97 @@ function printMatrix(matrix: number[][], sectionName: string) {
     console.log(row.map((value) => Math.round(value * 100) / 100).join("\t"));
   });
   console.log("\n");
+}
+
+function sumPerColumn(matrix: number[][]): number[] {
+  if (matrix.length === 0) return [];
+
+  const numColumns = matrix[0].length;
+  const columnSums = new Array(numColumns).fill(0);
+
+  for (let row of matrix) {
+    for (let col = 0; col < numColumns; col++) {
+      columnSums[col] += row[col];
+    }
+  }
+
+  // Round the column sums to two decimal places
+  for (let i = 0; i < columnSums.length; i++) {
+    columnSums[i] = Math.round(columnSums[i] * 100) / 100;
+  }
+
+  return columnSums;
+}
+
+function normalizeMatrix(matrix: number[][], columnSums: number[]): number[][] {
+  const numRows = matrix.length;
+  const numCols = matrix[0].length;
+  const normalizedMatrix: number[][] = [];
+
+  for (let row = 0; row < numRows; row++) {
+    const normalizedRow: number[] = [];
+    for (let col = 0; col < numCols; col++) {
+      const normalizedValue = matrix[row][col] / columnSums[col];
+      normalizedRow.push(Math.round(normalizedValue * 100) / 100);
+    }
+    normalizedMatrix.push(normalizedRow);
+  }
+
+  return normalizedMatrix;
+}
+
+function calculateRowAverages(matrix: number[][]): number[] {
+  const numRows = matrix.length;
+  const numCols = matrix[0].length;
+  const rowAverages: number[] = [];
+
+  for (let row = 0; row < numRows; row++) {
+    const sum = matrix[row].reduce((acc, val) => acc + val, 0);
+    const average = sum / numCols;
+    rowAverages.push(Math.round(average * 100) / 100);
+  }
+
+  return rowAverages;
+}
+
+function mergeArraysIntoMatrix(arrays: number[][]): number[][] {
+  const numRows = arrays[0].length;
+  const numCols = arrays.length;
+  const matrix: number[][] = [];
+
+  for (let row = 0; row < numRows; row++) {
+    const newRow: number[] = [];
+    for (let col = 0; col < numCols; col++) {
+      newRow.push(arrays[col][row]);
+    }
+    matrix.push(newRow);
+  }
+
+  return matrix;
+}
+
+function mmult(array2: number[][], array1: number[]): number[] {
+  const numRows2 = array2.length;
+  const numCols2 = array2[0].length;
+  const numRows1 = array1.length;
+
+  if (numCols2 !== numRows1) {
+    throw new Error(
+      "Number of columns in the first array must match the number of rows in the second array."
+    );
+  }
+
+  const result: number[] = new Array(numRows2).fill(0);
+
+  for (let i = 0; i < numRows2; i++) {
+    for (let j = 0; j < numCols2; j++) {
+      result[i] += array2[i][j] * array1[j];
+    }
+  }
+
+  for (let i = 0; i < result.length; i++) {
+    result[i] = Math.round(result[i] * 1000) / 1000;
+  }
+
+  return result;
 }

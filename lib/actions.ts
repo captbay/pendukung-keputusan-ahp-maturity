@@ -114,39 +114,131 @@ export async function submitAhp(
 }
 
 export async function getAhpData() {
-  const data = await prisma.ahpResult.findMany({
-    include: {
-      category: true
-    }
-  });
+  try {
+    const data = await prisma.ahpResult.findMany({
+      include: {
+        category: true,
+      },
+    });
 
-  if(!data){
+    if (!data) {
+      return {
+        success: false,
+        message: "Data not found",
+      };
+    }
+
     return {
-      success: false,
-      message: "Data not found",
+      success: true,
+      data: data,
+      message: "Data found",
+    };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: e.message,
+        };
+      }
+      return {
+        message: e.message,
+      };
     }
   }
-
-  return {
-    success: true,
-    data: data,
-    message: "Data found",
-  };
 }
 
 export async function getAllUser() {
-  const data = await prisma.user.findMany({});
+  try {
+    const data = await prisma.user.findMany({});
 
-  if(!data){
+    if (!data) {
+      return {
+        success: false,
+        message: "There is no user registered",
+      };
+    }
+
     return {
-      success: false,
-      message: "There is no user registered",
+      success: true,
+      data: data,
+      message: "Data found",
+    };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: e.message,
+        };
+      }
+      return {
+        message: e.message,
+      };
     }
   }
+}
 
-  return {
-    success: true,
-    data: data,
-    message: "Data found",
-  };
+export async function getAllUserFormAhp() {
+  try {
+    const data = await prisma.usersAhpForm.findMany({});
+
+    if (!data) {
+      return {
+        success: false,
+        message: "There is no data found",
+      };
+    }
+
+    return {
+      success: true,
+      data: data,
+      message: "Data found",
+    };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: e.message,
+        };
+      }
+      return {
+        message: e.message,
+      };
+    }
+  }
+}
+
+export async function getPerUserFormAhp(id: string) {
+  try {
+    const data = await prisma.usersAhpForm.findFirst({
+      where: {
+        user_id: {
+          equals: id,
+        },
+      },
+    });
+
+    if (!data) {
+      return {
+        success: false,
+        message: "There is no data found",
+      };
+    }
+
+    return {
+      success: true,
+      data: data,
+      message: "Data found",
+    };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: e.message,
+        };
+      }
+      return {
+        message: e.message,
+      };
+    }
+  }
 }
