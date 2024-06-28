@@ -101,7 +101,7 @@ model UsersProgressMaturity {
   user_id               String
   user_maturity_id      String
   level                 Int
-  isAccepted            Boolean    @map(name:"is_accepted")
+  isAccepted            Boolean?    @map(name:"is_accepted")
   createdAt             DateTime  @default(now()) @map(name: "created_at")
   updatedAt             DateTime  @updatedAt @map(name: "updated_at")
 
