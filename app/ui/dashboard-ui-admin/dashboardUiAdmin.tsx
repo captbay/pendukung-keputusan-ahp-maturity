@@ -2,8 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue } from "@nextui-org/react";
-import { ActionEyeIcon } from "@/app/icon/ActionEyeIcon";
 import UserTable from "@/app/components/user-table/userTable";
 import AHPResultTable from "@/app/components/ahp-result-table/ahpResultTable";
 

@@ -38,7 +38,7 @@ export const authConfig = {
     
       if (isLoggedIn) {
         if (isAdmin) {
-          if (nextUrl.pathname !== "/dashboard-admin" && nextUrl.pathname !== "/result-recap") {
+          if (nextUrl.pathname !== "/dashboard-admin" && nextUrl.pathname !== "/result-recap" && nextUrl.pathname !== "/ahp-recap") {
             return Response.redirect(new URL("/dashboard-admin", nextUrl)); // Redirect Admin to /dashboard-admin
           }
         } else {

@@ -14,13 +14,11 @@ interface UserTableProps {
   }> | undefined;
 }
 
-
 const UserTable: React.FC<UserTableProps> = ({ data }) => {
   const columnsUser = [
     { name: "NAME", uid: "name" },
-    { name: "ID", uid: "id"},
     { name: "ROLE", uid: "role" },
-    { name: "ACTIONS", uid: "actions" },
+
   ];
 
   const renderCell = React.useCallback((data: any, columnKey: string) => {
@@ -37,39 +35,11 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
             {data.email}
           </User>
         );
-      case "id":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
-          </div>
-        )
       case "role":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-sm capitalize">{cellValue}</p>
             <p className="text-bold text-sm capitalize text-default-400">{data.jabatan ? data.jabatan : "null"}</p>
-          </div>
-        );
-      case "actions":
-        return (
-          <div className="relative flex items-center justify-center gap-2">
-            <Tooltip content="See AHP Result">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <ActionEyeIcon />
-              </span>
-            </Tooltip>
-
-            {/* <Tooltip content="Edit user"> */}
-              {/* <span className="text-lg text-default-400 cursor-pointer active:opacity-50"> */}
-                {/* <EditIcon />bbb */}
-              {/* </span> */}
-            {/* </Tooltip> */}
-
-            {/* <Tooltip color="danger" content="Delete user"> */}
-              {/* <span className="text-lg text-danger cursor-pointer active:opacity-50"> */}
-                {/* <DeleteIcon />ccc */}
-              {/* </span> */}
-            {/* </Tooltip> */}
           </div>
         );
       default:

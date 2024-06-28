@@ -105,16 +105,28 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, session }) => {
             </Button>
 
             {isAdmin ? (
-              <Button
-                onClick={() => handleButtonClick("result-recap")}
-                className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${
-                  isActive("/result-recap") ? "bg-red-700 text-white" : ""
-                }`}
-                shadow-md
-              >
-                <HierarchyIcon />
-                <h2 className="text-secondary">Maturity Recap</h2>
-              </Button>
+              <>
+                <Button
+                  onClick={() => handleButtonClick("ahp-recap")}
+                  className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${
+                    isActive("/ahp-recap") ? "bg-red-700 text-white" : ""
+                  }`}
+                  shadow-md
+                >
+                  <HierarchyIcon />
+                  <h2 className="text-secondary">AHP Recap</h2>
+                </Button>
+                <Button
+                  onClick={() => handleButtonClick("result-recap")}
+                  className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${
+                    isActive("/result-recap") ? "bg-red-700 text-white" : ""
+                  }`}
+                  shadow-md
+                >
+                  <HierarchyIcon />
+                  <h2 className="text-secondary">Maturity Recap</h2>
+                </Button>
+              </>
             ) : (
               <>
                 <Button
