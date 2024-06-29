@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue } from "@nextui-org/react";
-import { ActionEyeIcon } from "@/app/icon/ActionEyeIcon";
 
 interface TableRow {
   kriteria1: string;

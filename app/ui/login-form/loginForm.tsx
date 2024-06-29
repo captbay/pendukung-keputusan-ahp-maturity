@@ -8,10 +8,12 @@ import { useFormState, useFormStatus } from "react-dom";
 import { login } from "@/lib/authentication";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
+import LoadingScreen from "@/app/components/loading-screen/loadingScreen";
 
 export default function LoginForm() {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { pending } = useFormStatus();
   const [errorMessage, dispatch] = useFormState(login, undefined);
@@ -20,6 +22,12 @@ export default function LoginForm() {
   useEffect(() => {
     router.replace("/login");
   }, []);
+
+  useEffect(() => {
+    if(errorMessage){
+      setIsLoading(false);
+    }
+  }, [errorMessage]);
 
   return (
     <section className="rounded-lg bg-white p-12">
@@ -85,6 +93,7 @@ export default function LoginForm() {
           color="primary"
           className="w-full"
           aria-disabled={pending}
+          onClick={() => setIsLoading(true)}
         >
           Login
         </Button>
@@ -116,6 +125,7 @@ export default function LoginForm() {
         richColors 
         position="top-center"
       />
+      <LoadingScreen isLoading={isLoading} />
     </section>
   );
 }

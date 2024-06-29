@@ -9,6 +9,7 @@ import { submitAhp } from '@/lib/actions';
 import { StateAhp } from '@/lib/actions';
 import { Toaster, toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import LoadingScreen from '@/app/components/loading-screen/loadingScreen';
 
 interface AHPPageProps {
   session: any;
@@ -23,6 +24,7 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
   );
   const tempSelections: Array<Array<number | null>> = criteriaData.map(row => Array.from({ length: row.length }, () => null));
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const scales = [9, 8, 7, 6, 5, 4, 3, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -72,6 +74,8 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
   };
 
   const sendData = async() => {
+    // show loading into true
+    setIsLoading(true);
     console.log('this data will be sent ---> ', tempSelections);
     const formData = new FormData();
     const state = {} as StateAhp;
@@ -84,21 +88,18 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
     console.log('form data ---> ', formData);
     const result = await submitAhp(session.user.id, state, formData);
     console.log('this result --- ', result);
-    toast.success('Analytical Hierarcy Process submitted successfully!');
-    setTimeout(() => {
-      router.push('/dashboard');
-    }, 2000);
+    // set the loading into false
+    if(result!.success){
+      toast.success('Analytical Hierarcy Process submitted successfully!');
+      setIsLoading(false);
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1200);
+    } else{
+      toast.error('Failed to submit Analytical Hierarcy Process');
+      setIsLoading(false);
+    }
   };
-
-  // const validateAnswer = () => {
-  //   selections[currentCheckpoint].map((selection, index) => {
-  //     if (selection) {
-  //       // alert(`Silahkan pilih skala pada baris ke-${index + 1}`);
-  //       return false;
-  //     }
-  //   });
-  //   return true;
-  // }
 
   const handlePreviousButton = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -172,6 +173,7 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
         richColors 
         position="top-center"
       />
+      <LoadingScreen isLoading={isLoading} />
     </main>
   );
 }

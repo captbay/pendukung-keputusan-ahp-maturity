@@ -32,21 +32,30 @@ export async function login(prevState: State | undefined, formData: FormData) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Something went wrong.",
+      success: false,
     };
   }
 
   try {
-    await signIn("credentials", formData);
+    const result = await signIn("credentials", formData);
+    if(result){
+      return {
+        message: "Successfully logged in.",
+        success: true,
+      };
+    }
   } catch (error) {
     console.log(error);
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CallbackRouteError":
           return {
+            success: false,
             message: "Invalid credentials.",
           };
         default:
           return {
+            success: false,
             message: "Something went wrong.",
           };
       }
@@ -84,6 +93,7 @@ export async function register(prevState: State | undefined, formData: FormData)
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Something went wrong.",
+      success: false,
     };
   }
 
@@ -101,16 +111,19 @@ export async function register(prevState: State | undefined, formData: FormData)
 
     return {
       message: "Successfully registered. Please login.",
+      success: true,
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
         return {
           message: e.message,
+          success: false,
         };
       }
       return {
         message: e.message,
+        success: false,
       };
     }
   }

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import { register } from "@/lib/authentication";
 import { useRouter } from "next/navigation";
+import LoadingScreen from "@/app/components/loading-screen/loadingScreen";
 
 export default function RegisterForm() {
   const [isVisible, setIsVisible] = useState(false);
@@ -20,10 +21,15 @@ export default function RegisterForm() {
   );
   const toggleVisibility = () => setIsVisible(!isVisible);
   const [errorMessage, dispatch] = useFormState(register, undefined);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if(errorMessage?.message.includes('Successfully registered. Please login.')){
       router.replace("/login");
+    }
+
+    if(errorMessage){
+      setIsLoading(false);
     }
   }, [errorMessage]);
 
@@ -70,35 +76,11 @@ export default function RegisterForm() {
           {errorMessage && (
             <>
               <p className="text-sm text-red-500">
-                {/* {errorMessage.errors?.jabatan} */}
+                {errorMessage.errors?.jabatan}
               </p>
             </>
           )}
         </div>
-        {/* <Dropdown>
-          <DropdownTrigger>
-            <Button
-              variant="bordered"
-              className="capitalize px-4 py-2 w-[260px] mb-[20px] rounded-md border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-            >
-              {selectedValue}
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu 
-            aria-label="Single selection example"
-            variant="flat"
-            disallowEmptySelection
-            selectionMode="single"
-            selectedKeys={selectedKeys}
-            onSelectionChange={(keys) => setSelectedKeys(new Set(Array.from(keys as Set<string>)))}
-          >
-            <DropdownItem key="office_boy">Office Boy</DropdownItem>
-            <DropdownItem key="karyawan">Karyawan</DropdownItem>
-            <DropdownItem key="supervisor">Supervisor</DropdownItem>
-            <DropdownItem key="manager">Manager</DropdownItem>
-            <DropdownItem key="director">Director</DropdownItem>
-          </DropdownMenu>
-        </Dropdown> */}
         <Input
           id="email"
           name="email"
@@ -161,6 +143,7 @@ export default function RegisterForm() {
           color="primary"
           className="w-full"
           aria-disabled={pending}
+          onClick={() => setIsLoading(true)}
         >
           Register
         </Button>
@@ -187,6 +170,7 @@ export default function RegisterForm() {
           Login
         </Link>
       </p>
+      <LoadingScreen isLoading={isLoading} />
     </section>
   );
 }

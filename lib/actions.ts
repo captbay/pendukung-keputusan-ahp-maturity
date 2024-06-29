@@ -68,6 +68,7 @@ export async function submitAhp(
 
   if (!validatedFields.success) {
     return {
+      success: false,
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Something went wrong.",
     };
@@ -115,16 +116,19 @@ export async function submitAhp(
     applyFormulaAhp();
 
     return {
+      success: true,
       message: "Successfully submitted.",
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
         return {
+          success: false,
           message: e.message,
         };
       }
       return {
+        success: false,
         message: e.message,
       };
     }

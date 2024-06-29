@@ -51,7 +51,7 @@ const AHPResultTable: React.FC<AHPResultTableProps> = ({ ahpResult }) => {
       <div className="flex flex-col w-full justify-center items-center">
         <div className="flex p-2 justify-center">
           <h1 className="text-lg">
-            AHP Result from x User
+            AHP Result from User
           </h1>
         </div>
         <div className="max-lg:w-full lg:w-[90%] w-[80%]">
