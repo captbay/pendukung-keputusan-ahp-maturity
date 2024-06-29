@@ -4,6 +4,7 @@ import prisma from "./prisma";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { applyFormulaAhp } from "./formula";
+import { criteriaData } from "@/app/utils/criteriaData";
 
 export type StateAhp = {
   errors?: {
@@ -24,6 +25,23 @@ const FormAhpSchema = z.object({
   section_four: z.array(z.any()).nonempty(),
   section_five: z.array(z.any()).nonempty(),
 });
+
+type AhpFormValue = {
+  section_one: number[],
+  section_two: number[],
+  section_three: number[],
+  section_four: number[],
+  section_five: number[],
+};
+
+type UserAhpForm = {
+  value: AhpFormValue,
+  users: {
+    name: string,
+    email: string,
+    jabatan: string | null,
+  }
+};
 
 export async function submitAhp(
   id: string,
@@ -179,7 +197,18 @@ export async function getAllUser() {
 
 export async function getAllUserFormAhp() {
   try {
-    const data = await prisma.usersAhpForm.findMany({});
+    const data: UserAhpForm[] = await prisma.usersAhpForm.findMany({
+      select: {
+        value: true,
+        users: {
+          select: {
+            name: true,
+            email: true,
+            jabatan: true,
+          },
+        },
+      },
+    }) as unknown as UserAhpForm[];
 
     if (!data) {
       return {
@@ -188,9 +217,46 @@ export async function getAllUserFormAhp() {
       };
     }
 
+    // merge all of the value
+    const combinedData = data.map(item => [
+      ...item.value.section_one,
+      ...item.value.section_two,
+      ...item.value.section_three,
+      ...item.value.section_four,
+      ...item.value.section_five
+    ]);
+
+    // transposed the responden value
+    const transposedData = combinedData[0].map((_, colIndex) => combinedData.map(row => row[colIndex]));
+    const users = data.map(item => item.users);
+
+    // adding kriteria into users data to be used in the table header
+    users.unshift({ name: 'Kriteria', email: '', jabatan: '' });
+    users.push({ name: 'Kriteria', email: '', jabatan: '' });
+
+    // flatten the array of criteria
+    const flattenedCriteria = criteriaData.flat();
+
+    // mapped the data that will fit on table
+    const tableData = transposedData.map((row, index) => {
+      const tableRow: { [key: string]: string } = {};
+      const criteriaPair = flattenedCriteria[index];
+      tableRow['kriteria1'] = criteriaPair.left;
+      row.forEach((value, respondenIndex) => {
+        tableRow[`responden${respondenIndex + 1}`] = value.toString();
+      });
+      tableRow['kriteria2'] = criteriaPair.right;
+      return tableRow;
+    });
+
+    const result = {
+      users: users,
+      tableData: tableData
+    };
+
     return {
       success: true,
-      data: data,
+      data: result,
       message: "Data found",
     };
   } catch (e) {

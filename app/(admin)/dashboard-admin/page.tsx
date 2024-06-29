@@ -10,8 +10,8 @@ export default async function DashboardAdmin() {
   return (
     <DashboardUiAdmin 
       session={session} 
-      data={user.data}
-      ahpResult={ahpResult.data}
+      data={user!.data}
+      ahpResult={ahpResult!.data}
     />
   );
 }
