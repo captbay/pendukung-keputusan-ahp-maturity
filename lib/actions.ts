@@ -27,20 +27,20 @@ const FormAhpSchema = z.object({
 });
 
 type AhpFormValue = {
-  section_one: number[],
-  section_two: number[],
-  section_three: number[],
-  section_four: number[],
-  section_five: number[],
+  section_one: number[];
+  section_two: number[];
+  section_three: number[];
+  section_four: number[];
+  section_five: number[];
 };
 
 type UserAhpForm = {
-  value: AhpFormValue,
+  value: AhpFormValue;
   users: {
-    name: string,
-    email: string,
-    jabatan: string | null,
-  }
+    name: string;
+    email: string;
+    jabatan: string | null;
+  };
 };
 
 export async function submitAhp(
@@ -48,14 +48,6 @@ export async function submitAhp(
   prevState: StateAhp,
   formData: FormData
 ) {
-  // const validatedFields = FormAhpSchema.safeParse({
-  //   section_one: formData.get("section_one"),
-  //   section_two: formData.get("section_two"),
-  //   section_three: formData.get("section_three"),
-  //   section_four: formData.get("section_four"),
-  //   section_five: formData.get("section_five"),
-  // });
-
   const parsedData = {
     section_one: JSON.parse(formData.get("section_one") as string),
     section_two: JSON.parse(formData.get("section_two") as string),
@@ -113,7 +105,7 @@ export async function submitAhp(
       });
     }
 
-    applyFormulaAhp();
+    await applyFormulaAhp();
 
     return {
       success: true,
@@ -140,6 +132,9 @@ export async function getAhpData() {
     const data = await prisma.ahpResult.findMany({
       include: {
         category: true,
+      },
+      orderBy: {
+        value: "desc",
       },
     });
 
@@ -201,7 +196,7 @@ export async function getAllUser() {
 
 export async function getAllUserFormAhp() {
   try {
-    const data: UserAhpForm[] = await prisma.usersAhpForm.findMany({
+    const data: UserAhpForm[] = (await prisma.usersAhpForm.findMany({
       select: {
         value: true,
         users: {
@@ -212,7 +207,7 @@ export async function getAllUserFormAhp() {
           },
         },
       },
-    }) as unknown as UserAhpForm[];
+    })) as unknown as UserAhpForm[];
 
     if (!data) {
       return {
@@ -222,21 +217,23 @@ export async function getAllUserFormAhp() {
     }
 
     // merge all of the value
-    const combinedData = data.map(item => [
+    const combinedData = data.map((item) => [
       ...item.value.section_one,
       ...item.value.section_two,
       ...item.value.section_three,
       ...item.value.section_four,
-      ...item.value.section_five
+      ...item.value.section_five,
     ]);
 
     // transposed the responden value
-    const transposedData = combinedData[0].map((_, colIndex) => combinedData.map(row => row[colIndex]));
-    const users = data.map(item => item.users);
+    const transposedData = combinedData[0].map((_, colIndex) =>
+      combinedData.map((row) => row[colIndex])
+    );
+    const users = data.map((item) => item.users);
 
     // adding kriteria into users data to be used in the table header
-    users.unshift({ name: 'Kriteria', email: '', jabatan: '' });
-    users.push({ name: 'Kriteria', email: '', jabatan: '' });
+    users.unshift({ name: "Kriteria", email: "", jabatan: "" });
+    users.push({ name: "Kriteria", email: "", jabatan: "" });
 
     // flatten the array of criteria
     const flattenedCriteria = criteriaData.flat();
@@ -245,17 +242,17 @@ export async function getAllUserFormAhp() {
     const tableData = transposedData.map((row, index) => {
       const tableRow: { [key: string]: string } = {};
       const criteriaPair = flattenedCriteria[index];
-      tableRow['kriteria1'] = criteriaPair.left;
+      tableRow["kriteria1"] = criteriaPair.left;
       row.forEach((value, respondenIndex) => {
         tableRow[`responden${respondenIndex + 1}`] = value.toString();
       });
-      tableRow['kriteria2'] = criteriaPair.right;
+      tableRow["kriteria2"] = criteriaPair.right;
       return tableRow;
     });
 
     const result = {
       users: users,
-      tableData: tableData
+      tableData: tableData,
     };
 
     return {
