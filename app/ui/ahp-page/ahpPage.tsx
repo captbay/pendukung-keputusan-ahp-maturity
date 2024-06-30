@@ -44,7 +44,6 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
 
   const handleNextButton = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    console.log('selections --- ', selections[currentCheckpoint - 1]);
     if(validateAnswer()){
       setCurrentCheckpoint(currentCheckpoint + 1);
     }
@@ -76,7 +75,6 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
   const sendData = async() => {
     // show loading into true
     setIsLoading(true);
-    console.log('this data will be sent ---> ', tempSelections);
     const formData = new FormData();
     const state = {} as StateAhp;
     formData.append('section_one', JSON.stringify(tempSelections[0]));
@@ -85,9 +83,7 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
     formData.append('section_four', JSON.stringify(tempSelections[3]));
     formData.append('section_five', JSON.stringify(tempSelections[4]));
 
-    console.log('form data ---> ', formData);
     const result = await submitAhp(session.user.id, state, formData);
-    console.log('this result --- ', result);
     // set the loading into false
     if(result!.success){
       toast.success('Analytical Hierarcy Process submitted successfully!');
@@ -161,7 +157,6 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
         title="Submit AHP"
         message="Are you sure you want to submit your AHP?"
         onConfirm={() => {
-          console.log('AHP submitted');
           calculateScore();
           setIsConfirmationModalOpen(false);
         }}

@@ -14,7 +14,6 @@ const AHPTable: React.FC<AHPTableProps> = ({ selections, setSelections, criteria
   const handleSelection = (rowIndex: number, scaleIndex: number) => {
     const newSelections = [...selections];
     newSelections[currentCheckpoint][rowIndex] = scaleIndex;
-    console.log(newSelections);
     setSelections(newSelections);
   };
 

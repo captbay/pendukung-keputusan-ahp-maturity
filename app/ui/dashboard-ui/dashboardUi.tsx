@@ -25,17 +25,6 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult }) => {
     }
   }, [session]);
 
-  useEffect(() => {
-    console.log('this is ahp result --- ', ahpResult.data);
-  }, [ahpResult]);
-
-  // from ahpResult.data, convert into rows
-  // make the kriteria from ahpResult.data.category.key with removing underscore and capitalize each word
-  // make the rank by sorting the ahpResult.data by value
-  // there is no item.rank in ahpResult.data, so we need to create it
-  // the rank is the index of the item in the sorted ahpResult.data by its value
-  // the priority_vector is the value of the item
-
   const rows: RowData[] = ahpResult.data.map((item: any) => {
     return {
       key: item.category.key,
@@ -50,8 +39,6 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult }) => {
   rows.forEach(row => {
     row.rank = sortedRows.findIndex(sortedRow => sortedRow.key === row.key) + 1;
   });
-
-  console.log('this is rows --- ', rows);
   
   const columns = [
     {

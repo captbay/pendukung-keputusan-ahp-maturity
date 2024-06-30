@@ -23,12 +23,6 @@ const AhpRecap: React.FC<AhpRecapProps> = ({ data, ahpData }) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectedUser = useRef<any>(null);
 
-  useEffect(() => {
-    if (ahpData) {
-      console.log('this is ahpData --- ', ahpData);
-    }
-  }, [ahpData]);
-
   return (
     <main className="flex flex-col w-full min-h-screen justify-center items-center py-10">
       <UserRecapTable
