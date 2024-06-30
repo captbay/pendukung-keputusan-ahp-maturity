@@ -36,7 +36,7 @@ export default function LoginForm() {
         <Input
           id="email"
           name="email"
-          type="email"
+          type="text"
           label="Email"
           placeholder="Enter your email"
           variant="bordered"

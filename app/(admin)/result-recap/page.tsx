@@ -7,7 +7,7 @@ export default async function ResultRecap() {
   return (
     <div>
       <ResultRecapPage 
-        data={user.data}
+        data={user!.data}
       />
     </div>
   );
