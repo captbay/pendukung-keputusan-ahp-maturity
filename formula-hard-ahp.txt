@@ -1,0 +1,1321 @@
+
+```ts
+interface valueFromAhp {
+  section_one: number[];
+  section_two: number[];
+  section_three: number[];
+  section_four: number[];
+  section_five: number[];
+};
+
+/**
+ * Function to calculate the geometric mean of an array of numbers.
+ * @param numbers - Array of numbers.
+ * @returns Geometric mean of the numbers, rounded to two decimal places.
+ */
+function geometricMean(numbers: number[]): number {
+  if (numbers.length === 0) {
+    console.log('error')
+  }
+
+  // Ensure all numbers are non-negative
+  for (const number of numbers) {
+    if (number < 0) {
+      console.log('error')
+    }
+  }
+
+  // Calculate the product of all numbers
+  const product = numbers.reduce((acc, num) => acc * num, 1);
+
+  // Calculate the n-th root of the product
+  const n = numbers.length;
+  const geomean = Math.pow(product, 1 / n);
+
+  // Round to two decimal places
+  const roundedGeomean = Math.round(geomean * 100) / 100;
+
+  return roundedGeomean;
+}
+
+function createPairwiseComparisonMatrixSectionOne (section: number[], length:number): number[][] {
+    const matrix: number[][] = [];
+    for (let i = 0; i < length; i++) {
+        const row: number[] = [];
+        for (let j = 0; j < length; j++) {
+            if(i==j){
+              row.push(1)
+            } else if(i - j > 0){
+              if(j==0){
+                row.push(Math.round(1/section[i-1] * 100) / 100)
+              }else if(j==1 || j==2){
+                row.push(Math.round(1/section[i+j] * 100) / 100)
+              } else{
+                row.push(Math.round(1/section[i] * 100) / 100)
+              }
+            } else {
+              if(i==0){
+                row.push(Math.round(section[j-1] * 100) / 100)
+              }else if(i==1 || i==2){
+                row.push(Math.round(section[i+j] * 100) / 100)
+              } else{
+                row.push(Math.round(section[j] * 100) / 100)
+              }
+            }
+        }
+        matrix.push(row);
+    }
+    return matrix;
+};
+
+function createPairwiseComparisonMatrix (section: number[], length:number): number[][] {
+    const matrix: number[][] = [];
+    for (let i = 0; i < length; i++) {
+        const row: number[] = [];
+        for (let j = 0; j < length; j++) {
+            if(i==j){
+              row.push(1)
+            } else if(i - j > 0){
+              if(j==0){
+                row.push(Math.round(1/section[i-1] * 100) / 100)
+              } else if (j==1) {
+                row.push(Math.round(1/section[i+j+3] * 100) / 100)
+              } else if (j==2) {
+                row.push(Math.round(1/section[i+j+6] * 100) / 100)
+              } else if (j==3) {
+                row.push(Math.round(1/section[i+j+8] * 100) / 100)
+              }else if (j==4) {
+                row.push(Math.round(1/section[i+j+9] * 100) / 100)
+              }else if (j==5) {
+                row.push(Math.round(1/section[i+j+9] * 100) / 100)
+              }else{
+                row.push(Math.round(section[i] * 100) / 100)
+              }
+            } else {
+              if(i==0){
+                row.push(Math.round(section[j-1] * 100) / 100)
+              }else if(i==1){
+                row.push(Math.round(section[i+j+3] * 100) / 100)
+              }else if(i==2){
+                row.push(Math.round(section[i+j+6] * 100) / 100)
+              }else if(i==3){
+                row.push(Math.round(section[i+j+8] * 100) / 100)
+              }else if(i==4){
+                row.push(Math.round(section[i+j+9] * 100) / 100)
+              }else if(i==5){
+                row.push(Math.round(section[i+j+9] * 100) / 100)
+              } else{
+                row.push(Math.round(section[j] * 100) / 100)
+              }
+            }
+        }
+        matrix.push(row);
+    }
+    return matrix;
+};
+
+function printMatrix (matrix: number[][], sectionName: string) {
+    console.log(`Pairwise comparison matrix for ${sectionName}:`);
+    matrix.forEach(row => {
+        console.log(row.map(value => Math.round(value * 100) / 100).join('\t'));
+    });
+    console.log('\n');
+};
+
+function sumPerColumn(matrix: number[][]): number[] {
+    if (matrix.length === 0) return [];
+
+    const numColumns = matrix[0].length;
+    const columnSums = new Array(numColumns).fill(0);
+
+    for (let row of matrix) {
+        for (let col = 0; col < numColumns; col++) {
+            columnSums[col] += row[col];
+        }
+    }
+
+    // Round the column sums to two decimal places
+    for (let i = 0; i < columnSums.length; i++) {
+        columnSums[i] = Math.round(columnSums[i] * 100) / 100;
+    }
+
+    return columnSums;
+}
+
+function normalizeMatrix(matrix: number[][], columnSums: number[]): number[][] {
+    const numRows = matrix.length;
+    const numCols = matrix[0].length;
+    const normalizedMatrix: number[][] = [];
+
+    for (let row = 0; row < numRows; row++) {
+        const normalizedRow: number[] = [];
+        for (let col = 0; col < numCols; col++) {
+            const normalizedValue = matrix[row][col] / columnSums[col];
+            normalizedRow.push(Math.round(normalizedValue * 100) / 100);
+        }
+        normalizedMatrix.push(normalizedRow);
+    }
+
+    return normalizedMatrix;
+}
+
+function calculateRowAverages(matrix: number[][]): number[] {
+    const numRows = matrix.length;
+    const numCols = matrix[0].length;
+    const rowAverages: number[] = [];
+
+    for (let row = 0; row < numRows; row++) {
+        const sum = matrix[row].reduce((acc, val) => acc + val, 0);
+        const average = sum / numCols;
+        rowAverages.push(Math.round(average* 100) / 100);
+    }
+
+    return rowAverages;
+}
+
+function mergeArraysIntoMatrix(arrays: number[][]): number[][] {
+    const numRows = arrays[0].length;
+    const numCols = arrays.length;
+    const matrix: number[][] = [];
+
+    for (let row = 0; row < numRows; row++) {
+        const newRow: number[] = [];
+        for (let col = 0; col < numCols; col++) {
+            newRow.push(arrays[col][row]);
+        }
+        matrix.push(newRow);
+    }
+
+    return matrix;
+}
+
+function mmult(array2: number[][], array1: number[]): number[] {
+    const numRows2 = array2.length;
+    const numCols2 = array2[0].length;
+    const numRows1 = array1.length;
+
+    if (numCols2 !== numRows1) {
+        throw new Error("Number of columns in the first array must match the number of rows in the second array.");
+    }
+
+    const result: number[] = new Array(numRows2).fill(0);
+
+    for (let i = 0; i < numRows2; i++) {
+        for (let j = 0; j < numCols2; j++) {
+            result[i] += array2[i][j] * array1[j];
+        }
+    }
+
+    for (let i =0; i< result.length; i++){
+        result[i] = Math.round(result[i] * 1000) / 1000
+    }
+
+    return result;
+}
+
+const data = [
+      {
+        value: {
+          section_one: [0.5, 2.0, 1.0, 4.0, 1.0, 1.0],
+          section_two: [
+            0.5, 2, 2, 1, 1, 1, 3, 1, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 1, 4, 4, 1,
+            0.5, 3, 1,
+          ],
+          section_three: [
+            4, 0.333333333, 0.333333333, 3, 0.5, 2, 0.333333333, 0.5, 1, 0.5, 1,
+            3, 3, 0.5, 3, 2, 0.5, 1, 0.5, 2, 3,
+          ],
+          section_four: [
+            3, 0.5, 0.5, 1, 0.5, 1, 0.5, 0.5, 2, 1, 1, 0.5, 2, 1, 1, 3, 0.5, 1,
+            2, 1, 3,
+          ],
+          section_five: [
+            2, 3, 3, 2, 2, 3, 0.5, 0.5, 1, 1, 1, 2, 1, 2, 1, 3, 3, 2, 0.5, 1,
+            2,
+          ],
+        },
+      },
+      {
+        value: {
+          section_one: [0.5, 1, 1, 3, 3, 2],
+          section_two: [
+            0.5, 2, 2, 3, 3, 4, 5, 5, 3, 3, 3, 1, 1, 1, 1, 4, 3, 0.5, 1, 1, 1,
+          ],
+          section_three: [
+            0.5, 2, 2, 1, 2, 3, 2, 2, 1, 2, 1, 2, 1, 1, 0.5, 2, 0.5, 1, 1, 2, 2,
+          ],
+          section_four: [
+            0.5, 3, 3, 1, 1, 0.5, 3, 3, 3, 3, 3, 2, 1, 1, 1, 1, 2, 2, 0.5, 0.5,
+            0.5,
+          ],
+          section_five: [
+            0.5, 1, 0.333333333, 0.5, 1, 0.5, 1, 1, 1, 0.5, 0.5, 2, 1, 0.5, 1,
+            2, 2, 1, 1, 1, 1,
+          ],
+        },
+      },
+      {
+        value: {
+          section_one: [3, 3, 3, 2, 3, 2],
+          section_two: [
+            3, 4, 4, 3, 3, 4, 3, 3, 4, 4, 4, 3, 4, 3, 4, 3, 3, 3, 3, 4, 4,
+          ],
+          section_three: [
+            3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 3, 4, 4, 4, 3,
+          ],
+          section_four: [
+            3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2, 2, 3, 3,
+          ],
+          section_five: [
+            2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3,
+          ],
+        },
+      },
+    ]
+
+    
+const formValue: valueFromAhp[] = data.map(item => item.value);
+
+const temp_section_one_1: Array<number> = [];
+const temp_section_one_2: Array<number> = [];
+const temp_section_one_3: Array<number> = [];
+const temp_section_one_4: Array<number> = [];
+const temp_section_one_5: Array<number> = [];
+const temp_section_one_6: Array<number> = [];
+
+const temp_section_two_1: Array<number> = [];
+const temp_section_two_2: Array<number> = [];
+const temp_section_two_3: Array<number> = [];
+const temp_section_two_4: Array<number> = [];
+const temp_section_two_5: Array<number> = [];
+const temp_section_two_6: Array<number> = [];
+const temp_section_two_7: Array<number> = [];
+const temp_section_two_8: Array<number> = [];
+const temp_section_two_9: Array<number> = [];
+const temp_section_two_10: Array<number> = [];
+const temp_section_two_11: Array<number> = [];
+const temp_section_two_12: Array<number> = [];
+const temp_section_two_13: Array<number> = [];
+const temp_section_two_14: Array<number> = [];
+const temp_section_two_15: Array<number> = [];
+const temp_section_two_16: Array<number> = [];
+const temp_section_two_17: Array<number> = [];
+const temp_section_two_18: Array<number> = [];
+const temp_section_two_19: Array<number> = [];
+const temp_section_two_20: Array<number> = [];
+const temp_section_two_21: Array<number> = [];
+
+const temp_section_three_1: Array<number> = [];
+const temp_section_three_2: Array<number> = [];
+const temp_section_three_3: Array<number> = [];
+const temp_section_three_4: Array<number> = [];
+const temp_section_three_5: Array<number> = [];
+const temp_section_three_6: Array<number> = [];
+const temp_section_three_7: Array<number> = [];
+const temp_section_three_8: Array<number> = [];
+const temp_section_three_9: Array<number> = [];
+const temp_section_three_10: Array<number> = [];
+const temp_section_three_11: Array<number> = [];
+const temp_section_three_12: Array<number> = [];
+const temp_section_three_13: Array<number> = [];
+const temp_section_three_14: Array<number> = [];
+const temp_section_three_15: Array<number> = [];
+const temp_section_three_16: Array<number> = [];
+const temp_section_three_17: Array<number> = [];
+const temp_section_three_18: Array<number> = [];
+const temp_section_three_19: Array<number> = [];
+const temp_section_three_20: Array<number> = [];
+const temp_section_three_21: Array<number> = [];
+
+const temp_section_four_1: Array<number> = [];
+const temp_section_four_2: Array<number> = [];
+const temp_section_four_3: Array<number> = [];
+const temp_section_four_4: Array<number> = [];
+const temp_section_four_5: Array<number> = [];
+const temp_section_four_6: Array<number> = [];
+const temp_section_four_7: Array<number> = [];
+const temp_section_four_8: Array<number> = [];
+const temp_section_four_9: Array<number> = [];
+const temp_section_four_10: Array<number> = [];
+const temp_section_four_11: Array<number> = [];
+const temp_section_four_12: Array<number> = [];
+const temp_section_four_13: Array<number> = [];
+const temp_section_four_14: Array<number> = [];
+const temp_section_four_15: Array<number> = [];
+const temp_section_four_16: Array<number> = [];
+const temp_section_four_17: Array<number> = [];
+const temp_section_four_18: Array<number> = [];
+const temp_section_four_19: Array<number> = [];
+const temp_section_four_20: Array<number> = [];
+const temp_section_four_21: Array<number> = [];
+
+const temp_section_five_1: Array<number> = [];
+const temp_section_five_2: Array<number> = [];
+const temp_section_five_3: Array<number> = [];
+const temp_section_five_4: Array<number> = [];
+const temp_section_five_5: Array<number> = [];
+const temp_section_five_6: Array<number> = [];
+const temp_section_five_7: Array<number> = [];
+const temp_section_five_8: Array<number> = [];
+const temp_section_five_9: Array<number> = [];
+const temp_section_five_10: Array<number> = [];
+const temp_section_five_11: Array<number> = [];
+const temp_section_five_12: Array<number> = [];
+const temp_section_five_13: Array<number> = [];
+const temp_section_five_14: Array<number> = [];
+const temp_section_five_15: Array<number> = [];
+const temp_section_five_16: Array<number> = [];
+const temp_section_five_17: Array<number> = [];
+const temp_section_five_18: Array<number> = [];
+const temp_section_five_19: Array<number> = [];
+const temp_section_five_20: Array<number> = [];
+const temp_section_five_21: Array<number> = [];
+
+const section_one_bobot: Array<number> = [];
+const section_two_bobot: Array<number> = [];
+const section_three_bobot: Array<number> = [];
+const section_four_bobot: Array<number> = [];
+const section_five_bobot: Array<number> = [];
+
+formValue.forEach((value) => {
+temp_section_one_1.push(value.section_one[0]);
+temp_section_one_2.push(value.section_one[1]);
+temp_section_one_3.push(value.section_one[2]);
+temp_section_one_4.push(value.section_one[3]);
+temp_section_one_5.push(value.section_one[4]);
+temp_section_one_6.push(value.section_one[5]);
+
+temp_section_two_1.push(value.section_two[0]);
+temp_section_two_2.push(value.section_two[1]);
+temp_section_two_3.push(value.section_two[2]);
+temp_section_two_4.push(value.section_two[3]);
+temp_section_two_5.push(value.section_two[4]);
+temp_section_two_6.push(value.section_two[5]);
+temp_section_two_7.push(value.section_two[6]);
+temp_section_two_8.push(value.section_two[7]);
+temp_section_two_9.push(value.section_two[8]);
+temp_section_two_10.push(value.section_two[9]);
+temp_section_two_11.push(value.section_two[10]);
+temp_section_two_12.push(value.section_two[11]);
+temp_section_two_13.push(value.section_two[12]);
+temp_section_two_14.push(value.section_two[13]);
+temp_section_two_15.push(value.section_two[14]);
+temp_section_two_16.push(value.section_two[15]);
+temp_section_two_17.push(value.section_two[16]);
+temp_section_two_18.push(value.section_two[17]);
+temp_section_two_19.push(value.section_two[18]);
+temp_section_two_20.push(value.section_two[19]);
+temp_section_two_21.push(value.section_two[20]);
+
+temp_section_three_1.push(value.section_three[0]);
+temp_section_three_2.push(value.section_three[1]);
+temp_section_three_3.push(value.section_three[2]);
+temp_section_three_4.push(value.section_three[3]);
+temp_section_three_5.push(value.section_three[4]);
+temp_section_three_6.push(value.section_three[5]);
+temp_section_three_7.push(value.section_three[6]);
+temp_section_three_8.push(value.section_three[7]);
+temp_section_three_9.push(value.section_three[8]);
+temp_section_three_10.push(value.section_three[9]);
+temp_section_three_11.push(value.section_three[10]);
+temp_section_three_12.push(value.section_three[11]);
+temp_section_three_13.push(value.section_three[12]);
+temp_section_three_14.push(value.section_three[13]);
+temp_section_three_15.push(value.section_three[14]);
+temp_section_three_16.push(value.section_three[15]);
+temp_section_three_17.push(value.section_three[16]);
+temp_section_three_18.push(value.section_three[17]);
+temp_section_three_19.push(value.section_three[18]);
+temp_section_three_20.push(value.section_three[19]);
+temp_section_three_21.push(value.section_three[20]);
+
+temp_section_four_1.push(value.section_four[0]);
+temp_section_four_2.push(value.section_four[1]);
+temp_section_four_3.push(value.section_four[2]);
+temp_section_four_4.push(value.section_four[3]);
+temp_section_four_5.push(value.section_four[4]);
+temp_section_four_6.push(value.section_four[5]);
+temp_section_four_7.push(value.section_four[6]);
+temp_section_four_8.push(value.section_four[7]);
+temp_section_four_9.push(value.section_four[8]);
+temp_section_four_10.push(value.section_four[9]);
+temp_section_four_11.push(value.section_four[10]);
+temp_section_four_12.push(value.section_four[11]);
+temp_section_four_13.push(value.section_four[12]);
+temp_section_four_14.push(value.section_four[13]);
+temp_section_four_15.push(value.section_four[14]);
+temp_section_four_16.push(value.section_four[15]);
+temp_section_four_17.push(value.section_four[16]);
+temp_section_four_18.push(value.section_four[17]);
+temp_section_four_19.push(value.section_four[18]);
+temp_section_four_20.push(value.section_four[19]);
+temp_section_four_21.push(value.section_four[20]);
+
+temp_section_five_1.push(value.section_five[0]);
+temp_section_five_2.push(value.section_five[1]);
+temp_section_five_3.push(value.section_five[2]);
+temp_section_five_4.push(value.section_five[3]);
+temp_section_five_5.push(value.section_five[4]);
+temp_section_five_6.push(value.section_five[5]);
+temp_section_five_7.push(value.section_five[6]);
+temp_section_five_8.push(value.section_five[7]);
+temp_section_five_9.push(value.section_five[8]);
+temp_section_five_10.push(value.section_five[9]);
+temp_section_five_11.push(value.section_five[10]);
+temp_section_five_12.push(value.section_five[11]);
+temp_section_five_13.push(value.section_five[12]);
+temp_section_five_14.push(value.section_five[13]);
+temp_section_five_15.push(value.section_five[14]);
+temp_section_five_16.push(value.section_five[15]);
+temp_section_five_17.push(value.section_five[16]);
+temp_section_five_18.push(value.section_five[17]);
+temp_section_five_19.push(value.section_five[18]);
+temp_section_five_20.push(value.section_five[19]);
+temp_section_five_21.push(value.section_five[20]);
+});
+
+section_one_bobot.push(geometricMean(temp_section_one_1));
+section_one_bobot.push(geometricMean(temp_section_one_2));
+section_one_bobot.push(geometricMean(temp_section_one_3));
+section_one_bobot.push(geometricMean(temp_section_one_4));
+section_one_bobot.push(geometricMean(temp_section_one_5));
+section_one_bobot.push(geometricMean(temp_section_one_6));
+
+section_two_bobot.push(geometricMean(temp_section_two_1));
+section_two_bobot.push(geometricMean(temp_section_two_2));
+section_two_bobot.push(geometricMean(temp_section_two_3));
+section_two_bobot.push(geometricMean(temp_section_two_4));
+section_two_bobot.push(geometricMean(temp_section_two_5));
+section_two_bobot.push(geometricMean(temp_section_two_6));
+section_two_bobot.push(geometricMean(temp_section_two_7));
+section_two_bobot.push(geometricMean(temp_section_two_8));
+section_two_bobot.push(geometricMean(temp_section_two_9));
+section_two_bobot.push(geometricMean(temp_section_two_10));
+section_two_bobot.push(geometricMean(temp_section_two_11));
+section_two_bobot.push(geometricMean(temp_section_two_12));
+section_two_bobot.push(geometricMean(temp_section_two_13));
+section_two_bobot.push(geometricMean(temp_section_two_14));
+section_two_bobot.push(geometricMean(temp_section_two_15));
+section_two_bobot.push(geometricMean(temp_section_two_16));
+section_two_bobot.push(geometricMean(temp_section_two_17));
+section_two_bobot.push(geometricMean(temp_section_two_18));
+section_two_bobot.push(geometricMean(temp_section_two_19));
+section_two_bobot.push(geometricMean(temp_section_two_20));
+section_two_bobot.push(geometricMean(temp_section_two_21));
+
+section_three_bobot.push(geometricMean(temp_section_three_1));
+section_three_bobot.push(geometricMean(temp_section_three_2));
+section_three_bobot.push(geometricMean(temp_section_three_3));
+section_three_bobot.push(geometricMean(temp_section_three_4));
+section_three_bobot.push(geometricMean(temp_section_three_5));
+section_three_bobot.push(geometricMean(temp_section_three_6));
+section_three_bobot.push(geometricMean(temp_section_three_7));
+section_three_bobot.push(geometricMean(temp_section_three_8));
+section_three_bobot.push(geometricMean(temp_section_three_9));
+section_three_bobot.push(geometricMean(temp_section_three_10));
+section_three_bobot.push(geometricMean(temp_section_three_11));
+section_three_bobot.push(geometricMean(temp_section_three_12));
+section_three_bobot.push(geometricMean(temp_section_three_13));
+section_three_bobot.push(geometricMean(temp_section_three_14));
+section_three_bobot.push(geometricMean(temp_section_three_15));
+section_three_bobot.push(geometricMean(temp_section_three_16));
+section_three_bobot.push(geometricMean(temp_section_three_17));
+section_three_bobot.push(geometricMean(temp_section_three_18));
+section_three_bobot.push(geometricMean(temp_section_three_19));
+section_three_bobot.push(geometricMean(temp_section_three_20));
+section_three_bobot.push(geometricMean(temp_section_three_21));
+
+section_four_bobot.push(geometricMean(temp_section_four_1));
+section_four_bobot.push(geometricMean(temp_section_four_2));
+section_four_bobot.push(geometricMean(temp_section_four_3));
+section_four_bobot.push(geometricMean(temp_section_four_4));
+section_four_bobot.push(geometricMean(temp_section_four_5));
+section_four_bobot.push(geometricMean(temp_section_four_6));
+section_four_bobot.push(geometricMean(temp_section_four_7));
+section_four_bobot.push(geometricMean(temp_section_four_8));
+section_four_bobot.push(geometricMean(temp_section_four_9));
+section_four_bobot.push(geometricMean(temp_section_four_10));
+section_four_bobot.push(geometricMean(temp_section_four_11));
+section_four_bobot.push(geometricMean(temp_section_four_12));
+section_four_bobot.push(geometricMean(temp_section_four_13));
+section_four_bobot.push(geometricMean(temp_section_four_14));
+section_four_bobot.push(geometricMean(temp_section_four_15));
+section_four_bobot.push(geometricMean(temp_section_four_16));
+section_four_bobot.push(geometricMean(temp_section_four_17));
+section_four_bobot.push(geometricMean(temp_section_four_18));
+section_four_bobot.push(geometricMean(temp_section_four_19));
+section_four_bobot.push(geometricMean(temp_section_four_20));
+section_four_bobot.push(geometricMean(temp_section_four_21));
+
+section_five_bobot.push(geometricMean(temp_section_five_1));
+section_five_bobot.push(geometricMean(temp_section_five_2));
+section_five_bobot.push(geometricMean(temp_section_five_3));
+section_five_bobot.push(geometricMean(temp_section_five_4));
+section_five_bobot.push(geometricMean(temp_section_five_5));
+section_five_bobot.push(geometricMean(temp_section_five_6));
+section_five_bobot.push(geometricMean(temp_section_five_7));
+section_five_bobot.push(geometricMean(temp_section_five_8));
+section_five_bobot.push(geometricMean(temp_section_five_9));
+section_five_bobot.push(geometricMean(temp_section_five_10));
+section_five_bobot.push(geometricMean(temp_section_five_11));
+section_five_bobot.push(geometricMean(temp_section_five_12));
+section_five_bobot.push(geometricMean(temp_section_five_13));
+section_five_bobot.push(geometricMean(temp_section_five_14));
+section_five_bobot.push(geometricMean(temp_section_five_15));
+section_five_bobot.push(geometricMean(temp_section_five_16));
+section_five_bobot.push(geometricMean(temp_section_five_17));
+section_five_bobot.push(geometricMean(temp_section_five_18));
+section_five_bobot.push(geometricMean(temp_section_five_19));
+section_five_bobot.push(geometricMean(temp_section_five_20));
+section_five_bobot.push(geometricMean(temp_section_five_21));
+
+const matrix_one = createPairwiseComparisonMatrixSectionOne(section_one_bobot,4);
+const matrix_two = createPairwiseComparisonMatrix(section_two_bobot,7);
+const matrix_three = createPairwiseComparisonMatrix(section_three_bobot,7);
+const matrix_four = createPairwiseComparisonMatrix(section_four_bobot,7);
+const matrix_five = createPairwiseComparisonMatrix(section_five_bobot,7);
+
+// print all section bobot
+console.log("section_one_bobot", section_one_bobot);
+printMatrix(matrix_one, "section_one_bobot");
+console.log("section_two_bobot", section_two_bobot);
+printMatrix(matrix_two, "section_two_bobot");
+console.log("section_three_bobot", section_three_bobot);
+printMatrix(matrix_three, "section_three_bobot");
+console.log("section_four_bobot", section_four_bobot);
+printMatrix(matrix_four, "section_four_bobot");
+console.log("section_five_bobot", section_five_bobot);
+printMatrix(matrix_five, "section_five_bobot");
+
+console.log(matrix_one)
+console.log(matrix_two)
+console.log(matrix_three)
+console.log(matrix_four)
+console.log(matrix_five)
+
+const sumMatrixOne = sumPerColumn(matrix_one)
+const sumMatrixTwo = sumPerColumn(matrix_two)
+const sumMatrixThree = sumPerColumn(matrix_three)
+const sumMatrixFour = sumPerColumn(matrix_four)
+const sumMatrixFive = sumPerColumn(matrix_five)
+
+console.log(sumMatrixOne)
+console.log(sumMatrixTwo)
+console.log(sumMatrixThree)
+console.log(sumMatrixFour)
+console.log(sumMatrixFive)
+
+const normalizeMatrixOne = normalizeMatrix(matrix_one,sumMatrixOne)
+const normalizeMatrixTwo = normalizeMatrix(matrix_two,sumMatrixTwo)
+const normalizeMatrixThree = normalizeMatrix(matrix_three,sumMatrixThree)
+const normalizeMatrixFour = normalizeMatrix(matrix_four,sumMatrixFour)
+const normalizeMatrixFive = normalizeMatrix(matrix_five,sumMatrixFive)
+
+console.log(normalizeMatrixOne)
+printMatrix(normalizeMatrixOne,"normalisasi one")
+console.log(normalizeMatrixTwo)
+printMatrix(normalizeMatrixTwo,"normalisasi two")
+console.log(normalizeMatrixThree)
+printMatrix(normalizeMatrixThree,"normalisasi three")
+console.log(normalizeMatrixFour)
+printMatrix(normalizeMatrixFour,"normalisasi four")
+console.log(normalizeMatrixFive)
+printMatrix(normalizeMatrixFive, "normalisasi five")
+
+const priorityVectorOne = calculateRowAverages(normalizeMatrixOne)
+console.log(priorityVectorOne)
+
+const priorityVectorTwo = calculateRowAverages(normalizeMatrixTwo)
+console.log(priorityVectorTwo)
+const priorityVectorThree = calculateRowAverages(normalizeMatrixThree)
+console.log(priorityVectorThree)
+const priorityVectorFour = calculateRowAverages(normalizeMatrixFour)
+console.log(priorityVectorFour)
+const priorityVectorFive = calculateRowAverages(normalizeMatrixFive)
+console.log(priorityVectorFive)
+
+const matrixKriteria = priorityVectorOne
+const matrixAlternatifKriteria = mergeArraysIntoMatrix(
+  [priorityVectorTwo,priorityVectorThree,priorityVectorFour,priorityVectorFive]
+  );
+
+console.log(matrixKriteria)
+console.log(matrixAlternatifKriteria);
+
+const result = mmult(matrixAlternatifKriteria, matrixKriteria);
+console.log(result);
+
+const plan_risk_management = result[0]
+const identify_risks = result[1]
+const perform_qualitative_risk_analysis = result[2]
+const perform_quantitative_qisk_analysis = result[3]
+const plan_risk_responses = result[4]
+const implement_risk_responses = result[5]
+const monitor_risks = result[6]
+
+console.log(plan_risk_management);
+console.log(identify_risks);
+console.log(perform_qualitative_risk_analysis);
+console.log(perform_quantitative_qisk_analysis);
+console.log(plan_risk_responses);
+console.log(implement_risk_responses);
+console.log(monitor_risks);
+
+```
+
+
+
+<details><summary><b>Output</b></summary>
+
+```ts
+"use strict";
+;
+/**
+ * Function to calculate the geometric mean of an array of numbers.
+ * @param numbers - Array of numbers.
+ * @returns Geometric mean of the numbers, rounded to two decimal places.
+ */
+function geometricMean(numbers) {
+    if (numbers.length === 0) {
+        console.log('error');
+    }
+    // Ensure all numbers are non-negative
+    for (const number of numbers) {
+        if (number < 0) {
+            console.log('error');
+        }
+    }
+    // Calculate the product of all numbers
+    const product = numbers.reduce((acc, num) => acc * num, 1);
+    // Calculate the n-th root of the product
+    const n = numbers.length;
+    const geomean = Math.pow(product, 1 / n);
+    // Round to two decimal places
+    const roundedGeomean = Math.round(geomean * 100) / 100;
+    return roundedGeomean;
+}
+function createPairwiseComparisonMatrixSectionOne(section, length) {
+    const matrix = [];
+    for (let i = 0; i < length; i++) {
+        const row = [];
+        for (let j = 0; j < length; j++) {
+            if (i == j) {
+                row.push(1);
+            }
+            else if (i - j > 0) {
+                if (j == 0) {
+                    row.push(Math.round(1 / section[i - 1] * 100) / 100);
+                }
+                else if (j == 1 || j == 2) {
+                    row.push(Math.round(1 / section[i + j] * 100) / 100);
+                }
+                else {
+                    row.push(Math.round(1 / section[i] * 100) / 100);
+                }
+            }
+            else {
+                if (i == 0) {
+                    row.push(Math.round(section[j - 1] * 100) / 100);
+                }
+                else if (i == 1 || i == 2) {
+                    row.push(Math.round(section[i + j] * 100) / 100);
+                }
+                else {
+                    row.push(Math.round(section[j] * 100) / 100);
+                }
+            }
+        }
+        matrix.push(row);
+    }
+    return matrix;
+}
+;
+function createPairwiseComparisonMatrix(section, length) {
+    const matrix = [];
+    for (let i = 0; i < length; i++) {
+        const row = [];
+        for (let j = 0; j < length; j++) {
+            if (i == j) {
+                row.push(1);
+            }
+            else if (i - j > 0) {
+                if (j == 0) {
+                    row.push(Math.round(1 / section[i - 1] * 100) / 100);
+                }
+                else if (j == 1) {
+                    row.push(Math.round(1 / section[i + j + 3] * 100) / 100);
+                }
+                else if (j == 2) {
+                    row.push(Math.round(1 / section[i + j + 6] * 100) / 100);
+                }
+                else if (j == 3) {
+                    row.push(Math.round(1 / section[i + j + 8] * 100) / 100);
+                }
+                else if (j == 4) {
+                    row.push(Math.round(1 / section[i + j + 9] * 100) / 100);
+                }
+                else if (j == 5) {
+                    row.push(Math.round(1 / section[i + j + 9] * 100) / 100);
+                }
+                else {
+                    row.push(Math.round(section[i] * 100) / 100);
+                }
+            }
+            else {
+                if (i == 0) {
+                    row.push(Math.round(section[j - 1] * 100) / 100);
+                }
+                else if (i == 1) {
+                    row.push(Math.round(section[i + j + 3] * 100) / 100);
+                }
+                else if (i == 2) {
+                    row.push(Math.round(section[i + j + 6] * 100) / 100);
+                }
+                else if (i == 3) {
+                    row.push(Math.round(section[i + j + 8] * 100) / 100);
+                }
+                else if (i == 4) {
+                    row.push(Math.round(section[i + j + 9] * 100) / 100);
+                }
+                else if (i == 5) {
+                    row.push(Math.round(section[i + j + 9] * 100) / 100);
+                }
+                else {
+                    row.push(Math.round(section[j] * 100) / 100);
+                }
+            }
+        }
+        matrix.push(row);
+    }
+    return matrix;
+}
+;
+function printMatrix(matrix, sectionName) {
+    console.log(`Pairwise comparison matrix for ${sectionName}:`);
+    matrix.forEach(row => {
+        console.log(row.map(value => Math.round(value * 100) / 100).join('\t'));
+    });
+    console.log('\n');
+}
+;
+function sumPerColumn(matrix) {
+    if (matrix.length === 0)
+        return [];
+    const numColumns = matrix[0].length;
+    const columnSums = new Array(numColumns).fill(0);
+    for (let row of matrix) {
+        for (let col = 0; col < numColumns; col++) {
+            columnSums[col] += row[col];
+        }
+    }
+    // Round the column sums to two decimal places
+    for (let i = 0; i < columnSums.length; i++) {
+        columnSums[i] = Math.round(columnSums[i] * 100) / 100;
+    }
+    return columnSums;
+}
+function normalizeMatrix(matrix, columnSums) {
+    const numRows = matrix.length;
+    const numCols = matrix[0].length;
+    const normalizedMatrix = [];
+    for (let row = 0; row < numRows; row++) {
+        const normalizedRow = [];
+        for (let col = 0; col < numCols; col++) {
+            const normalizedValue = matrix[row][col] / columnSums[col];
+            normalizedRow.push(Math.round(normalizedValue * 100) / 100);
+        }
+        normalizedMatrix.push(normalizedRow);
+    }
+    return normalizedMatrix;
+}
+function calculateRowAverages(matrix) {
+    const numRows = matrix.length;
+    const numCols = matrix[0].length;
+    const rowAverages = [];
+    for (let row = 0; row < numRows; row++) {
+        const sum = matrix[row].reduce((acc, val) => acc + val, 0);
+        const average = sum / numCols;
+        rowAverages.push(Math.round(average * 100) / 100);
+    }
+    return rowAverages;
+}
+function mergeArraysIntoMatrix(arrays) {
+    const numRows = arrays[0].length;
+    const numCols = arrays.length;
+    const matrix = [];
+    for (let row = 0; row < numRows; row++) {
+        const newRow = [];
+        for (let col = 0; col < numCols; col++) {
+            newRow.push(arrays[col][row]);
+        }
+        matrix.push(newRow);
+    }
+    return matrix;
+}
+function mmult(array2, array1) {
+    const numRows2 = array2.length;
+    const numCols2 = array2[0].length;
+    const numRows1 = array1.length;
+    if (numCols2 !== numRows1) {
+        throw new Error("Number of columns in the first array must match the number of rows in the second array.");
+    }
+    const result = new Array(numRows2).fill(0);
+    for (let i = 0; i < numRows2; i++) {
+        for (let j = 0; j < numCols2; j++) {
+            result[i] += array2[i][j] * array1[j];
+        }
+    }
+    for (let i = 0; i < result.length; i++) {
+        result[i] = Math.round(result[i] * 1000) / 1000;
+    }
+    return result;
+}
+const data = [
+    {
+        value: {
+            section_one: [0.5, 2.0, 1.0, 4.0, 1.0, 1.0],
+            section_two: [
+                0.5, 2, 2, 1, 1, 1, 3, 1, 0.5, 0.5, 1, 0.5, 0.5, 0.5, 1, 4, 4, 1,
+                0.5, 3, 1,
+            ],
+            section_three: [
+                4, 0.333333333, 0.333333333, 3, 0.5, 2, 0.333333333, 0.5, 1, 0.5, 1,
+                3, 3, 0.5, 3, 2, 0.5, 1, 0.5, 2, 3,
+            ],
+            section_four: [
+                3, 0.5, 0.5, 1, 0.5, 1, 0.5, 0.5, 2, 1, 1, 0.5, 2, 1, 1, 3, 0.5, 1,
+                2, 1, 3,
+            ],
+            section_five: [
+                2, 3, 3, 2, 2, 3, 0.5, 0.5, 1, 1, 1, 2, 1, 2, 1, 3, 3, 2, 0.5, 1,
+                2,
+            ],
+        },
+    },
+    {
+        value: {
+            section_one: [0.5, 1, 1, 3, 3, 2],
+            section_two: [
+                0.5, 2, 2, 3, 3, 4, 5, 5, 3, 3, 3, 1, 1, 1, 1, 4, 3, 0.5, 1, 1, 1,
+            ],
+            section_three: [
+                0.5, 2, 2, 1, 2, 3, 2, 2, 1, 2, 1, 2, 1, 1, 0.5, 2, 0.5, 1, 1, 2, 2,
+            ],
+            section_four: [
+                0.5, 3, 3, 1, 1, 0.5, 3, 3, 3, 3, 3, 2, 1, 1, 1, 1, 2, 2, 0.5, 0.5,
+                0.5,
+            ],
+            section_five: [
+                0.5, 1, 0.333333333, 0.5, 1, 0.5, 1, 1, 1, 0.5, 0.5, 2, 1, 0.5, 1,
+                2, 2, 1, 1, 1, 1,
+            ],
+        },
+    },
+    {
+        value: {
+            section_one: [3, 3, 3, 2, 3, 2],
+            section_two: [
+                3, 4, 4, 3, 3, 4, 3, 3, 4, 4, 4, 3, 4, 3, 4, 3, 3, 3, 3, 4, 4,
+            ],
+            section_three: [
+                3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 3, 4, 4, 4, 3,
+            ],
+            section_four: [
+                3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2, 2, 3, 3,
+            ],
+            section_five: [
+                2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3,
+            ],
+        },
+    },
+];
+const formValue = data.map(item => item.value);
+const temp_section_one_1 = [];
+const temp_section_one_2 = [];
+const temp_section_one_3 = [];
+const temp_section_one_4 = [];
+const temp_section_one_5 = [];
+const temp_section_one_6 = [];
+const temp_section_two_1 = [];
+const temp_section_two_2 = [];
+const temp_section_two_3 = [];
+const temp_section_two_4 = [];
+const temp_section_two_5 = [];
+const temp_section_two_6 = [];
+const temp_section_two_7 = [];
+const temp_section_two_8 = [];
+const temp_section_two_9 = [];
+const temp_section_two_10 = [];
+const temp_section_two_11 = [];
+const temp_section_two_12 = [];
+const temp_section_two_13 = [];
+const temp_section_two_14 = [];
+const temp_section_two_15 = [];
+const temp_section_two_16 = [];
+const temp_section_two_17 = [];
+const temp_section_two_18 = [];
+const temp_section_two_19 = [];
+const temp_section_two_20 = [];
+const temp_section_two_21 = [];
+const temp_section_three_1 = [];
+const temp_section_three_2 = [];
+const temp_section_three_3 = [];
+const temp_section_three_4 = [];
+const temp_section_three_5 = [];
+const temp_section_three_6 = [];
+const temp_section_three_7 = [];
+const temp_section_three_8 = [];
+const temp_section_three_9 = [];
+const temp_section_three_10 = [];
+const temp_section_three_11 = [];
+const temp_section_three_12 = [];
+const temp_section_three_13 = [];
+const temp_section_three_14 = [];
+const temp_section_three_15 = [];
+const temp_section_three_16 = [];
+const temp_section_three_17 = [];
+const temp_section_three_18 = [];
+const temp_section_three_19 = [];
+const temp_section_three_20 = [];
+const temp_section_three_21 = [];
+const temp_section_four_1 = [];
+const temp_section_four_2 = [];
+const temp_section_four_3 = [];
+const temp_section_four_4 = [];
+const temp_section_four_5 = [];
+const temp_section_four_6 = [];
+const temp_section_four_7 = [];
+const temp_section_four_8 = [];
+const temp_section_four_9 = [];
+const temp_section_four_10 = [];
+const temp_section_four_11 = [];
+const temp_section_four_12 = [];
+const temp_section_four_13 = [];
+const temp_section_four_14 = [];
+const temp_section_four_15 = [];
+const temp_section_four_16 = [];
+const temp_section_four_17 = [];
+const temp_section_four_18 = [];
+const temp_section_four_19 = [];
+const temp_section_four_20 = [];
+const temp_section_four_21 = [];
+const temp_section_five_1 = [];
+const temp_section_five_2 = [];
+const temp_section_five_3 = [];
+const temp_section_five_4 = [];
+const temp_section_five_5 = [];
+const temp_section_five_6 = [];
+const temp_section_five_7 = [];
+const temp_section_five_8 = [];
+const temp_section_five_9 = [];
+const temp_section_five_10 = [];
+const temp_section_five_11 = [];
+const temp_section_five_12 = [];
+const temp_section_five_13 = [];
+const temp_section_five_14 = [];
+const temp_section_five_15 = [];
+const temp_section_five_16 = [];
+const temp_section_five_17 = [];
+const temp_section_five_18 = [];
+const temp_section_five_19 = [];
+const temp_section_five_20 = [];
+const temp_section_five_21 = [];
+const section_one_bobot = [];
+const section_two_bobot = [];
+const section_three_bobot = [];
+const section_four_bobot = [];
+const section_five_bobot = [];
+formValue.forEach((value) => {
+    temp_section_one_1.push(value.section_one[0]);
+    temp_section_one_2.push(value.section_one[1]);
+    temp_section_one_3.push(value.section_one[2]);
+    temp_section_one_4.push(value.section_one[3]);
+    temp_section_one_5.push(value.section_one[4]);
+    temp_section_one_6.push(value.section_one[5]);
+    temp_section_two_1.push(value.section_two[0]);
+    temp_section_two_2.push(value.section_two[1]);
+    temp_section_two_3.push(value.section_two[2]);
+    temp_section_two_4.push(value.section_two[3]);
+    temp_section_two_5.push(value.section_two[4]);
+    temp_section_two_6.push(value.section_two[5]);
+    temp_section_two_7.push(value.section_two[6]);
+    temp_section_two_8.push(value.section_two[7]);
+    temp_section_two_9.push(value.section_two[8]);
+    temp_section_two_10.push(value.section_two[9]);
+    temp_section_two_11.push(value.section_two[10]);
+    temp_section_two_12.push(value.section_two[11]);
+    temp_section_two_13.push(value.section_two[12]);
+    temp_section_two_14.push(value.section_two[13]);
+    temp_section_two_15.push(value.section_two[14]);
+    temp_section_two_16.push(value.section_two[15]);
+    temp_section_two_17.push(value.section_two[16]);
+    temp_section_two_18.push(value.section_two[17]);
+    temp_section_two_19.push(value.section_two[18]);
+    temp_section_two_20.push(value.section_two[19]);
+    temp_section_two_21.push(value.section_two[20]);
+    temp_section_three_1.push(value.section_three[0]);
+    temp_section_three_2.push(value.section_three[1]);
+    temp_section_three_3.push(value.section_three[2]);
+    temp_section_three_4.push(value.section_three[3]);
+    temp_section_three_5.push(value.section_three[4]);
+    temp_section_three_6.push(value.section_three[5]);
+    temp_section_three_7.push(value.section_three[6]);
+    temp_section_three_8.push(value.section_three[7]);
+    temp_section_three_9.push(value.section_three[8]);
+    temp_section_three_10.push(value.section_three[9]);
+    temp_section_three_11.push(value.section_three[10]);
+    temp_section_three_12.push(value.section_three[11]);
+    temp_section_three_13.push(value.section_three[12]);
+    temp_section_three_14.push(value.section_three[13]);
+    temp_section_three_15.push(value.section_three[14]);
+    temp_section_three_16.push(value.section_three[15]);
+    temp_section_three_17.push(value.section_three[16]);
+    temp_section_three_18.push(value.section_three[17]);
+    temp_section_three_19.push(value.section_three[18]);
+    temp_section_three_20.push(value.section_three[19]);
+    temp_section_three_21.push(value.section_three[20]);
+    temp_section_four_1.push(value.section_four[0]);
+    temp_section_four_2.push(value.section_four[1]);
+    temp_section_four_3.push(value.section_four[2]);
+    temp_section_four_4.push(value.section_four[3]);
+    temp_section_four_5.push(value.section_four[4]);
+    temp_section_four_6.push(value.section_four[5]);
+    temp_section_four_7.push(value.section_four[6]);
+    temp_section_four_8.push(value.section_four[7]);
+    temp_section_four_9.push(value.section_four[8]);
+    temp_section_four_10.push(value.section_four[9]);
+    temp_section_four_11.push(value.section_four[10]);
+    temp_section_four_12.push(value.section_four[11]);
+    temp_section_four_13.push(value.section_four[12]);
+    temp_section_four_14.push(value.section_four[13]);
+    temp_section_four_15.push(value.section_four[14]);
+    temp_section_four_16.push(value.section_four[15]);
+    temp_section_four_17.push(value.section_four[16]);
+    temp_section_four_18.push(value.section_four[17]);
+    temp_section_four_19.push(value.section_four[18]);
+    temp_section_four_20.push(value.section_four[19]);
+    temp_section_four_21.push(value.section_four[20]);
+    temp_section_five_1.push(value.section_five[0]);
+    temp_section_five_2.push(value.section_five[1]);
+    temp_section_five_3.push(value.section_five[2]);
+    temp_section_five_4.push(value.section_five[3]);
+    temp_section_five_5.push(value.section_five[4]);
+    temp_section_five_6.push(value.section_five[5]);
+    temp_section_five_7.push(value.section_five[6]);
+    temp_section_five_8.push(value.section_five[7]);
+    temp_section_five_9.push(value.section_five[8]);
+    temp_section_five_10.push(value.section_five[9]);
+    temp_section_five_11.push(value.section_five[10]);
+    temp_section_five_12.push(value.section_five[11]);
+    temp_section_five_13.push(value.section_five[12]);
+    temp_section_five_14.push(value.section_five[13]);
+    temp_section_five_15.push(value.section_five[14]);
+    temp_section_five_16.push(value.section_five[15]);
+    temp_section_five_17.push(value.section_five[16]);
+    temp_section_five_18.push(value.section_five[17]);
+    temp_section_five_19.push(value.section_five[18]);
+    temp_section_five_20.push(value.section_five[19]);
+    temp_section_five_21.push(value.section_five[20]);
+});
+section_one_bobot.push(geometricMean(temp_section_one_1));
+section_one_bobot.push(geometricMean(temp_section_one_2));
+section_one_bobot.push(geometricMean(temp_section_one_3));
+section_one_bobot.push(geometricMean(temp_section_one_4));
+section_one_bobot.push(geometricMean(temp_section_one_5));
+section_one_bobot.push(geometricMean(temp_section_one_6));
+section_two_bobot.push(geometricMean(temp_section_two_1));
+section_two_bobot.push(geometricMean(temp_section_two_2));
+section_two_bobot.push(geometricMean(temp_section_two_3));
+section_two_bobot.push(geometricMean(temp_section_two_4));
+section_two_bobot.push(geometricMean(temp_section_two_5));
+section_two_bobot.push(geometricMean(temp_section_two_6));
+section_two_bobot.push(geometricMean(temp_section_two_7));
+section_two_bobot.push(geometricMean(temp_section_two_8));
+section_two_bobot.push(geometricMean(temp_section_two_9));
+section_two_bobot.push(geometricMean(temp_section_two_10));
+section_two_bobot.push(geometricMean(temp_section_two_11));
+section_two_bobot.push(geometricMean(temp_section_two_12));
+section_two_bobot.push(geometricMean(temp_section_two_13));
+section_two_bobot.push(geometricMean(temp_section_two_14));
+section_two_bobot.push(geometricMean(temp_section_two_15));
+section_two_bobot.push(geometricMean(temp_section_two_16));
+section_two_bobot.push(geometricMean(temp_section_two_17));
+section_two_bobot.push(geometricMean(temp_section_two_18));
+section_two_bobot.push(geometricMean(temp_section_two_19));
+section_two_bobot.push(geometricMean(temp_section_two_20));
+section_two_bobot.push(geometricMean(temp_section_two_21));
+section_three_bobot.push(geometricMean(temp_section_three_1));
+section_three_bobot.push(geometricMean(temp_section_three_2));
+section_three_bobot.push(geometricMean(temp_section_three_3));
+section_three_bobot.push(geometricMean(temp_section_three_4));
+section_three_bobot.push(geometricMean(temp_section_three_5));
+section_three_bobot.push(geometricMean(temp_section_three_6));
+section_three_bobot.push(geometricMean(temp_section_three_7));
+section_three_bobot.push(geometricMean(temp_section_three_8));
+section_three_bobot.push(geometricMean(temp_section_three_9));
+section_three_bobot.push(geometricMean(temp_section_three_10));
+section_three_bobot.push(geometricMean(temp_section_three_11));
+section_three_bobot.push(geometricMean(temp_section_three_12));
+section_three_bobot.push(geometricMean(temp_section_three_13));
+section_three_bobot.push(geometricMean(temp_section_three_14));
+section_three_bobot.push(geometricMean(temp_section_three_15));
+section_three_bobot.push(geometricMean(temp_section_three_16));
+section_three_bobot.push(geometricMean(temp_section_three_17));
+section_three_bobot.push(geometricMean(temp_section_three_18));
+section_three_bobot.push(geometricMean(temp_section_three_19));
+section_three_bobot.push(geometricMean(temp_section_three_20));
+section_three_bobot.push(geometricMean(temp_section_three_21));
+section_four_bobot.push(geometricMean(temp_section_four_1));
+section_four_bobot.push(geometricMean(temp_section_four_2));
+section_four_bobot.push(geometricMean(temp_section_four_3));
+section_four_bobot.push(geometricMean(temp_section_four_4));
+section_four_bobot.push(geometricMean(temp_section_four_5));
+section_four_bobot.push(geometricMean(temp_section_four_6));
+section_four_bobot.push(geometricMean(temp_section_four_7));
+section_four_bobot.push(geometricMean(temp_section_four_8));
+section_four_bobot.push(geometricMean(temp_section_four_9));
+section_four_bobot.push(geometricMean(temp_section_four_10));
+section_four_bobot.push(geometricMean(temp_section_four_11));
+section_four_bobot.push(geometricMean(temp_section_four_12));
+section_four_bobot.push(geometricMean(temp_section_four_13));
+section_four_bobot.push(geometricMean(temp_section_four_14));
+section_four_bobot.push(geometricMean(temp_section_four_15));
+section_four_bobot.push(geometricMean(temp_section_four_16));
+section_four_bobot.push(geometricMean(temp_section_four_17));
+section_four_bobot.push(geometricMean(temp_section_four_18));
+section_four_bobot.push(geometricMean(temp_section_four_19));
+section_four_bobot.push(geometricMean(temp_section_four_20));
+section_four_bobot.push(geometricMean(temp_section_four_21));
+section_five_bobot.push(geometricMean(temp_section_five_1));
+section_five_bobot.push(geometricMean(temp_section_five_2));
+section_five_bobot.push(geometricMean(temp_section_five_3));
+section_five_bobot.push(geometricMean(temp_section_five_4));
+section_five_bobot.push(geometricMean(temp_section_five_5));
+section_five_bobot.push(geometricMean(temp_section_five_6));
+section_five_bobot.push(geometricMean(temp_section_five_7));
+section_five_bobot.push(geometricMean(temp_section_five_8));
+section_five_bobot.push(geometricMean(temp_section_five_9));
+section_five_bobot.push(geometricMean(temp_section_five_10));
+section_five_bobot.push(geometricMean(temp_section_five_11));
+section_five_bobot.push(geometricMean(temp_section_five_12));
+section_five_bobot.push(geometricMean(temp_section_five_13));
+section_five_bobot.push(geometricMean(temp_section_five_14));
+section_five_bobot.push(geometricMean(temp_section_five_15));
+section_five_bobot.push(geometricMean(temp_section_five_16));
+section_five_bobot.push(geometricMean(temp_section_five_17));
+section_five_bobot.push(geometricMean(temp_section_five_18));
+section_five_bobot.push(geometricMean(temp_section_five_19));
+section_five_bobot.push(geometricMean(temp_section_five_20));
+section_five_bobot.push(geometricMean(temp_section_five_21));
+const matrix_one = createPairwiseComparisonMatrixSectionOne(section_one_bobot, 4);
+const matrix_two = createPairwiseComparisonMatrix(section_two_bobot, 7);
+const matrix_three = createPairwiseComparisonMatrix(section_three_bobot, 7);
+const matrix_four = createPairwiseComparisonMatrix(section_four_bobot, 7);
+const matrix_five = createPairwiseComparisonMatrix(section_five_bobot, 7);
+// print all section bobot
+console.log("section_one_bobot", section_one_bobot);
+printMatrix(matrix_one, "section_one_bobot");
+console.log("section_two_bobot", section_two_bobot);
+printMatrix(matrix_two, "section_two_bobot");
+console.log("section_three_bobot", section_three_bobot);
+printMatrix(matrix_three, "section_three_bobot");
+console.log("section_four_bobot", section_four_bobot);
+printMatrix(matrix_four, "section_four_bobot");
+console.log("section_five_bobot", section_five_bobot);
+printMatrix(matrix_five, "section_five_bobot");
+console.log(matrix_one);
+console.log(matrix_two);
+console.log(matrix_three);
+console.log(matrix_four);
+console.log(matrix_five);
+const sumMatrixOne = sumPerColumn(matrix_one);
+const sumMatrixTwo = sumPerColumn(matrix_two);
+const sumMatrixThree = sumPerColumn(matrix_three);
+const sumMatrixFour = sumPerColumn(matrix_four);
+const sumMatrixFive = sumPerColumn(matrix_five);
+console.log(sumMatrixOne);
+console.log(sumMatrixTwo);
+console.log(sumMatrixThree);
+console.log(sumMatrixFour);
+console.log(sumMatrixFive);
+const normalizeMatrixOne = normalizeMatrix(matrix_one, sumMatrixOne);
+const normalizeMatrixTwo = normalizeMatrix(matrix_two, sumMatrixTwo);
+const normalizeMatrixThree = normalizeMatrix(matrix_three, sumMatrixThree);
+const normalizeMatrixFour = normalizeMatrix(matrix_four, sumMatrixFour);
+const normalizeMatrixFive = normalizeMatrix(matrix_five, sumMatrixFive);
+console.log(normalizeMatrixOne);
+printMatrix(normalizeMatrixOne, "normalisasi one");
+console.log(normalizeMatrixTwo);
+printMatrix(normalizeMatrixTwo, "normalisasi two");
+console.log(normalizeMatrixThree);
+printMatrix(normalizeMatrixThree, "normalisasi three");
+console.log(normalizeMatrixFour);
+printMatrix(normalizeMatrixFour, "normalisasi four");
+console.log(normalizeMatrixFive);
+printMatrix(normalizeMatrixFive, "normalisasi five");
+const priorityVectorOne = calculateRowAverages(normalizeMatrixOne);
+console.log(priorityVectorOne);
+const priorityVectorTwo = calculateRowAverages(normalizeMatrixTwo);
+console.log(priorityVectorTwo);
+const priorityVectorThree = calculateRowAverages(normalizeMatrixThree);
+console.log(priorityVectorThree);
+const priorityVectorFour = calculateRowAverages(normalizeMatrixFour);
+console.log(priorityVectorFour);
+const priorityVectorFive = calculateRowAverages(normalizeMatrixFive);
+console.log(priorityVectorFive);
+const matrixKriteria = priorityVectorOne;
+const matrixAlternatifKriteria = mergeArraysIntoMatrix([priorityVectorTwo, priorityVectorThree, priorityVectorFour, priorityVectorFive]);
+console.log(matrixKriteria);
+console.log(matrixAlternatifKriteria);
+const result = mmult(matrixAlternatifKriteria, matrixKriteria);
+console.log(result);
+const plan_risk_management = result[0];
+const identify_risks = result[1];
+const perform_qualitative_risk_analysis = result[2];
+const perform_quantitative_qisk_analysis = result[3];
+const plan_risk_responses = result[4];
+const implement_risk_responses = result[5];
+const monitor_risks = result[6];
+console.log(plan_risk_management);
+console.log(identify_risks);
+console.log(perform_qualitative_risk_analysis);
+console.log(perform_quantitative_qisk_analysis);
+console.log(plan_risk_responses);
+console.log(implement_risk_responses);
+console.log(monitor_risks);
+
+```
+
+
+</details>
+
+
+<details><summary><b>Compiler Options</b></summary>
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "strictBindCallApply": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "target": "ES2017",
+    "jsx": "react",
+    "module": "ESNext",
+    "moduleResolution": "node"
+  }
+}
+```
+
+
+</details>
+
+**Playground Link:** [Provided](https://www.typescriptlang.org/play/?#code/JYOwLgpgTgZghgYwgAgG5wDYFcIDEoD2AtgIIAWADsgN4BQyyAzhAmMASAPocQBcyILEQBG0ANoBdANz0mLNh05gA7gX6CR46bOat2XMGSgQ+AoaKiSZDXQq4wCWKOvNbrcvYpjBUpjRataAF8ZWgB6ACoI+gjkXCwQTxBkMAJkBEwELAw4SBSyFABzCGIIMChgBGQiCDhkghhkOqaoKDgAT2QGs00oRgA6GOQAAQo4NqIei0ZkAFpkElaOrsb-aAGh4eMwJxAZgHESmvLK6tr6xsMUNb6AGmRCBIATCCeUtJU0l4RgIkxkCg5JAbZARMK0GAJJLIYqlE4IACy5wAFDdGC5epIAJQYiw0WTARqo1x9foYCAgQqGZAAXjpyAADFj8QwGAgOIwCOSyQRCsiAOTQQhQflY2RBWiyMJhZAAUT2ThQmAwU3WLWuHFmIAghVyPggsgcUGQyPZezAquN3TRzLorOQhJNN2QAB5GbbZPazZzuRheQKhQQRWL7RKGBKpTKAMKZbK5FBXAGEJ5YVgrJoYFVo2Tei0UZOpi00y0DYwppDI5GIBD3DTMmkAPiaCCqsQ09wAjFjQgxpcgYxgsjk8omQLNqYQCBbuon8wRy2AcxyLcli2iyRSqWR3LmYUdzrTkAjcmR+hQCMpkXOF53kDKQN3Jb2ZQAlRwgN6pFKqZDfX7-QFEAgRgl3NB53xeJ5DlKZpi2PQx+keD9kVhGpmliDsGSZO9kEwhkeweMpdnA55XmgtCQBkCNIUSOx0mMeMAAU4GAKBlGAZgo2IMYKk5EB4IqAAPABleR9AAeW1E1bH0XEtHuclKUMXgbhxS1JEkFlWV3P4TkEuTLAkTTi0Ce0jRNckLWAQ98IdV1kEUrcpAdABqFyPXtL1l3A5QDOM5BTM8hhzORSzkAAKxs5zIrdRzDGityPKCzzCWRYA6XCrE7WSoLCGUM8sEYMhkS7T0cuQIJkAgDBmAdGA0rmCLkCbJlsvK1lUvCulWrK9qGDygqiuReDTyQp4SrCGSODEYBZg7CRQVwrDmRlPCQz68Nqtqzq6Q7ZAAB99oiukACYst6vqBooQripGxCIImqaQBmlzwoWjDlpwtaLpyyqtogNqNp8wbbpPe7nkesTpuAd6luw1blp+5Kwz6v6apQQH2tS9KaR6oHWSum7hrBsbkSesRwrm2G1q+xH8aCf66rS3aDqOnGzsxy6LxB4mENJ8ngFe6nPoRpkkaCtHmE59rCaGu7+ah563sWmnRfWjaUfazXPO1+1dKEnm8sfUMyu2Yj9eAQSqNCGjoQQBjIGY1j2M47jxg4jgBMt6TFb8iQFM3ZTVL9zTAZ03IhJDhaTO0Mygwsso7OLWzrNiwPt1c9ytKC3c8r9w9AqCkKwsi5PovsuKM-CxLs-K7GMvO-HZeK0qNaq9Gmes+ZIpaxugZ23G+6b7nrrlkmHo7SbFZmqmVZFuH1dR9vtqJLqaS7WuNub3nRonqekhe6uAGZhfhhfxZ15eUEdZE17Ozeufy0fQb5veBdelyADZT5W8-6avuqJo15HySsPJ+RN5Zv2noLauAAOH+tMxb00ZjfNeAAWUBQNt6QIhpPd+1cACcCC1YX1DCg1edIACsmCt4jwgePXB+87CHxckQueZ9vrIPRtLcq2CGHIQFsQv+QNdbIwATwoK9dB4SOSnw1+ENyaU3muw3+nCRHkOZuvIeWC6Fj3kQI6BH8T4qMQYvLWGj2baNoeAvRu8FGGOrt-ExJCuEr00SAmRuVdEvzsQYg+MCXLwOccIjWFi6QYM8Z5ORvjxr4NYUItRoSO5SOoZE+00TwZ+OYQEthH0OF0xEVfNJBNvE70ybE6eys8mqIKRrUhFUkaiIYBbQShsLzG1ZNrM2UBkgtOtpKW2dF8ygDAF7QSJoWlR3uE9AAcnAGo-BGAnEpJg70XIIA8j5AAAydmxDiKB2REB4h7XpEdvbmQACTUFmfMiAQReBbI6c0s5rSjSykQMVPKtImw8LWb6f0A0-gUGROgbAKBGxHn4eNUFOBglrX6OFAgoABQAB0wCiieRVTFfyNl+j5PyFFIBRT9IhFCOijAhCMWgFxbARAQDIkmepIyEg1I3FDmVG+LSNxKTILSek2FunJECGVXcGgaVCD2IeFpYgGQSG5U5EV3l2S0pAMJIQMw1wQGUAsJY7RiREHFXSxgWJ+jeEzMiJkBFgrx1ConL53QWk0NZMXROyqorpC5PZMVXIJWMGcsqmukTlUSrVUQRgYhlULRcsWPKEauSx2RmVCM9o+xvmePkA5Pq6VMHVe8b8XwWD-hVIBYEZUXVWXdanD1KrQ0DErs5QWWdflZtVeqma0dIX6PGsGultb21wqwu4cMT4CZER6dWkN6qqIDLJfoAQQY-gYGAAALwgGMhlLypkTt7eqv2rKSQaQWmHbyGg3zKA1dUF58r4qKrAt6mqUqXkyrlfW29Sz51QEXSu14Yyo4F20GWm1YUvllx8l6oQZ6-U+UDUjUVC7MDfqeGe-OMch2eXLdW91bq3T3qgwGpt9S4OfoQ6up4AA1TAsLizSrykZSNOEe2trDXGjACb2ogHg0u0jZ6eY4OQhx4jXHXgUbBQOy1jSkYCa-aRsZPMpMkdeGezFybR07HHfJoTTwxnTtJbROdGRBxxkgGekgvg2jFEYBuvSUd92YiPW+lcEGLwXq5a+ryd6hA0pc0+2V17twOZ8qZ6AcALMoYCgBuOxpbUWhA4yZyXycNOfPfFi8MGcq7gpZMajT7aOIVeKmCAlZqz3FBfWJs1ZkAuTQJge44n0veTgGZkL4Kc2THvJ5rkfqkZ5SC+Z4CvGoVVia8Uappi0Mqf6mO5IPXhvAR04MudNQoDFEWG0dojAACS4ACDrvGGt9ETLsR-uPR5ogkHDx7Y6OG3zbntIno6w+4sl31t+bQ+Hazh2O3CsiwnGLF53UJZ6JBlLyg0vJVFVq5DTL-1oZ+9FzDoHsM9C8-6rkYP2OQ9Kc98NkaxC0cxSbHKXLn6okx8oZTI7JtqdOXpebs6ODVCINkMAVZdUnS3c9jse784nffae5zJ0Lts9ewF3Dgunts+fSL9zfOkuMD2hLtbHYRccqJGL5AABCek-Pz0bx4YYL52ptWylaEGZEAAiGZJJ0yMZmKADNyBvB9AtM96ohULS6QQLy0c1vuh5Tt8kRMugOBvGe-0c3FOAvGApRgMAYWjc6rW-qyDZ1TXAHNeJwDUWwrWVA1WnXjAToNvR+hoDidS5xaaolg1nWi8RRLzlaPzP+3RpaGtk67aKaw05132HnSk2U8d2XituMG1uib7H17mcrGjpj2AftcFBsT-nzDdh+SsID9NlNwic+dO7ieLkOABcLo8JhaYGRT1uDan4DK-olD7gnX6AyTsT-7hoNf7hD-yvZW3Avpfz4N+9SDId+D+oBuEnYEByAR8kBwB9+jIIB4B8BcBsBtWCBHYb+GB4BQBCB0BWB7U-sf+isSgRgJggBG0aCqBR8VB1B1BlBNBNB9wuBKByAJ0dB9BVBqBcB6BSBEB9SuBTBOBYBzB3BzBrBUBv++BEh5Ul+DgTgZBfUAhyBaBnBMBCBohkBIhCBYh3B3BihvBG02hjBUhOUBB7UMh+o8h7UYh-BYB1hKhPBiBOhYB3Bhh4hbhYhwhxh5UrBF8phyMXh4YARD8DAZ+-AF+RBPAN+nhiBNhLBfhOU-+qglh5U6hLBRhbhFByAcBcBsRuBThjhmBehBReB5U8RyU-+JBpgYg2BcBYhrhdhaRjRLhkBrhmhtR9h+RdRQR9oZRQUMhjgzgAUNR6ReRqhORIxExTRGhLRQhahIBwxvh3RrI5hvgyROU0RwB7BtBDhbR0xiBzBqRuxJRVhzhex6BixjSQRQQQRp+lG5+hBSQV+VRuRYBuBJ0vRnkiRagQxG0uBmRmRsRAJ6R-xhRoJyAQJbhgJGBFxZhRBBupBPxChkxLxkJmBIJ4JaJyJmJGJ4hMJ0hRBshgx1RvxWJqJ7hthrxpJXRjRDR0BeJCRBJFhiJJxNJFJjR6JHJ2JEJKJLx9JOsVxXhEgg+tAu4RoRAImOA-AZ++AxA5AFA-kB+YAcA-QQKaUkAWWTYwA6p-QZ+j4Ip3k6pFAnAl+PAnAXOieHQLoNwTYqG+pYEhpxpER2onA7OFp7QVpJINp4WMgu4DpJpzpR8-Aq2lp1pMOdp76fpTpEAnAaCQZuqHpvQXpgQvpEARyjpjxpplCcZa2CZFgSZ2gKZaZ-p0Zn82ZIZnpYZ4ZFokZjxnwZpZZ7poZtphZRpXxLpDZuZ0A+ZPpBpqZrZcJqgnAgZbpnZUA3ZVZKQfZ6ZdgSgg5sZI5TZ3pE5NZM5dZWZC5FZzZvZRZA5BAnApZG5iZYZLZ05+gs5e5AA7B2Yucmduf2bWYObAteZuUuSeW2QQs+UeVufaVOW2ZhJ+XmceXeaeYoHWR2OacGY2S+beT+TuQ+XuR2K6ZBaOeOW+buWacOchTeQWcBX+fOVhdBThbBfeauYOR2OuQRV+a+bhehR2AeZRYBd+RGb+bRVeYeYxdRcRSBQYGRU+exV2UBVxX+R+fxWOYJcxXBaRXuSdAyABQJUxdWSxfBS6RBfGdhaEGhbWZUfWaJahTRVpcYNGUhWpYRT2UJXCdpZhSZVRTBRJSRWefCdGfhdZRxbZYpZJQ5dpRRS5fJZxXZdxcQYZfuXJWJQpZOR5aBdpWxQxb5W5eFfZZFUFXxTFaFX5e5QlQYNpSJSlXpeZQZSYGabJbpeJelQFY5WaapTmepcuUpaudpYhSFblf5RUUFR2FZVVaZTVRFZla1c5R1TZURc1RZa1d5f1a5YNaVS1QVXRY1SVfFWVfVdFT5alXFSuZ5a1clctU1ZNcNdNdlVtXNWtYlQVTJbNWFUdT1SdZVeWQNRpfpTOYSTpTlYdbVWeY9cZWNbFRNfNf0U4EOWdWlT9QSQMTGQData9V4CDaNTdeNWZUNY8Y9fRQdedRDfYCDUtZ9Std9RdZwI9ZtZjdtUDQjSDftQTS9d1bjSDf+cVSjRTY9eBWDdjajZTX9Q1TTYDTjfTe1TDV9XDTtcTazX1TzVjXzUTQ9VTdDVBbdV1RlSzVAGaUjWTbTbLfTRjcLYTZzVTfjereTSrVTaTTrcrQFe9UVc9Ubb9fLSdNdVLbDZKJpQ9fqE9cjRzczd4L4O2ezeDXTY7dzTbbzTLcbY7ULX7SLQHSsdGZLShbrYHe7YrYbS7d7e7WrSHRra7Y7drSndHeHZwAbZnebYye7dTWbQnSrY7QzZ7UzYndGWzcXV7aXYXb7VHfnQjWXcHU3SXTHdXZHdVfbW9WXXHXnR3dnR2Mne3XXZ3WaRnWPZXfXdXbndPaLZzY7adRXYvWne7VbYzXdWBMWZwMIAQPvXHqvROW2fvYfVvSfbtdGWfVOBfRlsDX9TfUfbXd9dnU-RfRCAuhKRsm8h8pWLqd8viDjaacriTmfv0MWc+o+MA86Y-mA3cRA1GWIPNNA8zaaUfDzOA5A+8agxTaae-vA2CogxmdqGICfLg7LZmZgwg5A2giyjIDAyWdQ0Q5A5QvQ5KDjWBcwzgMQ1JVAww8zXWXA0TFg7ucg+w5w4ORg4Qzw18WIDgwIxTXWQQyIzQ2I+Q4o7LWudwxsnI3QxQ2VYOZ-Do7ww5aoGIGwwY22ReSY3I9-FY+hbArY2IxeRI4I4OQQs4-BWIPAg48pZhF43w0Qn41JRVYE2YwQMg7KiExE2acI0NKI94+BW40o2RdI6oyw2I4hSk1o2RSowk2o0kxo7QJIwhZQuE6BeYx2Po5o4YwhcYzI7o1k5Y7U3+TY406Y5U5E3RTk3U5PRUzxd064zE102aZ4x03Ix2L460+hTJQM+ecg8EzM8pVbfM58PI9E6EJw-VWs5UfwyU4I9pfE8VIk3VYZeIyM5ddGekwU5k-lRAPI701NU5bs+c8U9s0FeUxM1fWIDUwc0o9pQ0xk7Iz8y0-81o1Fa8yYGIPY8s2cwVU498-c2IMM3C+tQVeM8C008i9M+Cwta1cAUi-Cw80s3i882E0S+iw85hE81fXE1C9Syg2i8ddXTcyc4U8S8gwo2S3S9Uwy8g+84cyNfy9U7S-cwrSK2Cx89Ne01i501c8g7Czy+K1MyK6i8q8S2MyK7i9K0ZYS3K884s2K5q6s5Syyxs+wxq29VTfM4Sfs5rX9ccyChy9a04Bc8y2jX9Wy863c+LW69yw6-Lfk+y76665YIK3TVDbawMb88a2G-udG261K67ejYm5YEq4G5wIiwaw-ZYOq5m5i7cyCwLZYDqym6zfq0W9i365YKS5m+BWm1E3G5DazU66c2G8g0y1ay2-LW1Y29k5c3LWacGz68WzWwK82567218zmyW8g38-W0C1W-K3Lcg8m5G6zbK8uxbYq5O0O6q2a1O8g-m+W724WyG2Ox21M3uybf23W6eypY2zJZa0vYXba-qPa+vUZe+74O692-YD7T+w8wG1+zGUB2Qze47TO9uwXQ8wu6B0uxe9W33b++u7PZwFu0hyu27Q8xm6B9mzBy3b+ye1XTneB2W6RwE4e7jR+-e5R6A7Ow7b+zS4Ozh-S9Rzh525Bw3eBwOx6zR4XSO+214B+21dx13bx-B5R4h6O8hyJ8x2hxPSPbx3h5RwR1h+Hce+J1qxx6JxR+h3M7p8x3RwZwx4R0x8B5s8EHqbvU-TzKhGUBUIiCiIw2aViI+LZwfVOPZ-uPCEiHUMiK52dB51GXvV52AD53CE5-5-Sq5yAiFyQ9feF5F8cNFy52g86RgglzOaaXZyTg535+l3g86dQtl2ebl8l-l752lwF655-O56EKfZV0TAVzV7F+4whQ17QE14fSl455UDF4Fx1y6V1z1951V1FwN0V7k3ufFzIGNxFxN6l1N7V8N1l-N+hXly19Vyt+16k3uaVxt8pVt0NK17t0N-t-uaN5t816dzt856t5dxedd8d7d8VGdw93tzN1my96Eyd+9-d4N6Uznb97E-9yhID9N305hKD6M+Dx90D8N+BbD4M2F710t-159xd994hSj+eWj+N9t5N1j8D21Xj3WfD5D49zj+t91zd+j0T8tyT0j4d3T69wz3d8T4j5d3ReT4OZT1z1D203z3uQL0z9zzj7AiLwT4t4z5jxL9DwQtL2L-L0L7M0yGV3D29xD4L9T301bV12z5qyr4V3r+S12Jr1czL316b19-iydeT9pSb219j-b9c470Fc7+d7qzGR7wVV78zwC58370lxzwD7r3b+S-V5b4Ff79rwj2r+K89zH+VQHwr+S1Lyn07-H1T5H3S0r1n57znxH67+bxr0d8b8X+L4n5q8j4X3H2Hzr9X2b7y8FxX1S9bxj7b6X7y3N0bx32nzXx39UyH533L93z7+RaP4Py3yq9H+3yy2P5z833nyq8nwv1bzP6v7X5nxv7H6H4T8v6r7P7XwX3v6n1X8f9vx3zJdP5fxP0K1dYbxbUv+Hyvz3yW25zH49Vvx-zWyN9-xBq-9M2ffF-sAIfa08wB9-F3pm1Z5QDG+CfE-vG3n798e2r-Jvlfz-7xt1+qAqdugMQHX80Bu-XAUO3AEbt5aZ-EgT-2gHe8H2MPQAY-RoGB89arNC3nv2oEIDc+WAtAbjwYHy0yBLA3tqANzb4CuB9bSASIIEHG0JaePDgYfzf6YDF2sgoAUwPT4iCR6ygxgZwJL71tiB8A+QRgIf7kCxmmg-gaoKH5oDb+fA0QToIfYG8bOsHGwe-1fbV1ZBjtKQdnTb5UD3B5gpAfJ3d7f8fB2g5waBwkFEcD+svI-kYPQ5wDHBHgxwSgLfq+DCBAHJOm4PdrxDwhP3QIRkOSHcDUh0ZSgUkOCGKDQO9A9gUEIMEED8hAnaumwO8G5CSh0QpTl4OKFVCxBZQ4QVkMyEWdh26QiITbxgFlDYh3QvIS4IVr9CnBpQyjjgLaGRCFBzQ4enoLiFjCyhRQlYU0KGGkcrBFQxoe0NsHbD6hE5FpE8UPD2xagjsFiHsldhHJ3YfEMZKJCSCSRCsnnQ+rcAwSi0ThnwM4Q7AgC7IXYEALiLcN4iewXkZMenlOFuDPdPhLyffj8IuF-CrhAIoEccnuFgjyWT9KEY+HexCQ5a8IpiEiP2Qoi7hoIvSOCM-6YjoRxw2ETh3xGXDnYRIt2CCP4joiNhkIqkeEBlDDJwAGYFUE9GQBP1wy6yTZBbleFThzc0yULk-UfDcjRkYIk4TwHuDm4xRYACPHDWFF4pRREI1UZKPZ5TgZRFQcAOui+GqAlRC3NUUKP+R8hlRdLJ+hKI8CV9D6BokZMaNhGOUzRto8LhaJxQiibRFIr0bqP-7SiZAso10XpDloej-Rh9b0RyA1H+g-RvQu0YGJQ4RDnRRo+UTSP1CRjExXovUj6M1EKjtQYofMf6BNEEBixsYq0VZlxGOUKxewOMXyBOGEk6xPoXFKWMzG+AxQJ9IQGMmeGHhMsVKKAIanpSFiIALYi0JljGQAAVH8MWAHHUoW01Yy2OeXHGtZpxlRfsZSgXEqolxgkffquMnEvJcAAxTcUQEHHDjdxctA8T2KPH6hTx54xcU2P1BdiSxfIQ8XpGeEtiGxZMG8XpBnHljLRbYt8b+KEhTjKiX4qse+KEjHinAEEoCT+KIBjJcAz4u2iek4zfpexUkNcOhNXRhjcRioqCZbE-ETkNMGEl5P+MPCkTcJGY8MZ8FuCETBI-41cVRLXTkSNx2EwTGRLJFfDKi9EkCZbDAmGVmJOE1iXpBgnGgOJ0mUSUJEvGEk+JiEo8QMWEmcTqJYku8ZJIUx4TlxOHeSUhJQmASRRLEzCWONoChiwRRkl5M8NuDm5SJjAOAIwGsg8AI8BkzURZL-GqAxQZkskW5NAmmibJ6EuyQ5PzTOTXxqIESeuKEmmTDRco7yeFLYmGVrJtk+ydZEcohTKx8EnyZbHEmeTop66TKYJHEmJSApyUofE4DSn1iqx+U5CZ2KikujzJcUtSb4CVFJSgpOHZyROWGRBgtS7QMjPICDB9jiwBmIcPGBMyzZLM+U4iaFM6kVAwAPUvqVAGIkdSKgXU2ab1NYBBgKJg02MMOAgCjTgsFmMKSpOkkCSPJLk-0NNO6lrTUgUAJiUtPYAzS5p60m6exPSDbSRpF4XrM1nGkNTQJ4Es6XyAumrT5pgkkwKuMBmPTrp4ks4W9OMwfSxph0qSUhKUn-Srwy0h6VdKDDZS7pK0iGZjPUmvTDMO0vaX1m+lHS9JNUqaWjMunzTqpJk6kXpAADSM06AMACPzFhwZGMhadqHplCQSAseaACAD1AwAmZWpFmWzLODLYIAkFTbNtnXSyAxAHM4GaaMVlPSQZEAW4CrMhkDENZVMoGU9NplCkGAeY9KSKJaQizIAFQOAHBNNkvI+ZFswWWwGFnMzLZxssCMvilRM5Y8u4u2QLKFnmyxZ9wM2c7NZnYiTZmo5fK7PfSAQuAvEAANacA-ggs4oDUB5ExpgIzeWVBOWAAvBwAhIdoJwDjkXpl84jDqdADFKcAAAjlgAQxKk2A7tOOZwDqCYB1sHEQ8MXPeKlzYAC6SudXNzm1zHaFcjiPHKbkYAW5Rc9ObHgg4dScgMcoeQXOAjng9gwENuRPPnx0Ms5RyckCnLAAFy550eRecwHHlz4LGQpHSBwC1JBhd5jAWOUfObzfxUJFU+CdHKvnxzE5zWbeaHMfkijs5FIR2fnMLmfzWxIoigGXO7lVya5eoeuXPJHljzAF34kBV3M-Q9y6gbAfue7UHnXzG5gs0eQ5ONTqiqxz8hufvI5DAQ4FVY34ICFTK-yX588xgAfNIX4L4JRAc+ddJfl4LaAQAA)
+      
