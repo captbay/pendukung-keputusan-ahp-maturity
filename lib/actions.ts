@@ -133,6 +133,9 @@ export async function getAhpData() {
       include: {
         category: true,
       },
+      orderBy: {
+        value: "desc",
+      },
     });
 
     if (!data) {
