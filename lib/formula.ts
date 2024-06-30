@@ -4,6 +4,17 @@ import { valueFromAhp } from "./definitions";
 import prisma from "./prisma";
 import { Prisma } from "@prisma/client";
 
+function isValueFromAhp(value: any): value is valueFromAhp {
+  return (
+    value &&
+    Array.isArray(value.section_one) &&
+    Array.isArray(value.section_two) &&
+    Array.isArray(value.section_three) &&
+    Array.isArray(value.section_four) &&
+    Array.isArray(value.section_five)
+  );
+}
+
 export async function applyFormulaAhp() {
   try {
     const data = await prisma.usersAhpForm.findMany({
@@ -13,9 +24,9 @@ export async function applyFormulaAhp() {
     });
 
     if (data) {
-      const formValue: valueFromAhp[] = JSON.parse(JSON.stringify(data.values));
-      // const formValue: valueFromAhp[] = data.map((item) => item.value);
-      console.log(formValue);
+      const formValue: valueFromAhp[] = data
+        .map((entry) => entry.value)
+        .filter(isValueFromAhp);
 
       const temp_section_one_1: Array<number> = [];
       const temp_section_one_2: Array<number> = [];
