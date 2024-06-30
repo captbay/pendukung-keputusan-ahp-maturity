@@ -9,7 +9,6 @@ import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import ConfirmationModal from "../confirmation-modal/confirmationModal";
-import Cookie from "js-cookie";
 import { logout } from "@/lib/authentication";
 
 interface SidebarProps {
@@ -22,14 +21,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, session }) => {
   const pathname = usePathname();
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
-  const [user, setUser] = useState<any>({});
-
-  useEffect(() => {
-    const user = Cookie.get("user");
-    if (user) {
-      setUser(JSON.parse(user));
-    }
-  }, []);
 
   const handleButtonClick = (item: string) => {
     router.push(`/${item}`);
