@@ -43,6 +43,12 @@ type UserAhpForm = {
   };
 };
 
+type User = {
+  name: string;
+  email: string;
+  jabatan: string | null;
+};
+
 export async function submitAhp(
   id: string,
   prevState: StateAhp,
@@ -276,13 +282,23 @@ export async function getAllUserFormAhp() {
 
 export async function getPerUserFormAhp(id: string) {
   try {
-    const data = await prisma.usersAhpForm.findFirst({
+    const data: UserAhpForm = (await prisma.usersAhpForm.findFirst({
+      select: {
+        value: true,
+        users: {
+          select: {
+            name: true,
+            email: true,
+            jabatan: true,
+          },
+        },
+      },
       where: {
         user_id: {
           equals: id,
-        },
-      },
-    });
+        }
+      }
+    })) as unknown as UserAhpForm;
 
     if (!data) {
       return {
@@ -291,9 +307,39 @@ export async function getPerUserFormAhp(id: string) {
       };
     }
 
+    const combinedData = [
+      ...data.value.section_one,
+      ...data.value.section_two,
+      ...data.value.section_three,
+      ...data.value.section_four,
+      ...data.value.section_five,
+    ];
+
+    // transpose the combinedData to be used in the table
+
+    const user = [data.users];
+    user.unshift({ name: "Kriteria", email: "", jabatan: "" });
+    user.push({ name: "Kriteria", email: "", jabatan: "" });
+
+    const flattenedCriteria = criteriaData.flat();
+
+    const tableData = combinedData.map((row, index) => {
+      const tableRow: { [key: string]: string } = {};
+      const criteriaPair = flattenedCriteria[index];
+      tableRow["kriteria1"] = criteriaPair.left;
+      tableRow[`responden`] = row.toString();
+      tableRow["kriteria2"] = criteriaPair.right;
+      return tableRow;
+    });
+
+    const result = {
+      users: user,
+      tableData: tableData,
+    };
+
     return {
       success: true,
-      data: data,
+      data: result,
       message: "Data found",
     };
   } catch (e) {
@@ -304,6 +350,31 @@ export async function getPerUserFormAhp(id: string) {
         };
       }
       return {
+        message: e.message,
+      };
+    }
+  }
+}
+
+export async function resetAhpData() {
+  try {
+    await prisma.usersAhpForm.deleteMany({});
+    await prisma.ahpResult.deleteMany({});
+
+    return {
+      success: true,
+      message: "Successfully reset AHP data.",
+    };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          success: false,
+          message: e.message,
+        };
+      }
+      return {
+        success: false,
         message: e.message,
       };
     }

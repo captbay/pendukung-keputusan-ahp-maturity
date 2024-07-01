@@ -1,21 +1,23 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AHPTable from '@/app/ui/ahp-table/ahpTable';
 import ConfirmationModal from '@/app/ui/confirmation-modal/confirmationModal';
 import ProgressBar from '@/app/ui/progress-bar/progressBar';
 import { criteriaData } from '@/app/utils/criteriaData';
 import { Button, Spacer } from '@nextui-org/react';
-import { submitAhp } from '@/lib/actions';
+import { getPerUserFormAhp, submitAhp } from '@/lib/actions';
 import { StateAhp } from '@/lib/actions';
 import { Toaster, toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import LoadingScreen from '@/app/components/loading-screen/loadingScreen';
+import UserRecapTable from '@/app/components/user-recap-table/userRecapTable';
 
 interface AHPPageProps {
   session: any;
+  userAhpData: any;
 };
 
-const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
+const AHPPage: React.FC<AHPPageProps> = ({ session, userAhpData }) => {
   const [currentCheckpoint, setCurrentCheckpoint] = useState(1);
   const [totalCheckpoint, setTotalCheckpoint] = useState(criteriaData.length);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -25,6 +27,7 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
   const tempSelections: Array<Array<number | null>> = criteriaData.map(row => Array.from({ length: row.length }, () => null));
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [startAhpForm, setStartAhpForm] = useState(false);
 
   const scales = [9, 8, 7, 6, 5, 4, 3, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -34,7 +37,13 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
     "Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Complexity",
     "Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Importance",
     "Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Approach"
-  ]
+  ];
+
+  useEffect(() => {
+    if(userAhpData){
+      console.log('this is user ahp data --- ', userAhpData);
+    }
+  }, [userAhpData]);
 
   const handleCheckpointClick = (index: number) => {
     if (index + 1 > currentCheckpoint) return;
@@ -104,53 +113,79 @@ const AHPPage: React.FC<AHPPageProps> = ({ session }) => {
 
   return (
     <main className="flex w-full min-h-screen bg-secondary z-0 justify-center items-center">
-      <div className="flex flex-col lg:flex-row bg-secondary p-14 rounded-lg w-full lg:w-[80%]">
+      <div className="flex flex-col lg:flex-row bg-secondary rounded-lg w-full lg:w-[80%]">
         <div className="flex flex-col w-full h-full justify-center items-center">
-          <h1 className="text-xl lg:text-2xl font-bold text-center">Analytical Hierarchy Process</h1>
-          <ProgressBar
-            progress={(currentCheckpoint - 1) / (totalCheckpoint - 1) * 100}
-            totalCheckpoint={totalCheckpoint}
-            currentCheckpoint={currentCheckpoint}
-            icons={Array.from({ length: totalCheckpoint }, (_, i) => String(i + 1))}
-            onClickCheckpoint={handleCheckpointClick}
-          />
-          <Spacer y={8} />
-          <h1 className="text-md lg:text-lg font-semibold text-center">{tableKeyHeader[currentCheckpoint]}</h1>
-          <h1 className="text-sm lg:text-md p-2 text-center">*Pilih skala yang sesuai dengan kecondongan kriteria.</h1>
-          <AHPTable
-            selections={selections}
-            currentCheckpoint={currentCheckpoint - 1}
-            setSelections={setSelections}
-            criteria={criteriaData[currentCheckpoint - 1]}
-          />
-          <Spacer y={6} />
-          <div className="flex gap-2 w-full justify-end">
-            <Button
-              onClick={handlePreviousButton}
-              className={`text-secondary w-24 text-center ${currentCheckpoint === 1 ? 'disabled' : 'hover:bg-red-700 hover:text-white bg-primary'}`}
-              shadow-md
-              disabled={currentCheckpoint === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              onClick={() => {
-                if (currentCheckpoint === totalCheckpoint) {
-                  if(validateAnswer()){
-                    setIsConfirmationModalOpen(true);
-                  }
-                } else {
-                  handleNextButton();
-                }
-              }}
-              className={`text-secondary w-24 text-center ${currentCheckpoint === totalCheckpoint ? 'hover:bg-red-700 hover:text-white bg-primary' : 'hover:bg-red-700 hover:text-white bg-primary'}`}
-              shadow-md
-            >
-              <h2 className={`text-secondary ${currentCheckpoint === totalCheckpoint ? 'font-bold' : ''}`}>
-                {currentCheckpoint === totalCheckpoint ? 'Submit' : 'Next'}
-              </h2>
-            </Button>
+          
+          <div className='flex flex-col w-full items-center justify-center mt-10 max-lg:mt-20'>
+            <div className='bg-primary rounded-2xl flex'>
+              <h1 className="text-xl lg:text-2xl font-bold text-center text-secondary p-4">Analytical Hierarchy Process</h1>
+            </div>
+            <div className='flex justify-center'>
+              <Button
+                onClick={() => setStartAhpForm(!startAhpForm)}
+                className="text-secondary w-24 text-center hover:bg-red-700 hover:text-white bg-primary"
+                shadow-md
+              >
+                {startAhpForm ? 'Close' : 'Start'}
+              </Button>
+            </div>
           </div>
+
+          {userAhpData && !startAhpForm ? (
+            <UserRecapTable
+              data={userAhpData.tableData}
+              users={userAhpData.users}
+            />
+          ) : !userAhpData && !startAhpForm ? (
+            <p>No Data Found</p>
+          ) : (
+            <>
+              <ProgressBar
+                progress={(currentCheckpoint - 1) / (totalCheckpoint - 1) * 100}
+                totalCheckpoint={totalCheckpoint}
+                currentCheckpoint={currentCheckpoint}
+                icons={Array.from({ length: totalCheckpoint }, (_, i) => String(i + 1))}
+                onClickCheckpoint={handleCheckpointClick}
+              />
+              <Spacer y={8} />
+              <h1 className="text-md lg:text-lg font-semibold text-center">{tableKeyHeader[currentCheckpoint - 1]}</h1>
+              <h1 className="text-sm lg:text-md p-2 text-center">*Pilih skala yang sesuai dengan kecondongan kriteria.</h1>
+              <AHPTable
+                selections={selections}
+                currentCheckpoint={currentCheckpoint - 1}
+                setSelections={setSelections}
+                criteria={criteriaData[currentCheckpoint - 1]}
+              />
+              <Spacer y={6} />
+              <div className="flex gap-2 w-full justify-end">
+                <Button
+                  onClick={handlePreviousButton}
+                  className={`text-secondary w-24 text-center ${currentCheckpoint === 1 ? 'disabled' : 'hover:bg-red-700 hover:text-white bg-primary'}`}
+                  shadow-md
+                  disabled={currentCheckpoint === 1}
+                >
+                  Previous
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (currentCheckpoint === totalCheckpoint) {
+                      if(validateAnswer()){
+                        setIsConfirmationModalOpen(true);
+                      }
+                    } else {
+                      handleNextButton();
+                    }
+                  }}
+                  className={`text-secondary w-24 text-center ${currentCheckpoint === totalCheckpoint ? 'hover:bg-red-700 hover:text-white bg-primary' : 'hover:bg-red-700 hover:text-white bg-primary'}`}
+                  shadow-md
+                >
+                  <h2 className={`text-secondary ${currentCheckpoint === totalCheckpoint ? 'font-bold' : ''}`}>
+                    {currentCheckpoint === totalCheckpoint ? 'Submit' : 'Next'}
+                  </h2>
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
       <ConfirmationModal

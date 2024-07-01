@@ -11,7 +11,7 @@ export default async function Dashboard() {
     <>
       <DashboardUi 
         session={session}
-        ahpResult={ahpResult}
+        ahpResult={ahpResult!.data}
       />
     </>
   );

@@ -3,10 +3,16 @@
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/react";
+import AHPResultTable from "@/app/components/ahp-result-table/ahpResultTable";
 
 interface DashboardProps {
   session: any;
-  ahpResult: any;
+  ahpResult: Array<{
+    category?: {
+      key?: string | null;
+    } | null;
+    value?: number;
+  }> | undefined;
 }
 
 interface RowData {
@@ -25,20 +31,20 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult }) => {
     }
   }, [session]);
 
-  const rows: RowData[] = ahpResult.data.map((item: any) => {
-    return {
-      key: item.category.key,
-      kriteria: item.category.key.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-      priority_vector: item.value,
-      rank: item.rank,
-    };
-  });
+  // const rows: RowData[] = ahpResult?.data.map((item: any) => {
+  //   return {
+  //     key: item.category.key,
+  //     kriteria: item.category.key.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+  //     priority_vector: item.value,
+  //     rank: item.rank,
+  //   };
+  // });
 
-  const sortedRows = [...rows].sort((a, b) => b.priority_vector - a.priority_vector);
+  // const sortedRows = [...rows].sort((a, b) => b.priority_vector - a.priority_vector);
 
-  rows.forEach(row => {
-    row.rank = sortedRows.findIndex(sortedRow => sortedRow.key === row.key) + 1;
-  });
+  // rows.forEach(row => {
+  //   row.rank = sortedRows.findIndex(sortedRow => sortedRow.key === row.key) + 1;
+  // });
   
   const columns = [
     {
@@ -56,50 +62,22 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult }) => {
   ];
 
   return (
-    <main className="flex w-full min-h-screen justify-center items-center">
-      <div className="flex flex-row max-lg:flex-col max-lg:gap-10 w-[70%] max-lg:w-[90%] min-h-screen justify-center items-center">
+    <main className="flex flex-col w-full min-h-screen justify-center items-center">
+      <div className="max-lg:mt-20 mt-10 mb-[-90px] bg-primary rounded-2xl max-lg:mx-6">
+        <h1 className="text-xl font-bold text-secondary max-lg:text-lg text-center p-4">Risk Management Maturity Measurement Dashboard</h1>
+      </div>
+      <div className="flex flex-col max-lg:flex-col gap-10 w-[70%] max-lg:w-[90%] min-h-screen justify-center items-center">
+
         <div className="flex flex-col w-full justify-center items-center">
-          <div className="flex p-2 justify-center">
-            <h1 className="text-lg">
-              This is your AHP Result!
-            </h1>
-          </div>
-          <div className="max-lg:w-full lg:w-[90%] w-[80%]">
-            <Table aria-label="Example table with dynamic content">
-              <TableHeader columns={columns}>
-                {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-              </TableHeader>
-              <TableBody items={rows}>
-                {(item) => (
-                  <TableRow key={item.key}>
-                    {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <AHPResultTable
+            ahpResult={ahpResult}
+          />
         </div>
 
         <div className="flex flex-col w-full justify-center items-center">
-          <div className="flex p-2 justify-center">
-            <h1 className="text-lg">
-              This is your Maturity Result!
-            </h1>
-          </div>
-          <div className="max-lg:w-full lg:w-[90%] w-[80%]">
-            <Table aria-label="Example table with dynamic content">
-              <TableHeader columns={columns}>
-                {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-              </TableHeader>
-              <TableBody items={rows}>
-                {(item) => (
-                  <TableRow key={item.key}>
-                    {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <AHPResultTable
+            ahpResult={ahpResult}
+          />
         </div>
       </div>
     </main>

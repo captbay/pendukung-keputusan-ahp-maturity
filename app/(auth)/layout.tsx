@@ -24,7 +24,10 @@ export default function RootLayout({
           inter.className
         )}
       >
-        <NextUIProvider>{children}</NextUIProvider>
+       <div className="flex flex-col justify-center items-center h-full gap-20">
+          <h1 className="font-bold text-secondary text-3xl">Sistem Pendukung Keputusan</h1>
+          <NextUIProvider>{children}</NextUIProvider>
+       </div>
       </body>
     </html>
   );

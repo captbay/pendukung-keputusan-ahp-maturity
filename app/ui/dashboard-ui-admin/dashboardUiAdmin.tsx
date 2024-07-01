@@ -35,7 +35,10 @@ const DashboardUiAdmin: React.FC<DashboardProps> = ({ session, data, ahpResult }
 
   return (
     <main className="flex flex-col w-full min-h-screen justify-center items-center">
-      <div className="flex flex-row max-lg:flex-col max-lg:gap-10 w-[70%] max-lg:w-[90%] justify-center items-center mt-8">
+      <div className="max-lg:mt-20 mb-[-30px] bg-primary rounded-2xl max-lg:mx-6">
+        <h1 className="text-xl font-bold text-secondary max-lg:text-lg text-center p-4">Risk Management Maturity Measurement Dashboard</h1>
+      </div>
+      <div className="flex flex-row max-lg:flex-col max-lg:gap-10 w-[70%] max-lg:w-[90%] justify-center items-center mt-10">
         <AHPResultTable
           ahpResult={ahpResult}
         />

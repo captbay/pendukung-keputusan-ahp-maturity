@@ -55,7 +55,7 @@ const MaturityTable: React.FC<MaturityTableProps> = () => {
     const file = e.target.files?.[0];
     if (file) {
       const storageRef = ref(storage, `evidences/${file.name}`);
-      const allowedExtensions = ['pdf', 'jpeg', 'jpg', 'png', 'doc', 'docx'];
+      const allowedExtensions = ['pdf'];
       const fileExtension = file.name.split('.').pop()?.toLowerCase();
 
       if (fileExtension && allowedExtensions.includes(fileExtension)) {
@@ -71,7 +71,7 @@ const MaturityTable: React.FC<MaturityTableProps> = () => {
           console.error('Error uploading file:', error);
         }
       } else {
-        toast.error('Only DOC, DOCX, PDF, JPEG, JPG, or PNG files are allowed!');
+        toast.error('Only PDF file are allowed!');
         e.target.value = '';
       }
     }
