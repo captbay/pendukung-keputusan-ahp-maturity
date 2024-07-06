@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/react";
 import AHPResultTable from "@/app/components/ahp-result-table/ahpResultTable";
+import MaturityRecapTable from "@/app/components/maturity-recap-table/maturityRecapTable";
 
 interface DashboardProps {
   session: any;
@@ -27,57 +28,26 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult }) => {
 
   useEffect(() => {
     if(session?.user.jabatan !== "Admin") {
-      router.replace("/dashboard");
+      router.replace("/dashboard"); 
     }
   }, [session]);
 
-  // const rows: RowData[] = ahpResult?.data.map((item: any) => {
-  //   return {
-  //     key: item.category.key,
-  //     kriteria: item.category.key.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-  //     priority_vector: item.value,
-  //     rank: item.rank,
-  //   };
-  // });
-
-  // const sortedRows = [...rows].sort((a, b) => b.priority_vector - a.priority_vector);
-
-  // rows.forEach(row => {
-  //   row.rank = sortedRows.findIndex(sortedRow => sortedRow.key === row.key) + 1;
-  // });
-  
-  const columns = [
-    {
-      key: "kriteria",
-      label: "Kriteria",
-    },
-    {
-      key: "priority_vector",
-      label: "Priority Vector",
-    },
-    {
-      key: "rank",
-      label: "Rank",
-    },
-  ];
-
   return (
-    <main className="flex flex-col w-full min-h-screen justify-center items-center">
-      <div className="max-lg:mt-20 mt-10 mb-[-90px] bg-primary rounded-2xl max-lg:mx-6">
-        <h1 className="text-xl font-bold text-secondary max-lg:text-lg text-center p-4">Risk Management Maturity Measurement Dashboard</h1>
+    <main className="flex flex-col w-full min-h-screen items-center">
+      <div className="max-lg:mt-20 mt-10 mb-[-30px] rounded-2xl max-lg:mx-6">
+        <h1 className="text-3xl font-bold text-tertiary max-lg:text-lg text-center p-4">Risk Management Maturity Measurement Dashboard</h1>
       </div>
-      <div className="flex flex-col max-lg:flex-col gap-10 w-[70%] max-lg:w-[90%] min-h-screen justify-center items-center">
+      <div className="flex flex-col max-lg:flex-col w-[70%] max-lg:w-[90%] min-h-screen justify-center items-center">
 
         <div className="flex flex-col w-full justify-center items-center">
           <AHPResultTable
             ahpResult={ahpResult}
+            session={session}
           />
         </div>
 
         <div className="flex flex-col w-full justify-center items-center">
-          <AHPResultTable
-            ahpResult={ahpResult}
-          />
+          <MaturityRecapTable />
         </div>
       </div>
     </main>

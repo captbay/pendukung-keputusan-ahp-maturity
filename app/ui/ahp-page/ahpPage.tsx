@@ -11,6 +11,8 @@ import { Toaster, toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import LoadingScreen from '@/app/components/loading-screen/loadingScreen';
 import UserRecapTable from '@/app/components/user-recap-table/userRecapTable';
+import NotFoundIcon from '@/app/icon/NotFoundIcon';
+import Image from 'next/image';
 
 interface AHPPageProps {
   session: any;
@@ -112,13 +114,13 @@ const AHPPage: React.FC<AHPPageProps> = ({ session, userAhpData }) => {
   };
 
   return (
-    <main className="flex w-full min-h-screen bg-secondary z-0 justify-center items-center">
+    <main className="flex w-full min-h-screen bg-secondary z-0 justify-center">
       <div className="flex flex-col lg:flex-row bg-secondary rounded-lg w-full lg:w-[80%]">
-        <div className="flex flex-col w-full h-full justify-center items-center">
+        <div className="flex flex-col w-full h-full items-center">
           
-          <div className='flex flex-col w-full items-center justify-center mt-10 max-lg:mt-20'>
-            <div className='bg-primary rounded-2xl flex'>
-              <h1 className="text-xl lg:text-2xl font-bold text-center text-secondary p-4">Analytical Hierarchy Process</h1>
+          <div className='flex flex-col w-full items-center mt-10 max-lg:mt-20'>
+            <div className='rounded-2xl flex'>
+              <h1 className="text-2xl lg:text-3xl font-bold text-center text-tertiary p-4">Analytical Hierarchy Process</h1>
             </div>
             <div className='flex justify-center'>
               <Button
@@ -131,61 +133,66 @@ const AHPPage: React.FC<AHPPageProps> = ({ session, userAhpData }) => {
             </div>
           </div>
 
-          {userAhpData && !startAhpForm ? (
-            <UserRecapTable
-              data={userAhpData.tableData}
-              users={userAhpData.users}
-            />
-          ) : !userAhpData && !startAhpForm ? (
-            <p>No Data Found</p>
-          ) : (
-            <>
-              <ProgressBar
-                progress={(currentCheckpoint - 1) / (totalCheckpoint - 1) * 100}
-                totalCheckpoint={totalCheckpoint}
-                currentCheckpoint={currentCheckpoint}
-                icons={Array.from({ length: totalCheckpoint }, (_, i) => String(i + 1))}
-                onClickCheckpoint={handleCheckpointClick}
+          <div className='flex flex-col w-full h-full justify-center items-center max-lg:p-8 mb-[40px]'>
+            {userAhpData && !startAhpForm ? (
+              <UserRecapTable
+                data={userAhpData.tableData}
+                users={userAhpData.users}
               />
-              <Spacer y={8} />
-              <h1 className="text-md lg:text-lg font-semibold text-center">{tableKeyHeader[currentCheckpoint - 1]}</h1>
-              <h1 className="text-sm lg:text-md p-2 text-center">*Pilih skala yang sesuai dengan kecondongan kriteria.</h1>
-              <AHPTable
-                selections={selections}
-                currentCheckpoint={currentCheckpoint - 1}
-                setSelections={setSelections}
-                criteria={criteriaData[currentCheckpoint - 1]}
-              />
-              <Spacer y={6} />
-              <div className="flex gap-2 w-full justify-end">
-                <Button
-                  onClick={handlePreviousButton}
-                  className={`text-secondary w-24 text-center ${currentCheckpoint === 1 ? 'disabled' : 'hover:bg-red-700 hover:text-white bg-primary'}`}
-                  shadow-md
-                  disabled={currentCheckpoint === 1}
-                >
-                  Previous
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (currentCheckpoint === totalCheckpoint) {
-                      if(validateAnswer()){
-                        setIsConfirmationModalOpen(true);
-                      }
-                    } else {
-                      handleNextButton();
-                    }
-                  }}
-                  className={`text-secondary w-24 text-center ${currentCheckpoint === totalCheckpoint ? 'hover:bg-red-700 hover:text-white bg-primary' : 'hover:bg-red-700 hover:text-white bg-primary'}`}
-                  shadow-md
-                >
-                  <h2 className={`text-secondary ${currentCheckpoint === totalCheckpoint ? 'font-bold' : ''}`}>
-                    {currentCheckpoint === totalCheckpoint ? 'Submit' : 'Next'}
-                  </h2>
-                </Button>
+            ) : !userAhpData && !startAhpForm ? (
+              <div className='flex justify-center items-center flex-col gap-4'>
+                <NotFoundIcon />
+                <p className="text-center text-xl max-w-[500px]">No AHP data found. Press START button above to fill the Analytical Hierarchy Process form.</p>
               </div>
-            </>
-          )}
+            ) : (
+              <>
+                <ProgressBar
+                  progress={(currentCheckpoint - 1) / (totalCheckpoint - 1) * 100}
+                  totalCheckpoint={totalCheckpoint}
+                  currentCheckpoint={currentCheckpoint}
+                  icons={Array.from({ length: totalCheckpoint }, (_, i) => String(i + 1))}
+                  onClickCheckpoint={handleCheckpointClick}
+                />
+                <Spacer y={8} />
+                <h1 className="text-md lg:text-lg font-semibold text-center">{tableKeyHeader[currentCheckpoint - 1]}</h1>
+                <h1 className="text-sm lg:text-md p-2 text-center">*Pilih skala yang sesuai dengan kecondongan kriteria.</h1>
+                <AHPTable
+                  selections={selections}
+                  currentCheckpoint={currentCheckpoint - 1}
+                  setSelections={setSelections}
+                  criteria={criteriaData[currentCheckpoint - 1]}
+                />
+                <Spacer y={6} />
+                <div className="flex gap-2 w-full justify-end">
+                  <Button
+                    onClick={handlePreviousButton}
+                    className={`text-secondary w-24 text-center ${currentCheckpoint === 1 ? 'disabled' : 'hover:bg-red-700 hover:text-white bg-primary'}`}
+                    shadow-md
+                    disabled={currentCheckpoint === 1}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (currentCheckpoint === totalCheckpoint) {
+                        if(validateAnswer()){
+                          setIsConfirmationModalOpen(true);
+                        }
+                      } else {
+                        handleNextButton();
+                      }
+                    }}
+                    className={`text-secondary w-24 text-center ${currentCheckpoint === totalCheckpoint ? 'hover:bg-red-700 hover:text-white bg-primary' : 'hover:bg-red-700 hover:text-white bg-primary'}`}
+                    shadow-md
+                  >
+                    <h2 className={`text-secondary ${currentCheckpoint === totalCheckpoint ? 'font-bold' : ''}`}>
+                      {currentCheckpoint === totalCheckpoint ? 'Submit' : 'Next'}
+                    </h2>
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
       <ConfirmationModal

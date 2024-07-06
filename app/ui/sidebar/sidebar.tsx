@@ -114,7 +114,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, session }) => {
                   }`}
                   shadow-md
                 >
-                  <HierarchyIcon />
+                  <MaturityIcon />
                   <h2 className="text-secondary">Maturity Recap</h2>
                 </Button>
                 <Button

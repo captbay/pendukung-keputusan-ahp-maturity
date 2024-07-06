@@ -19,26 +19,18 @@ interface AhpRecapProps {
 }
 
 const AhpRecap: React.FC<AhpRecapProps> = ({ data, ahpData }) => {
-  const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
-  const selectedUser = useRef<any>(null);
 
   console.log('this is ahp data --- ', ahpData);
 
   return (
-    <main className="flex flex-col w-full min-h-screen justify-center items-center py-10">
+    <main className="flex flex-col w-full min-h-screen items-center py-10">
+      <div className="max-lg:mt-20 mb-[30px] rounded-2xl max-lg:mx-6">
+        <h1 className="text-3xl font-bold text-tertiary max-lg:text-2xl text-center p-4">Analytical Hierarchy Process Recap</h1>
+      </div>
       <UserRecapTable
         data={ahpData.tableData}
         users={ahpData.users}
       />
-      {isOpen && (
-        <AHPRecapModal
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          data={data}
-          header={`AHP Recap for ${selectedUser.current?.name}`}
-        />
-      )}
     </main>
   );
 }

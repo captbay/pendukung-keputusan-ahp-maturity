@@ -6,6 +6,7 @@ import { resetAhpData } from "@/lib/actions";
 import { Toaster, toast } from "sonner";
 
 interface AHPResultTableProps {
+  session: any;
   ahpResult: Array<{
     category?: {
       key?: string | null;
@@ -21,7 +22,7 @@ interface RowData {
   rank?: number;
 }
 
-const AHPResultTable: React.FC<AHPResultTableProps> = ({ ahpResult }) => {
+const AHPResultTable: React.FC<AHPResultTableProps> = ({ ahpResult, session }) => {
   const [isDeleteClicked, setIsDeleteClicked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -77,7 +78,7 @@ const AHPResultTable: React.FC<AHPResultTableProps> = ({ ahpResult }) => {
       <div className="flex flex-col w-full justify-center items-center">
         <div className="flex p-2 justify-center">
           <h1 className="text-lg">
-            AHP Result from User
+            AHP Result Overall
           </h1>
         </div>
         <div className="max-lg:w-full lg:w-full w-[80%]">
@@ -97,7 +98,7 @@ const AHPResultTable: React.FC<AHPResultTableProps> = ({ ahpResult }) => {
             </TableBody>
           </Table>
         </div>
-        {!rows && (
+        {rows && session.user.jabatan == "Admin" && (
           <div className="flex justify-end w-full">
             <Button
               size="sm"

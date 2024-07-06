@@ -1,10 +1,12 @@
 
 import MaturityPage from "@/app/ui/maturity-page/maturityPage";
+import { auth } from "@/auth";
 
-export default function Maturity() {
+export default async function Maturity() {
+  const session = await auth();
   return (
-    <div>
-      <MaturityPage />
-    </div>
+    <MaturityPage
+      session={session}
+    />
   );
 }

@@ -23,7 +23,7 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
   return (
     <div className="w-[70%] max-lg:w-[90%] flex flex-col gap-14 mt-10 text-center">
       <div>
-        <p>Perbandingan Berpasangan Tingkat Kepentingan Antar Kriteria</p>
+        <p className="p-2">Perbandingan Berpasangan Tingkat Kepentingan Antar Kriteria</p>
         <Table aria-label="Example static collection table">
           <TableHeader>
               {users.map((user, index) => (
@@ -45,7 +45,7 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
       </div>
 
       <div>
-        <p>Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Size</p>
+        <p className="p-2">Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Size</p>
         <Table aria-label="Example static collection table">
           <TableHeader>
               {users.map((user, index) => (
@@ -67,7 +67,7 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
       </div>
 
       <div>
-        <p>Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Complexity</p>
+        <p className="p-2">Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Complexity</p>
         <Table aria-label="Example static collection table">
           <TableHeader>
               {users.map((user, index) => (
@@ -89,7 +89,7 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
       </div>
 
       <div>
-        <p>Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Importance</p>
+        <p className="p-2">Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Importance</p>
         <Table aria-label="Example static collection table">
           <TableHeader>
               {users.map((user, index) => (
@@ -111,7 +111,7 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
       </div>
 
       <div>
-        <p>Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Approach</p>
+        <p className="p-2">Perbandingan Berpasangan Tingkat Kepentingan Setiap Alternatif pada Kriteria Project Approach</p>
         <Table aria-label="Example static collection table">
           <TableHeader>
               {users.map((user, index) => (

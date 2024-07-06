@@ -5,10 +5,10 @@ import Sidebar from "../ui/sidebar/sidebar";
 import { useState } from "react";
 import { auth } from '@/auth';
 
-const poppins = Poppins({ 
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-});
+// const poppins = Poppins({ 
+//   subsets: ["latin"],
+//   weight: ["400", "500", "600", "700", "800", "900"],
+// });
 
 export const metadata: Metadata = {
   title: "Sistem Pendukung Keputusan -citra",
@@ -20,7 +20,7 @@ export default async function RootLayout({ children }: {children: React.ReactNod
   
   return (
     <html lang="en">
-      <body className={poppins.className}>
+      <body>
         <Sidebar 
           isAdmin={true}
           session={session}
