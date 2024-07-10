@@ -6,7 +6,7 @@ export const authConfig = {
   },
   callbacks: {
     jwt({ token, user, session }) {
-      console.log("jwt callback", { token, user, session });
+      // console.log("jwt callback", { token, user, session });
       if (user) {
         return {
           ...token,
@@ -19,7 +19,7 @@ export const authConfig = {
       return token;
     },
     session({ session, token, user }) {
-      console.log("session callback", { session, token, user });
+      // console.log("session callback", { session, token, user });
 
       return {
         ...session,
@@ -35,26 +35,38 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isAdmin = auth?.user?.jabatan === "Admin";
-    
+
       if (isLoggedIn) {
         if (isAdmin) {
-          if (nextUrl.pathname !== "/dashboard-admin" && nextUrl.pathname !== "/result-recap" && nextUrl.pathname !== "/ahp-recap" && nextUrl.pathname !== "/playground") {
+          if (
+            nextUrl.pathname !== "/dashboard-admin" &&
+            nextUrl.pathname !== "/result-recap" &&
+            nextUrl.pathname !== "/ahp-recap" &&
+            nextUrl.pathname !== "/playground"
+          ) {
             return Response.redirect(new URL("/dashboard-admin", nextUrl)); // Redirect Admin to /dashboard-admin
           }
         } else {
-          if (nextUrl.pathname !== "/dashboard" && nextUrl.pathname !== "/ahp" && nextUrl.pathname !== "/maturity") {
+          if (
+            nextUrl.pathname !== "/dashboard" &&
+            nextUrl.pathname !== "/ahp" &&
+            nextUrl.pathname !== "/maturity"
+          ) {
             return Response.redirect(new URL("/dashboard", nextUrl)); // Redirect non-Admin to /dashboard
           }
         }
-    
+
         return true; // Allow access to the requested route for authenticated users
       }
-      if (nextUrl.pathname === "/login" || nextUrl.pathname === "/registration") {
+      if (
+        nextUrl.pathname === "/login" ||
+        nextUrl.pathname === "/registration"
+      ) {
         return true;
       }
-    
+
       return false; // Deny access for unauthenticated users
-    },    
+    },
   },
   providers: [], // Add providers with an empty array for now
 } satisfies NextAuthConfig;

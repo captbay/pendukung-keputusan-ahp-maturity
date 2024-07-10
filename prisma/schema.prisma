@@ -21,7 +21,7 @@ model User {
 
   usersAhpForm           UsersAhpForm[]
   usersMaturity          UsersMaturity[]
-  usersProgressMaturity  UsersProgressMaturity[]
+  // usersProgressMaturity  UsersProgressMaturity[]
 
   @@map(name: "users")
 }
@@ -35,6 +35,7 @@ model Category{
 
   ahpResult           AhpResult[]
   questionMaturity    QuestionMaturity[]
+  recommendMaturity   RecommendMaturity[]
 
   @@map(name:"category")
 }
@@ -66,12 +67,13 @@ model AhpResult {
 model QuestionMaturity{
   id                    String  @default(cuid()) @id
   category_id           String
+  code                  String
   level                 Int
   question              String
   createdAt             DateTime  @default(now()) @map(name: "created_at")
   updatedAt             DateTime  @updatedAt @map(name: "updated_at")
 
-  usersMaturity         UsersMaturity[]
+  usersMaturity         UsersMaturity?
 
   category              Category?  @relation(fields: [category_id], references: [id]) 
 
@@ -81,13 +83,14 @@ model QuestionMaturity{
 model UsersMaturity {
   id                    String      @default(cuid()) @id
   user_id               String
-  question_maturity_id  String
-  answer                String
+  question_maturity_id  String      @unique
+  answer                Boolean?     
   evidence              String
+  is_acc                Boolean
   createdAt             DateTime    @default(now()) @map(name: "created_at")
   updatedAt             DateTime    @updatedAt @map(name: "updated_at")
 
-  usersProgressMaturity UsersProgressMaturity[]
+  // usersProgressMaturity UsersProgressMaturity[]
 
   users                 User?       @relation(fields: [user_id], references: [id])
   questionMaturity      QuestionMaturity?   @relation(fields: [question_maturity_id], references: [id])
@@ -95,17 +98,29 @@ model UsersMaturity {
   @@map(name:"users-maturity")
 }
 
-
-model UsersProgressMaturity {
-  id                    String     @default(cuid()) @id
-  user_id               String
-  user_maturity_id      String
+model RecommendMaturity {
+  id                    String      @default(cuid()) @id
+  category_id           String
   level                 Int
-  isAccepted            Boolean?    @map(name:"is_accepted")
-  createdAt             DateTime  @default(now()) @map(name: "created_at")
-  updatedAt             DateTime  @updatedAt @map(name: "updated_at")
+  recommend             String
+  createdAt             DateTime    @default(now()) @map(name: "created_at")
+  updatedAt             DateTime    @updatedAt @map(name: "updated_at")
 
-  users                 User?   @relation(fields: [user_id], references: [id])
-  usersMaturity         UsersMaturity?   @relation(fields: [user_maturity_id], references: [id])
-  @@map(name:"users-progress-maturity")
+  category              Category?   @relation(fields: [category_id], references: [id])
+
+  @@map(name:"recommend-maturity")
 }
+
+// model UsersProgressMaturity {
+//   id                    String     @default(cuid()) @id
+//   user_id               String
+//   user_maturity_id      String
+//   level                 Int
+//   isAccepted            Boolean?    @map(name:"is_accepted")
+//   createdAt             DateTime  @default(now()) @map(name: "created_at")
+//   updatedAt             DateTime  @updatedAt @map(name: "updated_at")
+
+//   users                 User?   @relation(fields: [user_id], references: [id])
+//   usersMaturity         UsersMaturity?   @relation(fields: [user_maturity_id], references: [id])
+//   @@map(name:"users-progress-maturity")
+// }

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { applyFormulaAhp } from "./formula";
 import { criteriaData } from "@/app/utils/criteriaData";
+import { title } from "process";
 
 export type StateAhp = {
   errors?: {
@@ -47,6 +48,67 @@ type User = {
   name: string;
   email: string;
   jabatan: string | null;
+};
+
+type Category = {
+  id: string;
+  key: string;
+  value: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type UserMaturity = {
+  id: string;
+  user_id: string;
+  question_maturity_id: string;
+  answer: boolean;
+  evidence: any;
+  is_acc: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type QuestionMaturity = {
+  id: string;
+  category_id: string;
+  code: string;
+  level: number;
+  question: string;
+  createdAt: Date;
+  updatedAt: Date;
+  category: Category;
+  usersMaturity: UserMaturity;
+};
+
+type Question = {
+  id: string;
+  kode: string;
+  question: string;
+  ya: boolean;
+  tidak: boolean;
+  evidence: string | null;
+};
+
+type Detail = {
+  level: number;
+  recommend: string;
+  question: Question[];
+};
+
+type QuestionPerSection = {
+  title: string;
+  category_id: string;
+  detail: Detail[];
+};
+
+type RecommendMaturity = {
+  id: string;
+  category_id: string;
+  level: number;
+  recommend: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export async function submitAhp(
@@ -296,8 +358,8 @@ export async function getPerUserFormAhp(id: string) {
       where: {
         user_id: {
           equals: id,
-        }
-      }
+        },
+      },
     })) as unknown as UserAhpForm;
 
     if (!data) {
@@ -377,6 +439,187 @@ export async function resetAhpData() {
         success: false,
         message: e.message,
       };
+    }
+  }
+}
+
+export async function getQuestionMaturity(idUser: string) {
+  try {
+    const data: QuestionMaturity[] = (await prisma.questionMaturity.findMany({
+      include: {
+        category: true,
+        usersMaturity: true,
+      },
+    })) as unknown as QuestionMaturity[];
+
+    if (!data) {
+      return {
+        success: false,
+        message: "There is no data found",
+      };
+    }
+
+    const sections: QuestionPerSection[] = [
+      { title: "Plan Risk Management", category_id: "", detail: [] },
+      { title: "Identify Risks", category_id: "", detail: [] },
+      {
+        title: "Perform Qualitative Risk Analysis",
+        category_id: "",
+        detail: [],
+      },
+      {
+        title: "Perform Quantitative Risk Analysis",
+        category_id: "",
+        detail: [],
+      },
+      { title: "Plan Risk Responses", category_id: "", detail: [] },
+      { title: "Implement Risk Responses", category_id: "", detail: [] },
+      { title: "Monitor Risks", category_id: "", detail: [] },
+    ];
+
+    const sectionMap: { [key: string]: QuestionPerSection } = {
+      plan_risk_management: sections[0],
+      identify_risks: sections[1],
+      perform_qualitative_risk_analysis: sections[2],
+      perform_quantitative_risk_analysis: sections[3],
+      plan_risk_responses: sections[4],
+      implement_risk_responses: sections[5],
+      monitor_risks: sections[6],
+    };
+
+    data.forEach((item) => {
+      const section = sectionMap[item.category.key];
+      if (section) {
+        section.category_id = item.category_id;
+
+        const detailIndex = section.detail.findIndex(
+          (detail) => detail.level === item.level
+        );
+
+        if (detailIndex === -1) {
+          section.detail.push({
+            level: item.level,
+            recommend: "",
+            question: [
+              {
+                id: item.id,
+                kode: item.code,
+                question: item.question,
+                ya:
+                  item.usersMaturity != null
+                    ? item.usersMaturity.answer
+                      ? true
+                      : false
+                    : false,
+                tidak:
+                  item.usersMaturity != null
+                    ? item.usersMaturity.answer
+                      ? false
+                      : true
+                    : false,
+                evidence:
+                  item.usersMaturity != null
+                    ? item.usersMaturity.evidence
+                    : null,
+              },
+            ],
+          });
+        } else {
+          section.detail[detailIndex].question.push({
+            id: item.id,
+            kode: item.code,
+            question: item.question,
+            ya:
+              item.usersMaturity != null
+                ? item.usersMaturity.answer
+                  ? true
+                  : false
+                : false,
+            tidak:
+              item.usersMaturity != null
+                ? item.usersMaturity.answer
+                  ? false
+                  : true
+                : false,
+            evidence:
+              item.usersMaturity != null ? item.usersMaturity.evidence : null,
+          });
+        }
+      }
+    });
+
+    await Promise.all(
+      sections.map(async (section) => {
+        await Promise.all(
+          section.detail.map(async (detail) => {
+            const allItems = data.filter(
+              (item) =>
+                item.category_id === section.category_id &&
+                item.level === detail.level
+            );
+            const allAnsweredAndEvidence = allItems.every((item) =>
+              item.usersMaturity
+                ? item.usersMaturity.answer &&
+                  item.usersMaturity.evidence !== null
+                : false
+            );
+            const anyUnansweredOrNoEvidence = allItems.some((item) =>
+              item.usersMaturity
+                ? !item.usersMaturity.answer ||
+                  item.usersMaturity.evidence === null
+                : true
+            );
+            if (anyUnansweredOrNoEvidence) {
+              detail.recommend = "Belum ada";
+            } else if (allAnsweredAndEvidence) {
+              const result = await getRecommendMaturity(
+                detail.level,
+                section.category_id
+              );
+              detail.recommend = result != undefined ? result : "Belum ada";
+            } else {
+              detail.recommend = ""; // Or any other default value you prefer
+            }
+          })
+        );
+      })
+    );
+
+    return {
+      success: true,
+      data: sections,
+      message: "Data found",
+    };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: e.message,
+        };
+      }
+      return {
+        message: e.message,
+      };
+    }
+  }
+}
+
+async function getRecommendMaturity(level: number, category_id: string) {
+  try {
+    const data = (await prisma.recommendMaturity.findFirst({
+      where: {
+        level: level,
+        category_id: category_id,
+      },
+    })) as unknown as RecommendMaturity;
+
+    return data.recommend;
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        console.log(e.message);
+      }
+      console.log(e.message);
     }
   }
 }
