@@ -5,7 +5,7 @@ import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { applyFormulaAhp } from "./formula";
 import { criteriaData } from "@/app/utils/criteriaData";
-import { title } from "process";
+import { forEach } from "lodash";
 
 export type StateAhp = {
   errors?: {
@@ -26,9 +26,6 @@ const FormAhpSchema = z.object({
   section_four: z.array(z.any()).nonempty(),
   section_five: z.array(z.any()).nonempty(),
 });
-
-// maturity
-const FormMaturitySchema = z.array(z.any()).nonempty();
 
 type AhpFormValue = {
   section_one: number[];
@@ -66,8 +63,7 @@ type UserMaturity = {
   user_id: string;
   question_maturity_id: string;
   answer: boolean;
-  evidence: any;
-  is_acc: boolean;
+  evidence: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -81,7 +77,7 @@ type QuestionMaturity = {
   createdAt: Date;
   updatedAt: Date;
   category: Category;
-  usersMaturity: UserMaturity;
+  usersMaturity: UserMaturity[];
 };
 
 type Question = {
@@ -97,7 +93,7 @@ type Question = {
 type Detail = {
   level: number;
   recommend: string;
-  question: Question[];
+  question?: Question[];
 };
 
 type QuestionPerSection = {
@@ -115,42 +111,123 @@ type RecommendMaturity = {
   updatedAt: Date;
 };
 
-// type AnswerResultMaturity = {
-//   id_question: string;
-//   answer: string;
-//   evidence: string;
-// };
+type formMaturity = {
+  id_question: string;
+  answer: boolean;
+  evidence: string;
+};
 
-// export async function submitMaturity(
-//   id_user: string,
-//   prevState: StateAhp,
-//   formData: FormData
-// ) {
-//   const parsedData = {
-//     maturity: formData.get(
-//       "answer_result_maturity"
-//     ) as unknown as AnswerResultMaturity[],
-//   };
+export type StateMaturity = {
+  errors?: formMaturity[];
+  message?: string | null;
+};
 
-//   const validatedFields = FormMaturitySchema.safeParse(parsedData);
+// maturity
+const FormMaturitySchema = z.array(z.any()).nonempty();
 
-//   if (!validatedFields.success) {
-//     return {
-//       success: false,
-//       errors: validatedFields.error.flatten().fieldErrors,
-//       message: "Something went wrong.",
-//     };
-//   }
+export async function submitMaturity(
+  id_user: string,
+  prevState: StateMaturity,
+  formData: FormData
+) {
+  const parsedData: formMaturity[] = JSON.parse(
+    formData.get("result_answer_maturity") as string
+  );
 
-//   try {
-//     const data = await prisma.usersMaturityForm.findFirst({
-//       where: {
-//         user_id: {
-//           equals: id_user,
-//         },
-//       },
-//     });
-// }
+  const validatedFields = FormMaturitySchema.safeParse(parsedData);
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Something went wrong.",
+    };
+  }
+
+  try {
+    forEach(validatedFields.data, async (value) => {
+      const data = await prisma.usersMaturity.findFirst({
+        where: {
+          user_id: {
+            equals: id_user,
+          },
+          question_maturity_id: {
+            equals: value.id_question,
+          },
+        },
+      });
+
+      if (data != null) {
+        try {
+          await prisma.usersMaturity.update({
+            where: {
+              id: data.id,
+            },
+            data: {
+              answer: value.answer,
+              evidence: value.evidence,
+            },
+          });
+        } catch (e) {
+          if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            if (e.code === "P2002") {
+              return {
+                success: false,
+                message: e.message,
+              };
+            }
+            return {
+              success: false,
+              message: e.message,
+            };
+          }
+        }
+      } else {
+        try {
+          await prisma.usersMaturity.create({
+            data: {
+              user_id: id_user,
+              question_maturity_id: value.id_question,
+              answer: value.answer,
+              evidence: value.evidence,
+            },
+          });
+        } catch (e) {
+          if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            if (e.code === "P2002") {
+              return {
+                success: false,
+                message: e.message,
+              };
+            }
+            return {
+              success: false,
+              message: e.message,
+            };
+          }
+        }
+      }
+    });
+
+    return {
+      success: true,
+      message: "Successfully submitted.",
+    };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          success: false,
+          message: e.message,
+        };
+      }
+      return {
+        success: false,
+        message: e.message,
+      };
+    }
+  }
+}
 
 export async function submitAhp(
   id: string,
@@ -484,21 +561,41 @@ export async function resetAhpData() {
   }
 }
 
+interface TransformedQuestionMaturity extends Omit<QuestionMaturity, 'usersMaturity'> {
+  usersMaturity: UserMaturity | null; // Transform to a single object
+}
+
 export async function getQuestionMaturity(idUser: string) {
   try {
-    const data: QuestionMaturity[] = (await prisma.questionMaturity.findMany({
+    const getData: QuestionMaturity[] = (await prisma.questionMaturity.findMany({
       include: {
         category: true,
-        usersMaturity: true,
+        usersMaturity: {
+          where: {
+            user_id: idUser,
+          },
+          take: 1,
+          orderBy: {
+            createdAt: "desc",
+          }
+        },
+      },
+      orderBy: {
+        code: "asc",
       },
     })) as unknown as QuestionMaturity[];
 
-    if (!data) {
+    if (!getData) {
       return {
         success: false,
         message: "There is no data found",
       };
     }
+
+    const data: TransformedQuestionMaturity[] = getData.map(item => ({
+      ...item,
+      usersMaturity: item.usersMaturity.length > 0 ? item.usersMaturity[0] : null,
+    }));
 
     const sections: QuestionPerSection[] = [
       { title: "Plan Risk Management", category_id: "", detail: [] },
@@ -573,7 +670,7 @@ export async function getQuestionMaturity(idUser: string) {
             ],
           });
         } else {
-          section.detail[detailIndex].question.push({
+          section.detail[detailIndex].question?.push({
             id: item.id,
             kode: item.code,
             question: item.question,
@@ -675,6 +772,306 @@ async function getRecommendMaturity(level: number, category_id: string) {
         console.log(e.message);
       }
       console.log(e.message);
+    }
+  }
+}
+
+export async function resetMaturityData() {
+  try {
+    await prisma.usersMaturity.deleteMany({});
+
+    return {
+      success: true,
+      message: "Successfully reset Maturity data.",
+    };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          success: false,
+          message: e.message,
+        };
+      }
+      return {
+        success: false,
+        message: e.message,
+      };
+    }
+  }
+}
+
+// Mau yang kayak gini?
+export async function getResultMaturityUser(user_id: string) {
+  try {
+    const getData: QuestionMaturity[] = (await prisma.questionMaturity.findMany({
+      include: {
+        category: true,
+        usersMaturity: {
+          where: {
+            user_id: user_id,
+          },
+          take: 1,
+          orderBy: {
+            createdAt: "desc",
+          }
+        },
+      },
+      orderBy: {
+        code: "asc",
+      },
+    })) as unknown as QuestionMaturity[];
+
+    if (!getData) {
+      return {
+        success: false,
+        message: "There is no data found",
+      };
+    }
+
+    const data: TransformedQuestionMaturity[] = getData.map(item => ({
+      ...item,
+      usersMaturity: item.usersMaturity.length > 0 ? item.usersMaturity[0] : null,
+    }));
+
+    const sections: QuestionPerSection[] = [
+      { title: "Plan Risk Management", category_id: "", detail: [] },
+      { title: "Identify Risks", category_id: "", detail: [] },
+      {
+        title: "Perform Qualitative Risk Analysis",
+        category_id: "",
+        detail: [],
+      },
+      {
+        title: "Perform Quantitative Risk Analysis",
+        category_id: "",
+        detail: [],
+      },
+      { title: "Plan Risk Responses", category_id: "", detail: [] },
+      { title: "Implement Risk Responses", category_id: "", detail: [] },
+      { title: "Monitor Risks", category_id: "", detail: [] },
+    ];
+
+    const sectionMap: { [key: string]: QuestionPerSection } = {
+      plan_risk_management: sections[0],
+      identify_risks: sections[1],
+      perform_qualitative_risk_analysis: sections[2],
+      perform_quantitative_risk_analysis: sections[3],
+      plan_risk_responses: sections[4],
+      implement_risk_responses: sections[5],
+      monitor_risks: sections[6],
+    };
+
+    data.forEach((item) => {
+      const section = sectionMap[item.category.key];
+      if (section) {
+        section.category_id = item.category_id;
+
+        const detailIndex = section.detail.findIndex(
+          (detail) => detail.level === item.level
+        );
+
+        if (detailIndex === -1) {
+          section.detail.push({
+            level: item.level,
+            recommend: "",
+          });
+        }
+      }
+    });
+
+    await Promise.all(
+      sections.map(async (section) => {
+        await Promise.all(
+          section.detail.map(async (detail) => {
+            const allItems = data.filter(
+              (item) =>
+                item.category_id === section.category_id &&
+                item.level === detail.level
+            );
+            const allAnsweredAndEvidence = allItems.every((item) =>
+              item.usersMaturity
+                ? item.usersMaturity.answer &&
+                  item.usersMaturity.evidence !== null
+                : false
+            );
+            const anyUnansweredOrNoEvidence = allItems.some((item) =>
+              item.usersMaturity
+                ? !item.usersMaturity.answer ||
+                  item.usersMaturity.evidence === null
+                : true
+            );
+            if (anyUnansweredOrNoEvidence) {
+              detail.recommend = "Belum ada";
+            } else if (allAnsweredAndEvidence) {
+              const result = await getRecommendMaturity(
+                detail.level,
+                section.category_id
+              );
+              detail.recommend = result != undefined ? result : "Belum ada";
+            } else {
+              detail.recommend = ""; // Or any other default value you prefer
+            }
+          })
+        );
+      })
+    );
+
+    return {
+      success: true,
+      data: sections,
+      message: "Data found",
+    };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: e.message,
+        };
+      }
+      return {
+        message: e.message,
+      };
+    }
+  }
+}
+
+// Belum Done
+export async function getResultMaturityAll() {
+  try {
+    const data: QuestionMaturity[] = (await prisma.usersMaturity.findMany({
+      include: {
+        questionMaturity: true,
+        users: true,
+      },
+      where: {
+        answer: true,
+        evidence: {
+          not: null,
+        },
+      },
+      orderBy: {
+        questionMaturity: {
+          code: "asc",
+        },
+      },
+    })) as unknown as QuestionMaturity[];
+
+    if (!data) {
+      return {
+        success: false,
+        message: "There is no data found",
+      };
+    }
+
+    return {
+      success: true,
+      data: data,
+      message: "Data found",
+    };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: e.message,
+        };
+      }
+      return {
+        message: e.message,
+      };
+    }
+  }
+}
+
+export async function getQuestionMaturityAdmin(){
+  try{
+    const data = await prisma.questionMaturity.findMany();
+
+    if(!data){
+      return {
+        success: false,
+        message: "There is no data found",
+      };
+    }
+
+    return {
+      success: true,
+      data: data,
+      message: "Data found",
+    };
+
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: e.message,
+        };
+      }
+      return {
+        message: e.message,
+      };
+    }
+  }
+}
+
+export async function postQuestionMaturityAdmin(prevState:any, formData: FormData) {
+  const parsedData: formMaturity[] = JSON.parse(
+    formData.get("question") as string
+  );
+
+  const validatedFields = FormMaturitySchema.safeParse(parsedData);
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Something went wrong.",
+    };
+  }
+
+  try {
+    validatedFields.data.forEach( async (item) => {
+      const data = await prisma.questionMaturity.findFirst({
+        where: {
+          id: item.id
+        }
+      })
+
+      if(data != null){
+        await prisma.questionMaturity.update({
+          where: {
+            id: item.id
+          },
+          data: {
+            question: item.question,
+          }
+        })
+      } else {
+        await prisma.questionMaturity.create({
+          data: {
+            category_id: item.category_id,
+            code: item.code,
+            level: item.level,
+            question: item.question,
+          }
+        })
+      }
+    });
+
+    return {
+      success: true,
+      message: "Data saved successfully",
+    };
+
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: e.message,
+        };
+      }
+      return {
+        message: e.message,
+      };
     }
   }
 }

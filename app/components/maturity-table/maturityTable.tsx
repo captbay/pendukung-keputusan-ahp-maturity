@@ -7,6 +7,7 @@ import { app } from '@/firebase';
 import ConfirmationModal from '@/app/ui/confirmation-modal/confirmationModal';
 import ProgressBar from '@/app/ui/progress-bar/progressBar';
 import LoadingScreen from '../loading-screen/loadingScreen';
+import { StateMaturity, submitMaturity } from '@/lib/actions';
 
 interface Question {
   id: string;
@@ -141,9 +142,26 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
       console.log('Final Data:', updatedData);
 
       formDataMaturity.append('result_answer_maturity', JSON.stringify(updatedData));
-      setIsLoading(false);
+      // hit the func DB
 
-      toast.success('Form submitted successfully!');
+      const state = {} as StateMaturity;
+
+      const result = await submitMaturity(
+        session.user.id,
+        state,
+        formDataMaturity
+      );
+
+      if (result!.success) {
+        toast.success("Form submitted successfully!");
+        // setTimeout(() => {
+        //   router.push('/dashboard');
+        // }, 1200);
+      } else {
+        toast.error("Failed to submit form. Please try again later.");
+      }
+
+      setIsLoading(false);
     } catch (error) {
       console.error('Error uploading files:', error);
       toast.error('Gagal untuk mengunggah evidence. Silakan coba lagi.');

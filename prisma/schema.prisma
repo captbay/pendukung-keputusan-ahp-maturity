@@ -73,7 +73,7 @@ model QuestionMaturity{
   createdAt             DateTime  @default(now()) @map(name: "created_at")
   updatedAt             DateTime  @updatedAt @map(name: "updated_at")
 
-  usersMaturity         UsersMaturity?
+  usersMaturity         UsersMaturity[]
 
   category              Category?  @relation(fields: [category_id], references: [id]) 
 
@@ -83,10 +83,9 @@ model QuestionMaturity{
 model UsersMaturity {
   id                    String      @default(cuid()) @id
   user_id               String
-  question_maturity_id  String      @unique
+  question_maturity_id  String      
   answer                Boolean?     
-  evidence              String
-  is_acc                Boolean
+  evidence              String?
   createdAt             DateTime    @default(now()) @map(name: "created_at")
   updatedAt             DateTime    @updatedAt @map(name: "updated_at")
 
