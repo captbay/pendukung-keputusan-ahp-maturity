@@ -124,6 +124,7 @@ const AHPResultTable: React.FC<AHPResultTableProps> = ({ ahpResult, session }) =
       />
       <LoadingScreen
         isLoading={isLoading}
+        text="Resetting AHP data..."
       />
       <Toaster 
         expand={true} 

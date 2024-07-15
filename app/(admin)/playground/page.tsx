@@ -1,5 +1,6 @@
+
 import { getQuestionMaturity } from "@/lib/actions";
-import React, { useEffect } from "react";
+import React from "react";
 
 export default async function Playground() {
   // RUN FUNCTION HERE

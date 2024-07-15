@@ -103,7 +103,7 @@ const AHPPage: React.FC<AHPPageProps> = ({ session, userAhpData }) => {
         router.push('/dashboard');
       }, 1200);
     } else{
-      toast.error('Failed to submit Analytical Hierarcy Process');
+      toast.error('Gagal untuk mengunggah jawaban Analytical Hierarcy Process');
       setIsLoading(false);
     }
   };
@@ -210,7 +210,10 @@ const AHPPage: React.FC<AHPPageProps> = ({ session, userAhpData }) => {
         richColors 
         position="top-center"
       />
-      <LoadingScreen isLoading={isLoading} />
+      <LoadingScreen 
+        isLoading={isLoading}
+        text="Mengunggah data AHP..."
+      />
     </main>
   );
 }

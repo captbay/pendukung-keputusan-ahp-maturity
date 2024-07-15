@@ -170,7 +170,10 @@ export default function RegisterForm() {
           Login
         </Link>
       </p>
-      <LoadingScreen isLoading={isLoading} />
+      <LoadingScreen 
+        isLoading={isLoading}
+        text="Loading..."
+      />
     </section>
   );
 }

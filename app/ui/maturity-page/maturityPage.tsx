@@ -2,6 +2,7 @@
 import MaturityRecapTable from '@/app/components/maturity-recap-table/maturityRecapTable';
 import MaturityTable from '@/app/components/maturity-table/maturityTable';
 import NotFoundIcon from '@/app/icon/NotFoundIcon';
+import { getQuestionMaturity } from '@/lib/actions';
 import { Button } from '@nextui-org/react';
 import React, { useState } from 'react';
 
@@ -16,36 +17,41 @@ interface Question {
 
 interface Detail {
   level: number;
-  rekomendasi: string;
-  questions: Question[];
+  recommend: string;
+  question: Question[];
 }
 
 interface QuestionSet {
   title: string;
   detail: Detail[];
+  category_id: string;
 }
 interface MaturityPageProps {
   session: any;
+  questionMaturity: any;
 }
 
-const MaturityPage: React.FC<MaturityPageProps> = () => {
+const MaturityPage: React.FC<MaturityPageProps> = ({ session, questionMaturity }) => {
   const [startAhpForm, setStartAhpForm] = useState(false);
   const [isData, setIsData] = useState(false);
+
+  console.log('questionMaturity ---- ', questionMaturity);
 
   const tempQuestion: QuestionSet[] = 
   [
     {
       title: "Plan Risk Management",
+      category_id: "1",
       detail: [
         {
           level: 1,
-          rekomendasi: "Belum ada",
-          questions: [
+          recommend: "Belum ada",
+          question: [
             {
               id: 1,
               kode: "A01",
               question: 'Apakah perusahaan sudah efisien?',
-              ya: false,
+              ya: true,
               tidak: false,
               evidence: null
             },
@@ -54,7 +60,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               kode: "A02",
               question: 'Apakah perusahaan beroperasi dengan baik?',
               ya: false,
-              tidak: false,
+              tidak: true,
               evidence: null
             },
             {
@@ -66,23 +72,23 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 1,
+              id: 4,
               kode: "A01",
               question: 'Apakah perusahaan sudah efisien?',
-              ya: false,
+              ya: true,
               tidak: false,
               evidence: null
             },
             {
-              id: 2,
+              id: 5,
               kode: "A02",
               question: 'Apakah perusahaan beroperasi dengan baik?',
-              ya: false,
+              ya: true,
               tidak: false,
               evidence: null
             },
             {
-              id: 3,
+              id: 6,
               kode: "A03",
               question: 'Apakah kinerja karyawan telah optimal sesuai dengan standar kinerja karyawan?',
               ya: false,
@@ -93,10 +99,10 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
         },
         {
           level: 2,
-          rekomendasi: "Tingkatkan lagi",
-          questions: [
+          recommend: "Tingkatkan lagi",
+          question: [
             {
-              id: 1,
+              id: 7,
               kode: "B01",
               question: 'Level 2-1?',
               ya: false,
@@ -104,7 +110,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 2,
+              id: 8,
               kode: "B02",
               question: 'Level 2-2',
               ya: false,
@@ -112,7 +118,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 3,
+              id: 9,
               kode: "B03",
               question: 'Level 2-3',
               ya: false,
@@ -120,7 +126,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 1,
+              id: 10,
               kode: "B01",
               question: 'Level 2-1?',
               ya: false,
@@ -128,7 +134,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 2,
+              id: 11,
               kode: "B02",
               question: 'Level 2-2',
               ya: false,
@@ -136,7 +142,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 3,
+              id: 12,
               kode: "B03",
               question: 'Level 2-3',
               ya: false,
@@ -149,13 +155,14 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
     },
     {
       title: "Monitor Risks",
+      category_id: "2",
       detail: [
         {
           level: 1,
-          rekomendasi: "Monitor risk rekomendasi",
-          questions: [
+          recommend: "Monitor risk rekomendasi",
+          question: [
             {
-              id: 1,
+              id: 13,
               kode: "A01",
               question: 'Apakah monitor risk sudah efisien?',
               ya: false,
@@ -163,7 +170,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 2,
+              id: 14,
               kode: "A02",
               question: 'Apakah perusahaan beroperasi dengan baik sesuai monitor risks?',
               ya: false,
@@ -171,7 +178,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 3,
+              id: 15,
               kode: "A03",
               question: 'Apakah kinerja karyawan telah optimal sesuai dengan standar kinerja karyawan?',
               ya: false,
@@ -179,7 +186,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 1,
+              id: 16,
               kode: "A01",
               question: 'Apakah monitor risk sudah efisien?',
               ya: false,
@@ -187,7 +194,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 2,
+              id: 17,
               kode: "A02",
               question: 'Apakah perusahaan beroperasi dengan baik sesuai monitor risks?',
               ya: false,
@@ -195,7 +202,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 3,
+              id: 18,
               kode: "A03",
               question: 'Apakah kinerja karyawan telah optimal sesuai dengan standar kinerja karyawan?',
               ya: false,
@@ -206,10 +213,10 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
         },
         {
           level: 2,
-          rekomendasi: "Monitor risk level 2 rekomendasi",
-          questions: [
+          recommend: "Monitor risk level 2 rekomendasi",
+          question: [
             {
-              id: 1,
+              id: 19,
               kode: "B01",
               question: 'Level 2-1 monitor risks?',
               ya: false,
@@ -217,7 +224,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 2,
+              id: 20,
               kode: "B02",
               question: 'Level 2-2 monitor risks',
               ya: false,
@@ -225,7 +232,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 3,
+              id: 21,
               kode: "B03",
               question: 'Level 2-3 monitor risks',
               ya: false,
@@ -233,7 +240,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 1,
+              id: 22,
               kode: "B01",
               question: 'Level 2-1 monitor risks?',
               ya: false,
@@ -241,7 +248,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 2,
+              id: 23,
               kode: "B02",
               question: 'Level 2-2 monitor risks',
               ya: false,
@@ -249,7 +256,7 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               evidence: null
             },
             {
-              id: 3,
+              id: 24,
               kode: "B03",
               question: 'Level 2-3 monitor risks',
               ya: false,
@@ -293,10 +300,10 @@ const MaturityPage: React.FC<MaturityPageProps> = () => {
               ) : (
                 <div className='flex flex-col w-full h-full justify-center items-center'>
                   <MaturityTable 
-                    maturityQuestion={tempQuestion}
+                    maturityQuestion={questionMaturity}
+                    session={session}
                   />
                 </div>
-              
               )}
             </div>
           </div>

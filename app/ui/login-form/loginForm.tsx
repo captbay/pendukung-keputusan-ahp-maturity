@@ -125,7 +125,10 @@ export default function LoginForm() {
         richColors 
         position="top-center"
       />
-      <LoadingScreen isLoading={isLoading} />
+      <LoadingScreen 
+        isLoading={isLoading}
+        text="Loading..."
+      />
     </section>
   );
 }
