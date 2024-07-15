@@ -27,6 +27,9 @@ const FormAhpSchema = z.object({
   section_five: z.array(z.any()).nonempty(),
 });
 
+// maturity
+const FormMaturitySchema = z.array(z.any()).nonempty();
+
 type AhpFormValue = {
   section_one: number[];
   section_two: number[];
@@ -88,6 +91,7 @@ type Question = {
   ya: boolean;
   tidak: boolean;
   evidence: string | null;
+  is_acc: boolean;
 };
 
 type Detail = {
@@ -110,6 +114,43 @@ type RecommendMaturity = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+// type AnswerResultMaturity = {
+//   id_question: string;
+//   answer: string;
+//   evidence: string;
+// };
+
+// export async function submitMaturity(
+//   id_user: string,
+//   prevState: StateAhp,
+//   formData: FormData
+// ) {
+//   const parsedData = {
+//     maturity: formData.get(
+//       "answer_result_maturity"
+//     ) as unknown as AnswerResultMaturity[],
+//   };
+
+//   const validatedFields = FormMaturitySchema.safeParse(parsedData);
+
+//   if (!validatedFields.success) {
+//     return {
+//       success: false,
+//       errors: validatedFields.error.flatten().fieldErrors,
+//       message: "Something went wrong.",
+//     };
+//   }
+
+//   try {
+//     const data = await prisma.usersMaturityForm.findFirst({
+//       where: {
+//         user_id: {
+//           equals: id_user,
+//         },
+//       },
+//     });
+// }
 
 export async function submitAhp(
   id: string,
@@ -521,6 +562,13 @@ export async function getQuestionMaturity(idUser: string) {
                   item.usersMaturity != null
                     ? item.usersMaturity.evidence
                     : null,
+                is_acc:
+                  item.usersMaturity != null
+                    ? item.usersMaturity.evidence != null &&
+                      item.usersMaturity.answer != null
+                      ? true
+                      : false
+                    : false,
               },
             ],
           });
@@ -543,6 +591,13 @@ export async function getQuestionMaturity(idUser: string) {
                 : false,
             evidence:
               item.usersMaturity != null ? item.usersMaturity.evidence : null,
+            is_acc:
+              item.usersMaturity != null
+                ? item.usersMaturity.evidence != null &&
+                  item.usersMaturity.answer != null
+                  ? true
+                  : false
+                : false,
           });
         }
       }
