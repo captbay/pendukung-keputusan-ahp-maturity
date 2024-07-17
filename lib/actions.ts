@@ -803,6 +803,20 @@ export async function resetMaturityData() {
 // Mau yang kayak gini?
 export async function getResultMaturityUser(user_id: string) {
   try {
+    const checkIfUserNotSubmit = await prisma.usersMaturity.findMany({
+      where: {
+        user_id: user_id
+      }
+    });
+
+    if (checkIfUserNotSubmit.length == 0) {
+      return {
+        success: false,
+        data: [],
+        message: "Maturity data not found",
+      };
+    }
+
     const getData: QuestionMaturity[] = (await prisma.questionMaturity.findMany({
       include: {
         category: true,
@@ -916,6 +930,21 @@ export async function getResultMaturityUser(user_id: string) {
       })
     );
 
+    // loop sections check if all detail.recommend is "Belum ada" and set sections to []
+    // sections.forEach((section) => {
+    //   if (section.detail.every((detail) => detail.recommend === "Belum ada")) {
+    //     section.detail = [];
+    //   }
+    // });
+
+    // // loop sections check if all detail is empty and set sections to splice
+    // for (let i = 0; i < sections.length; i++) {
+    //   if (sections[i].detail.length === 0) {
+    //     sections.splice(i, 1);
+    //     i--;
+    //   }
+    // }
+    
     return {
       success: true,
       data: sections,
