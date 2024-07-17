@@ -964,12 +964,40 @@ export async function getResultMaturityUser(user_id: string) {
   }
 }
 
-// NOTED
+type HeaderTabelResultMaturity = {
+  name: string;
+}
+
+// Function to calculate average level
+const calculateAverage = (levels: number[]): number => {
+  const total = levels.reduce((sum, level) => sum + level, 0);
+  return Math.round(total / levels.length);
+};
+
+// Mock function to fetch recommendation based on average level
+const fetchRecommendation = async (avgLevel: number): Promise<string> => {
+  // Replace this with actual DB call
+  const recommendations = await prisma.recommendMaturity.findFirst({
+    select: {
+      recommend: true,
+    },
+    where: {
+      level: avgLevel,
+    },
+  });
+
+  return recommendations?.recommend || 'Belum ada';
+};
+
 export async function getResultMaturityAll() {
   try {
-    const data: QuestionMaturity[] = (await prisma.usersMaturity.findMany({
+    const data = await prisma.usersMaturity.findMany({
       include: {
-        questionMaturity: true,
+        questionMaturity: {
+          include: {
+            category: true,
+          }
+        },
         users: true,
       },
       where: {
@@ -979,11 +1007,11 @@ export async function getResultMaturityAll() {
         },
       },
       orderBy: {
-        questionMaturity: {
-          code: "asc",
+        users: {
+          name: "asc",
         },
       },
-    })) as unknown as QuestionMaturity[];
+    }) ;
 
     if (!data) {
       return {
@@ -992,10 +1020,74 @@ export async function getResultMaturityAll() {
       };
     }
 
+    const headerTabel : HeaderTabelResultMaturity[] =[];
+
+    data.forEach((item) => {
+      const indexUser = headerTabel.findIndex(
+        (header) => header.name === item.users!.name
+      )
+
+      if(indexUser === -1){
+        headerTabel.push({
+          name: item.users!.name
+        });
+      }
+    })
+
+    headerTabel.unshift({
+      name: "Kriteria"
+    })
+
+    headerTabel.push({
+      name: "Hasil Rata Rata"
+    })
+
+    headerTabel.push({
+      name: "Hasil Rekomendasi"
+    })
+
+    // Transform the data
+    const groupedData: { [key: string]: any } = {};
+
+    data.forEach((item) => {
+      const category = item.questionMaturity!.category!.value;
+      const userName = item.users!.name;
+      const level = item.questionMaturity!.level;
+      const evidence = item.evidence;
+
+      if (item.answer && evidence) {
+        if (!groupedData[category]) {
+          groupedData[category] = {
+            kriteria: category,
+            users: {},
+            levels: [],
+            avg_result: 0,
+            recommendation: '',
+          };
+        }
+        groupedData[category].users[userName] = level;
+        groupedData[category].levels.push(level);
+      }
+    });
+
+    for (const category in groupedData) {
+      const avgLevel = calculateAverage(groupedData[category].levels);
+      groupedData[category].avg_result = avgLevel;
+      groupedData[category].recommendation = await fetchRecommendation(avgLevel);
+    }
+
+    const transformedData = Object.values(groupedData).map((item: any) => ({
+      kriteria: item.kriteria,
+      ...item.users,
+      avg_result: item.avg_result,
+      recommendation: item.recommendation,
+    }));
+
     return {
       success: true,
-      data: data,
-      message: "Data found",
+      header: headerTabel,
+      data: transformedData,
+      message: 'Data found',
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -1011,7 +1103,6 @@ export async function getResultMaturityAll() {
   }
 }
 
-// on progress
 export async function getQuestionMaturityAdmin(){
   try{
     const data : QuestionMaturity[] = (await prisma.questionMaturity.findMany({
