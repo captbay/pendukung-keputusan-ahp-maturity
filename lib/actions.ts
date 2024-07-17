@@ -662,7 +662,7 @@ export async function getQuestionMaturity(idUser: string) {
                 is_acc:
                   item.usersMaturity != null
                     ? item.usersMaturity.evidence != null &&
-                      item.usersMaturity.answer != null
+                      item.usersMaturity.answer
                       ? true
                       : false
                     : false,
@@ -691,7 +691,7 @@ export async function getQuestionMaturity(idUser: string) {
             is_acc:
               item.usersMaturity != null
                 ? item.usersMaturity.evidence != null &&
-                  item.usersMaturity.answer != null
+                  item.usersMaturity.answer
                   ? true
                   : false
                 : false,
