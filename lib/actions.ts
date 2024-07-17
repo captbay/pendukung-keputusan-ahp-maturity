@@ -84,15 +84,15 @@ type Question = {
   id: string;
   kode: string;
   question: string;
-  ya: boolean;
-  tidak: boolean;
-  evidence: string | null;
-  is_acc: boolean;
+  ya?: boolean;
+  tidak?: boolean;
+  evidence?: string | null;
+  is_acc?: boolean;
 };
 
 type Detail = {
   level: number;
-  recommend: string;
+  recommend?: string;
   question?: Question[];
 };
 
@@ -964,7 +964,7 @@ export async function getResultMaturityUser(user_id: string) {
   }
 }
 
-// Belum Done
+// NOTED
 export async function getResultMaturityAll() {
   try {
     const data: QuestionMaturity[] = (await prisma.usersMaturity.findMany({
@@ -1011,9 +1011,17 @@ export async function getResultMaturityAll() {
   }
 }
 
+// on progress
 export async function getQuestionMaturityAdmin(){
   try{
-    const data = await prisma.questionMaturity.findMany();
+    const data : QuestionMaturity[] = (await prisma.questionMaturity.findMany({
+      include: {
+        category: true,
+      },
+      orderBy: {
+        code: "asc",
+      },
+    })) as unknown as QuestionMaturity[];
 
     if(!data){
       return {
@@ -1022,9 +1030,67 @@ export async function getQuestionMaturityAdmin(){
       };
     }
 
+    const sections: QuestionPerSection[] = [
+      { title: "Plan Risk Management", category_id: "", detail: [] },
+      { title: "Identify Risks", category_id: "", detail: [] },
+      {
+        title: "Perform Qualitative Risk Analysis",
+        category_id: "",
+        detail: [],
+      },
+      {
+        title: "Perform Quantitative Risk Analysis",
+        category_id: "",
+        detail: [],
+      },
+      { title: "Plan Risk Responses", category_id: "", detail: [] },
+      { title: "Implement Risk Responses", category_id: "", detail: [] },
+      { title: "Monitor Risks", category_id: "", detail: [] },
+    ];
+
+    const sectionMap: { [key: string]: QuestionPerSection } = {
+      plan_risk_management: sections[0],
+      identify_risks: sections[1],
+      perform_qualitative_risk_analysis: sections[2],
+      perform_quantitative_risk_analysis: sections[3],
+      plan_risk_responses: sections[4],
+      implement_risk_responses: sections[5],
+      monitor_risks: sections[6],
+    };
+
+    data.forEach((item) => {
+      const section = sectionMap[item.category.key];
+      if (section) {
+        section.category_id = item.category_id;
+
+        const detailIndex = section.detail.findIndex(
+          (detail) => detail.level === item.level
+        );
+
+        if (detailIndex === -1) {
+          section.detail.push({
+            level: item.level,
+            question: [
+              {
+                id: item.id,
+                kode: item.code,
+                question: item.question,
+              },
+            ],
+          });
+        } else {
+          section.detail[detailIndex].question?.push({
+            id: item.id,
+            kode: item.code,
+            question: item.question
+          });
+        }
+      }
+    });
+
     return {
       success: true,
-      data: data,
+      data: sections,
       message: "Data found",
     };
 
