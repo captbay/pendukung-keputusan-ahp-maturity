@@ -12,7 +12,7 @@ export default async function MaturityQuestionEdit() {
   console.log('ini maturity question --- ', maturityQuestion?.data);
   return (
     <MaturityQuestionEditPage 
-      maturityQuestion={maturityQuestion!.data!!}
+      maturityQuestion={maturityQuestion!.data}
     />
   );
 }

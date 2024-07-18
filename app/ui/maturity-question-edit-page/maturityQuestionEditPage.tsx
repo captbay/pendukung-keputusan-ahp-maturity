@@ -8,7 +8,7 @@ import { QuestionPerSection } from "@/lib/actions";
 import MaturityQuestionEditTable from "@/app/components/maturity-question-edit-table/maturityQuestionEditTable";
 
 interface MaturityQuestionEditPageProps {
-  maturityQuestion: QuestionPerSection[];
+  maturityQuestion: QuestionPerSection[] | undefined;
 }
 
 const MaturityQuestionEditPage: React.FC<MaturityQuestionEditPageProps> = ({ maturityQuestion }) => {
@@ -21,7 +21,7 @@ const MaturityQuestionEditPage: React.FC<MaturityQuestionEditPageProps> = ({ mat
       </div>
       <div className="flex flex-row max-lg:flex-col max-lg:gap-10 w-[70%] max-lg:w-[90%] justify-center items-center mt-10">
         <MaturityQuestionEditTable
-          maturityQuestion={maturityQuestion}
+          maturityQuestion={maturityQuestion!}
         />
       </div>
     </main>

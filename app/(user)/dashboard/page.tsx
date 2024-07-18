@@ -15,7 +15,7 @@ export default async function Dashboard() {
       <DashboardUi 
         session={session}
         ahpResult={ahpResult!.data}
-        maturityResult={maturityResultData!}
+        maturityResult={maturityResultData}
       />
     </>
   );

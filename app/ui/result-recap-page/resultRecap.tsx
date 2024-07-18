@@ -9,12 +9,12 @@ interface ResultRecapPageProps {
   maturityResult: {
     header: HeaderTabelResultMaturity[],
     data: any[];
-  }
+  } | undefined;
 }
 
 const ResultRecapPage: React.FC<ResultRecapPageProps> = ({ maturityResult }) => {
-  const maturityResultData = maturityResult.data as TableRowMaturity[];
-  const maturityResultHeader = maturityResult.header as User[];
+  const maturityResultData = maturityResult!.data as TableRowMaturity[];
+  const maturityResultHeader = maturityResult!.header as User[];
 
   return (
     <main className="flex flex-col w-full min-h-screen items-center py-10">

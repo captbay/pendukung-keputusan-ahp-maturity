@@ -13,7 +13,7 @@ export default async function DashboardAdmin() {
       session={session} 
       data={user!.data}
       ahpResult={ahpResult!.data}
-      maturityResult={maturityResult!.data!!}
+      maturityResult={maturityResult!.data}
     />
   );
 }

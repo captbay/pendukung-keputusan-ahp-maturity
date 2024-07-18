@@ -18,13 +18,13 @@ interface DashboardProps {
   maturityResult: {
     header: HeaderTabelResultMaturity[],
     data: any[];
-  }
+  } | undefined
 }
 
 const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult, maturityResult }) => {
   const router = useRouter();
-  const maturityResultData = maturityResult.data as TableRowMaturity[];
-  const maturityResultHeader = maturityResult.header as User[];
+  const maturityResultData = maturityResult!.data as TableRowMaturity[];
+  const maturityResultHeader = maturityResult!.header as User[];
 
   console.log('ini maturity reesult dashboard --- ', maturityResultData);
 

@@ -27,13 +27,13 @@ interface DashboardProps {
   maturityResult: {
     header: HeaderTabelResultMaturity[],
     data: any[];
-  }
+  } | undefined;
 }
 
 const DashboardUiAdmin: React.FC<DashboardProps> = ({ session, data, ahpResult, maturityResult }) => {
   const router = useRouter();
-  const maturityResultData = maturityResult.data as TableRowMaturity[];
-  const maturityResultHeader = maturityResult.header as User[];
+  const maturityResultData = maturityResult!.data as TableRowMaturity[];
+  const maturityResultHeader = maturityResult!.header as User[];
 
   useEffect(() => {
     if (session?.user.jabatan === "Admin") {

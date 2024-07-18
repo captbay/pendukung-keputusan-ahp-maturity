@@ -103,11 +103,10 @@ const MaturityPage: React.FC<MaturityPageProps> = ({ session, questionMaturity, 
             <div className='flex flex-col w-full h-full justify-center items-center max-lg:p-8 mb-[40px]'>
               {maturityResult.length > 0 && !startMaturityForm ? (
                 <MaturityRecapTable 
-                  data={filteredDataRecommendations!!}
+                  data={filteredDataRecommendations}
                   users={userData}
                 />
-                // <p>aa</p>
-              ) : filteredDataRecommendations?.length == 0 && !startMaturityForm ? (
+              ) : maturityResult.length == 0 && !startMaturityForm ? (
                 <div className='flex justify-center items-center flex-col gap-4'>
                   <NotFoundIcon />
                 <p className="text-center text-xl max-w-[500px]">No Maturity data found. Press START button above to fill the Maturity Measurement form.</p>

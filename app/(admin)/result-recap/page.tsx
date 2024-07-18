@@ -10,7 +10,7 @@ export default async function ResultRecap() {
   return (
     <div>
       <ResultRecapPage 
-        maturityResult={maturityResultData!!}
+        maturityResult={maturityResultData}
       />
     </div>
   );
