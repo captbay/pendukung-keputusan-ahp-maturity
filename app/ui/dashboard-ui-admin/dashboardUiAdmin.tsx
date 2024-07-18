@@ -24,7 +24,7 @@ interface DashboardProps {
     } | null;
     value?: number;
   }> | undefined;
-  maturityResult: {
+  maturityResult?: {
     header: HeaderTabelResultMaturity[],
     data: any[];
   } | undefined;
