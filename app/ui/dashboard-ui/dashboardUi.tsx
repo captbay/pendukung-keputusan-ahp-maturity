@@ -21,13 +21,6 @@ interface DashboardProps {
   }
 }
 
-interface RowData {
-  key: string;
-  kriteria: string;
-  priority_vector: number;
-  rank: number;
-}
-
 const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult, maturityResult }) => {
   const router = useRouter();
   const maturityResultData = maturityResult.data as TableRowMaturity[];
@@ -55,12 +48,12 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult, maturityRes
           />
         </div>
 
-        <div className="flex flex-col w-full justify-center items-center mb-6">
+        {/* <div className="flex flex-col w-full justify-center items-center mb-6">
           <MaturityRecapTable 
             users={maturityResultHeader}
             data={maturityResultData}
           />
-        </div>
+        </div> */}
       </div>
     </main>
   );
