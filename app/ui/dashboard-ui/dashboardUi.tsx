@@ -28,11 +28,11 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult, maturityRes
 
   console.log('ini maturity reesult dashboard --- ', maturityResultData);
 
-  useEffect(() => {
-    if(session?.user.jabatan !== "Admin") {
-      router.replace("/dashboard"); 
-    }
-  }, [session]);
+  // useEffect(() => {
+  //   if(session?.user.jabatan !== "Admin") {
+  //     router.replace("/dashboard"); 
+  //   }
+  // }, [session]);
 
   return (
     <main className="flex flex-col w-full min-h-screen items-center">
@@ -41,12 +41,12 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult, maturityRes
       </div>
       <div className="flex flex-col max-lg:flex-col w-[90%] max-lg:w-[90%] min-h-screen justify-center items-center">
 
-        <div className="flex flex-col w-full justify-center items-center">
+        {/* <div className="flex flex-col w-full justify-center items-center">
           <AHPResultTable
             ahpResult={ahpResult}
             session={session}
           />
-        </div>
+        </div> */}
 
         {/* <div className="flex flex-col w-full justify-center items-center mb-6">
           <MaturityRecapTable 
