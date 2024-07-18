@@ -7,32 +7,11 @@ import { app } from '@/firebase';
 import ConfirmationModal from '@/app/ui/confirmation-modal/confirmationModal';
 import ProgressBar from '@/app/ui/progress-bar/progressBar';
 import LoadingScreen from '../loading-screen/loadingScreen';
-import { StateMaturity, submitMaturity } from '@/lib/actions';
-
-interface Question {
-  id: string;
-  kode: string;
-  question: string;
-  ya: boolean;
-  tidak: boolean;
-  evidence: string | null;
-  is_acc: boolean;
-}
-
-interface Detail {
-  level: number;
-  recommend: string;
-  question: Question[];
-}
-
-interface QuestionSet {
-  title: string;
-  detail: Detail[];
-  category_id: string;
-}
+import { QuestionPerSection, StateMaturity, submitMaturity } from '@/lib/actions';
+import { useRouter } from 'next/navigation';
 
 interface MaturityTableProps {
-  maturityQuestion: QuestionSet[];
+  maturityQuestion: QuestionPerSection[];
   session: any;
 }
 
@@ -45,12 +24,13 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
   const [formData, setFormData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const formDataMaturity = new FormData();
+  const router = useRouter();
 
   useEffect(() => {
     // initialize form data with default values
     const initialData = maturityQuestion.flatMap(questionSet =>
       questionSet.detail.flatMap(detail =>
-        detail.question.map(question => ({
+        detail.question?.map(question => ({
           id_user: session?.user.id,
           id_question: question.id,
           id_category: questionSet.category_id,
@@ -68,7 +48,7 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
   const validateAnswer = () => {
     const currentQuestions = eachLevelQuestion.detail.flatMap(detail => detail.question);
     return currentQuestions.every(question => {
-      const answer = formData.find(item => item.id_question === question.id);
+      const answer = formData.find(item => item.id_question === question?.id);
       return answer && (answer.ya || answer.tidak);
     });
   };
@@ -101,7 +81,9 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
 
   const handleRadioChange = (questionId: string, answer: boolean) => {
     setFormData(prev => prev.map(item =>
-      item.id_question === questionId ? { ...item, ya: answer, tidak: !answer } : item
+      item.id_question === questionId 
+        ? { ...item, ya: answer, tidak: !answer, evidence: answer ? item.evidence : '', file: answer ? item.file : null } 
+        : item
     ));
   };
 
@@ -154,9 +136,7 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
 
       if (result!.success) {
         toast.success("Form submitted successfully!");
-        // setTimeout(() => {
-        //   router.push('/dashboard');
-        // }, 1200);
+        window.location.reload();
       } else {
         toast.error("Failed to submit form. Please try again later.");
       }
@@ -165,6 +145,7 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
     } catch (error) {
       console.error('Error uploading files:', error);
       toast.error('Gagal untuk mengunggah evidence. Silakan coba lagi.');
+      setIsLoading(false);
     }
   };
 
@@ -198,7 +179,7 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
               </tr>
             </thead>
             <tbody>
-              {questionSet.question.map((data, qIndex) => (
+              {questionSet.question?.map((data, qIndex) => (
                 <tr key={qIndex}>
                   <td className="border border-gray-400 px-4 py-2">{data.kode}</td>
                   <td className="border border-gray-400 px-4 py-2">{data.question}</td>
@@ -223,29 +204,32 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
                     />
                   </td>
                   <td className="border border-gray-400 px-4 py-2 text-center">
-                    {formData.find((item) => item.id_question === data.id)?.evidence?.startsWith("https://") 
-                    ? (
-                      <a
-                        href={formData.find((item) => item.id_question === data.id)
-                          ?.evidence || ""}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-primary"
-                      >
-                        Lihat Evidence
-                      </a>
-                    ) : (
-                      <Button
-                      className='bg-secondary text-primary border-primary border-2'
-                      onClick={() => handleFileButtonClick(data.id)}
-                      >
-                        {formData.find(item => item.id_question === data.id)?.evidence ? 
-                          formData.find(item => item.id_question === data.id).evidence.length > 20 ? 
-                            formData.find(item => item.id_question === data.id).evidence.substring(0, 9) + "...  " + formData.find(item => item.id_question === data.id).evidence.substring(formData.find(item => item.id_question === data.id).evidence.length - 4) 
-                          : formData.find(item => item.id_question === data.id).evidence
-                        : "Upload Evidence"}
-                      </Button>
-                    )}
+                  {formData.find((item) => item.id_question === data.id)?.ya ? (
+                    formData.find((item) => item.id_question === data.id)?.evidence?.startsWith("https://") 
+                      ? (
+                        <a
+                          href={formData.find((item) => item.id_question === data.id)?.evidence || ""}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary"
+                        >
+                          Lihat Evidence
+                        </a>
+                      ) : (
+                        <Button
+                          className='bg-secondary text-primary border-primary border-2'
+                          onClick={() => handleFileButtonClick(data.id)}
+                        >
+                          {formData.find(item => item.id_question === data.id)?.evidence 
+                            ? formData.find(item => item.id_question === data.id).evidence.length > 20 
+                              ? formData.find(item => item.id_question === data.id).evidence.substring(0, 9) + "...  " + formData.find(item => item.id_question === data.id).evidence.substring(formData.find(item => item.id_question === data.id).evidence.length - 4) 
+                              : formData.find(item => item.id_question === data.id).evidence 
+                            : "Upload Evidence"}
+                        </Button>
+                      )
+                  ) : (
+                    "-"
+                  )}
                     <input
                       id={`evidence-${data.id}`}
                       type="file"
@@ -260,7 +244,7 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
                     />
                   </td>
                   {qIndex === 0 && (
-                    <td className="border border-gray-400 px-4 py-2" rowSpan={questionSet.question.length}>
+                    <td className="border border-gray-400 px-4 py-2" rowSpan={questionSet.question?.length}>
                       {questionSet.recommend}
                     </td>
                   )}

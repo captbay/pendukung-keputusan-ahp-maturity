@@ -40,7 +40,7 @@ export const authConfig = {
         if (isAdmin) {
           if (
             nextUrl.pathname !== "/dashboard-admin" &&
-            nextUrl.pathname !== "/result-recap" &&
+            nextUrl.pathname !== "/maturity-question-edit" &&
             nextUrl.pathname !== "/ahp-recap" &&
             nextUrl.pathname !== "/playground"
           ) {

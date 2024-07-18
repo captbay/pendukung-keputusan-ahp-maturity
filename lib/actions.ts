@@ -964,7 +964,7 @@ export async function getResultMaturityUser(user_id: string) {
   }
 }
 
-type HeaderTabelResultMaturity = {
+export type HeaderTabelResultMaturity = {
   name: string;
 }
 
@@ -1085,8 +1085,10 @@ export async function getResultMaturityAll() {
 
     return {
       success: true,
-      header: headerTabel,
-      data: transformedData,
+      data: {
+        header: headerTabel,
+        data: transformedData,
+      },
       message: 'Data found',
     };
   } catch (e) {
@@ -1199,7 +1201,7 @@ export async function getQuestionMaturityAdmin(){
   }
 }
 
-export async function postQuestionMaturityAdmin(prevState:any, formData: FormData) {
+export async function postQuestionMaturityAdmin(formData: FormData) {
   const parsedData: formMaturity[] = JSON.parse(
     formData.get("question") as string
   );

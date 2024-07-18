@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import UserTable from "@/app/components/user-table/userTable";
 import AHPResultTable from "@/app/components/ahp-result-table/ahpResultTable";
+import { HeaderTabelResultMaturity } from "@/lib/actions";
+import MaturityRecapTable, { TableRowMaturity, User } from "@/app/components/maturity-recap-table/maturityRecapTable";
 
 interface DashboardProps {
   session: any;
@@ -22,10 +24,16 @@ interface DashboardProps {
     } | null;
     value?: number;
   }> | undefined;
+  maturityResult: {
+    header: HeaderTabelResultMaturity[],
+    data: any[];
+  }
 }
 
-const DashboardUiAdmin: React.FC<DashboardProps> = ({ session, data, ahpResult }) => {
+const DashboardUiAdmin: React.FC<DashboardProps> = ({ session, data, ahpResult, maturityResult }) => {
   const router = useRouter();
+  const maturityResultData = maturityResult.data as TableRowMaturity[];
+  const maturityResultHeader = maturityResult.header as User[];
 
   useEffect(() => {
     if (session?.user.jabatan === "Admin") {
@@ -44,8 +52,9 @@ const DashboardUiAdmin: React.FC<DashboardProps> = ({ session, data, ahpResult }
           session={session}
         />
       </div>
-      <UserTable
-        data={data}
+      <MaturityRecapTable
+        users={maturityResultHeader}
+        data={maturityResultData}
       />
     </main>
   );

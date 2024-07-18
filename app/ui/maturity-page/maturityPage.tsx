@@ -2,272 +2,83 @@
 import MaturityRecapTable from '@/app/components/maturity-recap-table/maturityRecapTable';
 import MaturityTable from '@/app/components/maturity-table/maturityTable';
 import NotFoundIcon from '@/app/icon/NotFoundIcon';
-import { getQuestionMaturity } from '@/lib/actions';
+import { RecommendMaturity, getQuestionMaturity } from '@/lib/actions';
 import { Button } from '@nextui-org/react';
 import React, { useState } from 'react';
+import { QuestionPerSection } from '@/lib/actions';
 
-interface Question {
-  id: number;
-  kode: string;
-  question: string;
-  ya: boolean;
-  tidak: boolean;
-  evidence: string | null;
-}
-
-interface Detail {
-  level: number;
-  recommend: string;
-  question: Question[];
-}
-
-interface QuestionSet {
-  title: string;
-  detail: Detail[];
-  category_id: string;
-}
 interface MaturityPageProps {
   session: any;
-  questionMaturity: any;
+  questionMaturity: QuestionPerSection[];
+  maturityResult: QuestionPerSection[];
 }
 
-const MaturityPage: React.FC<MaturityPageProps> = ({ session, questionMaturity }) => {
-  const [startAhpForm, setStartAhpForm] = useState(false);
-  const [isData, setIsData] = useState(false);
+const MaturityPage: React.FC<MaturityPageProps> = ({ session, questionMaturity, maturityResult }) => {
+  const [startMaturityForm, setStartMaturityForm] = useState(false);
+  console.log('maturityResult ---- ', maturityResult);
 
-  console.log('questionMaturity ---- ', questionMaturity);
-
-  const tempQuestion: QuestionSet[] = 
-  [
-    {
-      title: "Plan Risk Management",
-      category_id: "1",
-      detail: [
-        {
-          level: 1,
-          recommend: "Belum ada",
-          question: [
-            {
-              id: 1,
-              kode: "A01",
-              question: 'Apakah perusahaan sudah efisien?',
-              ya: true,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 2,
-              kode: "A02",
-              question: 'Apakah perusahaan beroperasi dengan baik?',
-              ya: false,
-              tidak: true,
-              evidence: null
-            },
-            {
-              id: 3,
-              kode: "A03",
-              question: 'Apakah kinerja karyawan telah optimal sesuai dengan standar kinerja karyawan?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 4,
-              kode: "A01",
-              question: 'Apakah perusahaan sudah efisien?',
-              ya: true,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 5,
-              kode: "A02",
-              question: 'Apakah perusahaan beroperasi dengan baik?',
-              ya: true,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 6,
-              kode: "A03",
-              question: 'Apakah kinerja karyawan telah optimal sesuai dengan standar kinerja karyawan?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-          ]
-        },
-        {
-          level: 2,
-          recommend: "Tingkatkan lagi",
-          question: [
-            {
-              id: 7,
-              kode: "B01",
-              question: 'Level 2-1?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 8,
-              kode: "B02",
-              question: 'Level 2-2',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 9,
-              kode: "B03",
-              question: 'Level 2-3',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 10,
-              kode: "B01",
-              question: 'Level 2-1?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 11,
-              kode: "B02",
-              question: 'Level 2-2',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 12,
-              kode: "B03",
-              question: 'Level 2-3',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-          ]
+  function getFilteredRecommendations(maturityResult: QuestionPerSection[], userName: string) {
+    return maturityResult.map(entry => {
+      const validDetails = entry.detail.filter(detail => detail.recommend !== "Belum ada");
+      console.log('validDetails ---- ', entry.title, validDetails);
+  
+      if (validDetails.length > 0) {
+        const levels = validDetails.map(detail => detail.level).sort((a, b) => a - b);
+        let highestConsecutiveLevel = levels[0];
+  
+        for (let i = 1; i < levels.length; i++) {
+          if (levels[i] === highestConsecutiveLevel + 1) {
+            highestConsecutiveLevel = levels[i];
+          } else {
+            break;
+          }
         }
-      ],
+  
+        const highestLevelDetail = validDetails.find(detail => detail.level === highestConsecutiveLevel);
+        console.log('lalalal -- ', entry.title, highestConsecutiveLevel);
+  
+        return {
+          kriteria: entry.title,
+          [userName]: highestConsecutiveLevel.toString(),
+          avg_result: highestConsecutiveLevel.toString(),
+          recommendation: highestLevelDetail ? highestLevelDetail.recommend : "Belum ada"
+        };
+      }
+  
+      return {
+        kriteria: entry.title,
+        [userName]: "0",
+        avg_result: "0",
+        recommendation: "Belum ada"
+      };
+    });
+  }  
+
+  const filteredDataRecommendations = maturityResult.length > 0 ? getFilteredRecommendations(maturityResult, session?.user.name) : null;
+  const userData = [
+    {
+      name: "Kriteria",
+      email: "",
+      jabatan: ""
     },
     {
-      title: "Monitor Risks",
-      category_id: "2",
-      detail: [
-        {
-          level: 1,
-          recommend: "Monitor risk rekomendasi",
-          question: [
-            {
-              id: 13,
-              kode: "A01",
-              question: 'Apakah monitor risk sudah efisien?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 14,
-              kode: "A02",
-              question: 'Apakah perusahaan beroperasi dengan baik sesuai monitor risks?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 15,
-              kode: "A03",
-              question: 'Apakah kinerja karyawan telah optimal sesuai dengan standar kinerja karyawan?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 16,
-              kode: "A01",
-              question: 'Apakah monitor risk sudah efisien?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 17,
-              kode: "A02",
-              question: 'Apakah perusahaan beroperasi dengan baik sesuai monitor risks?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 18,
-              kode: "A03",
-              question: 'Apakah kinerja karyawan telah optimal sesuai dengan standar kinerja karyawan?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-          ]
-        },
-        {
-          level: 2,
-          recommend: "Monitor risk level 2 rekomendasi",
-          question: [
-            {
-              id: 19,
-              kode: "B01",
-              question: 'Level 2-1 monitor risks?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 20,
-              kode: "B02",
-              question: 'Level 2-2 monitor risks',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 21,
-              kode: "B03",
-              question: 'Level 2-3 monitor risks',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 22,
-              kode: "B01",
-              question: 'Level 2-1 monitor risks?',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 23,
-              kode: "B02",
-              question: 'Level 2-2 monitor risks',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-            {
-              id: 24,
-              kode: "B03",
-              question: 'Level 2-3 monitor risks',
-              ya: false,
-              tidak: false,
-              evidence: null
-            },
-          ]
-        }
-      ],
+      name: session?.user.name,
+      email: session?.user.email,
+      jabatan: session?.user.jabatan
+    },
+    {
+      name: "Hasil Rata Rata",
+      email: "",
+      jabatan: ""
+    },
+    {
+      name: "Hasil Rekomendasi",
+      email: "",
+      jabatan: ""
     }
-  ];
+  ]
+
+  console.log('getFilteredRecommendations ---- ', filteredDataRecommendations);
 
   return (
     <main className="flex w-full min-h-screen bg-secondary z-0 justify-center">
@@ -281,18 +92,22 @@ const MaturityPage: React.FC<MaturityPageProps> = ({ session, questionMaturity }
 
             <div className='flex justify-center'>
               <Button
-                onClick={() => setStartAhpForm(!startAhpForm)}
+                onClick={() => setStartMaturityForm(!startMaturityForm)}
                 className="text-secondary w-24 text-center hover:bg-red-700 hover:text-white bg-primary"
                 shadow-md
               >
-                {startAhpForm ? 'Close' : 'Start'}
+                {startMaturityForm ? 'Close' : 'Start'}
               </Button>
             </div>
 
             <div className='flex flex-col w-full h-full justify-center items-center max-lg:p-8 mb-[40px]'>
-              {isData && !startAhpForm ? (
-                <MaturityRecapTable />
-              ) : !isData && !startAhpForm ? (
+              {maturityResult.length > 0 && !startMaturityForm ? (
+                <MaturityRecapTable 
+                  data={filteredDataRecommendations!!}
+                  users={userData}
+                />
+                // <p>aa</p>
+              ) : filteredDataRecommendations?.length == 0 && !startMaturityForm ? (
                 <div className='flex justify-center items-center flex-col gap-4'>
                   <NotFoundIcon />
                 <p className="text-center text-xl max-w-[500px]">No Maturity data found. Press START button above to fill the Maturity Measurement form.</p>

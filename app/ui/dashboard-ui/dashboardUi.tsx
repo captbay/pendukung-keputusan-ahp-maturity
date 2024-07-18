@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/react";
 import AHPResultTable from "@/app/components/ahp-result-table/ahpResultTable";
-import MaturityRecapTable from "@/app/components/maturity-recap-table/maturityRecapTable";
+import MaturityRecapTable, { TableRowMaturity, User } from "@/app/components/maturity-recap-table/maturityRecapTable";
+import { HeaderTabelResultMaturity } from "@/lib/actions";
 
 interface DashboardProps {
   session: any;
@@ -14,6 +15,10 @@ interface DashboardProps {
     } | null;
     value?: number;
   }> | undefined;
+  maturityResult: {
+    header: HeaderTabelResultMaturity[],
+    data: any[];
+  }
 }
 
 interface RowData {
@@ -23,8 +28,12 @@ interface RowData {
   rank: number;
 }
 
-const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult }) => {
+const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult, maturityResult }) => {
   const router = useRouter();
+  const maturityResultData = maturityResult.data as TableRowMaturity[];
+  const maturityResultHeader = maturityResult.header as User[];
+
+  console.log('ini maturity reesult dashboard --- ', maturityResultData);
 
   useEffect(() => {
     if(session?.user.jabatan !== "Admin") {
@@ -37,7 +46,7 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult }) => {
       <div className="max-lg:mt-20 mt-10 mb-[-30px] rounded-2xl max-lg:mx-6">
         <h1 className="text-3xl font-bold text-tertiary max-lg:text-lg text-center p-4">Risk Management Maturity Measurement Dashboard</h1>
       </div>
-      <div className="flex flex-col max-lg:flex-col w-[70%] max-lg:w-[90%] min-h-screen justify-center items-center">
+      <div className="flex flex-col max-lg:flex-col w-[90%] max-lg:w-[90%] min-h-screen justify-center items-center">
 
         <div className="flex flex-col w-full justify-center items-center">
           <AHPResultTable
@@ -46,8 +55,11 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult }) => {
           />
         </div>
 
-        <div className="flex flex-col w-full justify-center items-center">
-          <MaturityRecapTable />
+        <div className="flex flex-col w-full justify-center items-center mb-6">
+          <MaturityRecapTable 
+            users={maturityResultHeader}
+            data={maturityResultData}
+          />
         </div>
       </div>
     </main>

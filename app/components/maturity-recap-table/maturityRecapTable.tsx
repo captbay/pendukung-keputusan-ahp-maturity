@@ -1,24 +1,26 @@
 import React, { useEffect } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue } from "@nextui-org/react";
+import { HeaderTabelResultMaturity } from "@/lib/actions";
 
-interface TableRow {
+export type TableRowMaturity = {
   kriteria: string;
   [key: string]: string;
   avg_result: string;
   recommendation: string;
 }
-interface User {
+
+export type User = {
   name: string;
   email: string;
   jabatan: string | null;
 }
 interface MaturityRecapTableProps {
-  data: TableRow[];
+  data: TableRowMaturity[];
   users: User[];
 }
 
-// const MaturityRecapTable: React.FC<MaturityRecapTableProps> = ({ data, users }) => {
-const MaturityRecapTable = () => {
+const MaturityRecapTable: React.FC<MaturityRecapTableProps> = ({ data, users }) => {
+// const MaturityRecapTable = () => {
   const usersTemp: User[] = [
     {
       name: "Kriteria",
@@ -52,7 +54,7 @@ const MaturityRecapTable = () => {
     }
   ]
 
-  const maturityResultTemp: TableRow[] = [
+  const maturityResultTemp: TableRowMaturity[] = [
     {
       kriteria: "Plan Risk Management",
       "User One": "5",
@@ -127,7 +129,7 @@ const MaturityRecapTable = () => {
     }
   ]
   // const keys = Object.keys(data[0]);
-  const keys = Object.keys(maturityResultTemp[0]);
+  const keys = Object.keys(data[0]);
 
   return (
     <div className="w-[70%] max-lg:w-[90%] flex flex-col gap-14 mt-10 text-center">
@@ -135,7 +137,7 @@ const MaturityRecapTable = () => {
         <p className="text-lg p-2">Maturity Measurement Result Overall</p>
         <Table aria-label="Example static collection table">
           <TableHeader>
-              {usersTemp.map((user, index) => (
+              {users.map((user, index) => (
                 <TableColumn key={index} align="center">
                   {user.name !== "Kriteria" && user.name !== "Hasil Rata Rata" && user.name !== "Hasil Rekomendasi" 
                     ? user.name + '\'s level'
@@ -147,7 +149,7 @@ const MaturityRecapTable = () => {
           <TableBody
             emptyContent="No data found."
           >
-            {maturityResultTemp.map((item, rowIndex) => (
+            {data.map((item, rowIndex) => (
               <TableRow key={rowIndex}>
                 {keys.map((key, cellIndex) => (
                   <TableCell key={cellIndex}>{item[key]}</TableCell>
