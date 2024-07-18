@@ -24,7 +24,8 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
   const [formData, setFormData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const formDataMaturity = new FormData();
-  const router = useRouter();
+  const [textProgress, setTextProgress] = useState("Mengunggah evidence...");
+  const [progressValue, setProgressValue] = useState(0);
 
   useEffect(() => {
     // initialize form data with default values
@@ -122,6 +123,8 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
 
       const updatedData = await Promise.all(uploadPromises);
       console.log('Final Data:', updatedData);
+      setProgressValue(50);
+      setTextProgress("Mengirim data ke server...");
 
       formDataMaturity.append('result_answer_maturity', JSON.stringify(updatedData));
       // hit the func DB
@@ -134,14 +137,17 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
         formDataMaturity
       );
 
-      if (result!.success) {
-        toast.success("Form submitted successfully!");
-        window.location.reload();
-      } else {
-        toast.error("Failed to submit form. Please try again later.");
-      }
-
-      setIsLoading(false);
+      setTimeout(() => {
+        if (result!.success) {
+          setProgressValue(100);
+          toast.success("Form submitted successfully!");
+          window.location.reload();
+        } else {
+          toast.error("Failed to submit form. Please try again later.");
+        }
+  
+        setIsLoading(false);
+      }, 2000);
     } catch (error) {
       console.error('Error uploading files:', error);
       toast.error('Gagal untuk mengunggah evidence. Silakan coba lagi.');
@@ -301,7 +307,7 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
         richColors 
         position="top-center"
       />
-      <LoadingScreen isLoading={isLoading} text={"Mengunggah Evidence..."} />
+      <LoadingScreen isLoading={isLoading} isProgress={true} progressValue={progressValue} text={textProgress} />
     </div>
   );
 };
