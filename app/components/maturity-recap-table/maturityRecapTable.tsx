@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue } from "@nextui-org/react";
 import { HeaderTabelResultMaturity } from "@/lib/actions";

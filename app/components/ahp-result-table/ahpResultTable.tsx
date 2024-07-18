@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue, Button } from "@nextui-org/react";
 import ConfirmationModal from "@/app/ui/confirmation-modal/confirmationModal";

@@ -1,6 +1,3 @@
-"use client"
-
-import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/react";
 import AHPResultTable from "@/app/components/ahp-result-table/ahpResultTable";
@@ -22,17 +19,10 @@ interface DashboardProps {
 }
 
 const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult, maturityResult }) => {
-  const router = useRouter();
   const maturityResultData = maturityResult!.data as TableRowMaturity[];
   const maturityResultHeader = maturityResult!.header as User[];
 
   console.log('ini maturity reesult dashboard --- ', maturityResultData);
-
-  useEffect(() => {
-    if(session?.user.jabatan !== "Admin") {
-      router.replace("/dashboard"); 
-    }
-  }, [session]);
 
   return (
     <main className="flex flex-col w-full min-h-screen items-center">
@@ -41,19 +31,19 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult, maturityRes
       </div>
       <div className="flex flex-col max-lg:flex-col w-[90%] max-lg:w-[90%] min-h-screen justify-center items-center">
 
-        {/* <div className="flex flex-col w-full justify-center items-center">
+        <div className="flex flex-col w-full justify-center items-center">
           <AHPResultTable
             ahpResult={ahpResult}
             session={session}
           />
-        </div> */}
+        </div>
 
-        {/* <div className="flex flex-col w-full justify-center items-center mb-6">
+        <div className="flex flex-col w-full justify-center items-center mb-6">
           <MaturityRecapTable 
             users={maturityResultHeader}
             data={maturityResultData}
           />
-        </div> */}
+        </div>
       </div>
     </main>
   );
