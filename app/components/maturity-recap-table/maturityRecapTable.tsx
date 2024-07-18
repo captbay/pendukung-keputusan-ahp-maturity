@@ -21,6 +21,10 @@ interface MaturityRecapTableProps {
 }
 
 const MaturityRecapTable: React.FC<MaturityRecapTableProps> = ({ data, users }) => {
+
+  // 
+  if (data.length === 0) return <p>no data</p>;
+
   const keys = Object.keys(data[0]);
 
   return (
