@@ -43,7 +43,7 @@ const DashboardUiAdmin: React.FC<DashboardProps> = ({ session, data, ahpResult, 
 
   return (
     <main className="flex flex-col w-full min-h-screen items-center py-10">
-      {/* <div className="max-lg:mt-20 mb-[-30px] rounded-2xl max-lg:mx-6">
+      <div className="max-lg:mt-20 mb-[-30px] rounded-2xl max-lg:mx-6">
         <h1 className="text-3xl font-bold text-tertiary max-lg:text-2xl text-center p-4">Risk Management Maturity Measurement Dashboard</h1>
       </div>
       <div className="flex flex-row max-lg:flex-col max-lg:gap-10 w-[70%] max-lg:w-[90%] justify-center items-center mt-10">
@@ -52,7 +52,7 @@ const DashboardUiAdmin: React.FC<DashboardProps> = ({ session, data, ahpResult, 
           session={session}
         />
       </div>
-      <MaturityRecapTable
+      {/* <MaturityRecapTable
         users={maturityResultHeader}
         data={maturityResultData}
       /> */}
