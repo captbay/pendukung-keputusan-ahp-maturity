@@ -84,15 +84,15 @@ export type Question = {
   id: string;
   kode: string;
   question: string;
-  ya: boolean;
-  tidak: boolean;
-  evidence: string | null;
-  is_acc: boolean;
+  ya?: boolean;
+  tidak?: boolean;
+  evidence?: string | null;
+  is_acc?: boolean;
 };
 
 export type Detail = {
   level: number;
-  recommend: string;
+  recommend?: string;
   question?: Question[];
 };
 
@@ -662,7 +662,7 @@ export async function getQuestionMaturity(idUser: string) {
                 is_acc:
                   item.usersMaturity != null
                     ? item.usersMaturity.evidence != null &&
-                      item.usersMaturity.answer != null
+                      item.usersMaturity.answer
                       ? true
                       : false
                     : false,
@@ -691,7 +691,7 @@ export async function getQuestionMaturity(idUser: string) {
             is_acc:
               item.usersMaturity != null
                 ? item.usersMaturity.evidence != null &&
-                  item.usersMaturity.answer != null
+                  item.usersMaturity.answer
                   ? true
                   : false
                 : false,
@@ -803,6 +803,20 @@ export async function resetMaturityData() {
 // Mau yang kayak gini?
 export async function getResultMaturityUser(user_id: string) {
   try {
+    const checkIfUserNotSubmit = await prisma.usersMaturity.findMany({
+      where: {
+        user_id: user_id
+      }
+    });
+
+    if (checkIfUserNotSubmit.length == 0) {
+      return {
+        success: false,
+        data: [],
+        message: "Maturity data not found",
+      };
+    }
+
     const getData: QuestionMaturity[] = (await prisma.questionMaturity.findMany({
       include: {
         category: true,
@@ -916,6 +930,21 @@ export async function getResultMaturityUser(user_id: string) {
       })
     );
 
+    // loop sections check if all detail.recommend is "Belum ada" and set sections to []
+    // sections.forEach((section) => {
+    //   if (section.detail.every((detail) => detail.recommend === "Belum ada")) {
+    //     section.detail = [];
+    //   }
+    // });
+
+    // // loop sections check if all detail is empty and set sections to splice
+    // for (let i = 0; i < sections.length; i++) {
+    //   if (sections[i].detail.length === 0) {
+    //     sections.splice(i, 1);
+    //     i--;
+    //   }
+    // }
+    
     return {
       success: true,
       data: sections,
@@ -935,12 +964,40 @@ export async function getResultMaturityUser(user_id: string) {
   }
 }
 
-// Belum Done
+type HeaderTabelResultMaturity = {
+  name: string;
+}
+
+// Function to calculate average level
+const calculateAverage = (levels: number[]): number => {
+  const total = levels.reduce((sum, level) => sum + level, 0);
+  return Math.round(total / levels.length);
+};
+
+// Mock function to fetch recommendation based on average level
+const fetchRecommendation = async (avgLevel: number): Promise<string> => {
+  // Replace this with actual DB call
+  const recommendations = await prisma.recommendMaturity.findFirst({
+    select: {
+      recommend: true,
+    },
+    where: {
+      level: avgLevel,
+    },
+  });
+
+  return recommendations?.recommend || 'Belum ada';
+};
+
 export async function getResultMaturityAll() {
   try {
-    const data: QuestionMaturity[] = (await prisma.usersMaturity.findMany({
+    const data = await prisma.usersMaturity.findMany({
       include: {
-        questionMaturity: true,
+        questionMaturity: {
+          include: {
+            category: true,
+          }
+        },
         users: true,
       },
       where: {
@@ -950,11 +1007,11 @@ export async function getResultMaturityAll() {
         },
       },
       orderBy: {
-        questionMaturity: {
-          code: "asc",
+        users: {
+          name: "asc",
         },
       },
-    })) as unknown as QuestionMaturity[];
+    }) ;
 
     if (!data) {
       return {
@@ -963,10 +1020,74 @@ export async function getResultMaturityAll() {
       };
     }
 
+    const headerTabel : HeaderTabelResultMaturity[] =[];
+
+    data.forEach((item) => {
+      const indexUser = headerTabel.findIndex(
+        (header) => header.name === item.users!.name
+      )
+
+      if(indexUser === -1){
+        headerTabel.push({
+          name: item.users!.name
+        });
+      }
+    })
+
+    headerTabel.unshift({
+      name: "Kriteria"
+    })
+
+    headerTabel.push({
+      name: "Hasil Rata Rata"
+    })
+
+    headerTabel.push({
+      name: "Hasil Rekomendasi"
+    })
+
+    // Transform the data
+    const groupedData: { [key: string]: any } = {};
+
+    data.forEach((item) => {
+      const category = item.questionMaturity!.category!.value;
+      const userName = item.users!.name;
+      const level = item.questionMaturity!.level;
+      const evidence = item.evidence;
+
+      if (item.answer && evidence) {
+        if (!groupedData[category]) {
+          groupedData[category] = {
+            kriteria: category,
+            users: {},
+            levels: [],
+            avg_result: 0,
+            recommendation: '',
+          };
+        }
+        groupedData[category].users[userName] = level;
+        groupedData[category].levels.push(level);
+      }
+    });
+
+    for (const category in groupedData) {
+      const avgLevel = calculateAverage(groupedData[category].levels);
+      groupedData[category].avg_result = avgLevel;
+      groupedData[category].recommendation = await fetchRecommendation(avgLevel);
+    }
+
+    const transformedData = Object.values(groupedData).map((item: any) => ({
+      kriteria: item.kriteria,
+      ...item.users,
+      avg_result: item.avg_result,
+      recommendation: item.recommendation,
+    }));
+
     return {
       success: true,
-      data: data,
-      message: "Data found",
+      header: headerTabel,
+      data: transformedData,
+      message: 'Data found',
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -984,7 +1105,14 @@ export async function getResultMaturityAll() {
 
 export async function getQuestionMaturityAdmin(){
   try{
-    const data = await prisma.questionMaturity.findMany();
+    const data : QuestionMaturity[] = (await prisma.questionMaturity.findMany({
+      include: {
+        category: true,
+      },
+      orderBy: {
+        code: "asc",
+      },
+    })) as unknown as QuestionMaturity[];
 
     if(!data){
       return {
@@ -993,9 +1121,67 @@ export async function getQuestionMaturityAdmin(){
       };
     }
 
+    const sections: QuestionPerSection[] = [
+      { title: "Plan Risk Management", category_id: "", detail: [] },
+      { title: "Identify Risks", category_id: "", detail: [] },
+      {
+        title: "Perform Qualitative Risk Analysis",
+        category_id: "",
+        detail: [],
+      },
+      {
+        title: "Perform Quantitative Risk Analysis",
+        category_id: "",
+        detail: [],
+      },
+      { title: "Plan Risk Responses", category_id: "", detail: [] },
+      { title: "Implement Risk Responses", category_id: "", detail: [] },
+      { title: "Monitor Risks", category_id: "", detail: [] },
+    ];
+
+    const sectionMap: { [key: string]: QuestionPerSection } = {
+      plan_risk_management: sections[0],
+      identify_risks: sections[1],
+      perform_qualitative_risk_analysis: sections[2],
+      perform_quantitative_risk_analysis: sections[3],
+      plan_risk_responses: sections[4],
+      implement_risk_responses: sections[5],
+      monitor_risks: sections[6],
+    };
+
+    data.forEach((item) => {
+      const section = sectionMap[item.category.key];
+      if (section) {
+        section.category_id = item.category_id;
+
+        const detailIndex = section.detail.findIndex(
+          (detail) => detail.level === item.level
+        );
+
+        if (detailIndex === -1) {
+          section.detail.push({
+            level: item.level,
+            question: [
+              {
+                id: item.id,
+                kode: item.code,
+                question: item.question,
+              },
+            ],
+          });
+        } else {
+          section.detail[detailIndex].question?.push({
+            id: item.id,
+            kode: item.code,
+            question: item.question
+          });
+        }
+      }
+    });
+
     return {
       success: true,
-      data: data,
+      data: sections,
       message: "Data found",
     };
 

@@ -837,111 +837,104 @@ async function main() {
       {
         category_id: category7.id,
         code: "G03",
-        level: 1,
-        question:
-          "Apakah tidak ada database historis mengenai risiko dan hanya mengandalkan pengalaman masa lalu dari tim proyek?",
-      },
-      {
-        category_id: category7.id,
-        code: "G04",
         level: 2,
         question:
           "Apakah terdapat risk owner yang bertanggung jawab atas pengawasan dan pelaporan respons risiko?",
       },
       {
         category_id: category7.id,
-        code: "G05",
+        code: "G04",
         level: 2,
         question:
           "Apakah ada prosedur terdokumentasi untuk melaporkan status risiko kepada stakeholder kunci?",
       },
       {
         category_id: category7.id,
-        code: "G06",
+        code: "G05",
         level: 2,
         question:
           "Apakah pendekatan individu dilakukan dalam mengelola dan mengendalikan risiko?",
       },
       {
         category_id: category7.id,
-        code: "G07",
+        code: "G06",
         level: 2,
         question:
           "Apakah proses monitoring risiko mencakup risk register, pihak yang bertanggung jawab, dampak potensial, probabilitas dampak risiko, strategi mitigasi, dan status?",
       },
       {
         category_id: category7.id,
-        code: "G08",
+        code: "G07",
         level: 3,
         question:
           "Apakah terdapat proses khusus untuk mengelola dan mengendalikan risiko?",
       },
       {
         category_id: category7.id,
-        code: "G09",
+        code: "G08",
         level: 3,
         question:
           "Apakah risiko proyek dipantau secara rutin dan aktif untuk bisa mengambil Tindakan korektif?",
       },
       {
         category_id: category7.id,
-        code: "G10",
+        code: "G09",
         level: 3,
         question:
           "Apakah dilakukan pembaharuan terhadap rencana manajemen risiko ketika risiko terjadi dan adanya perubahan kondisi?",
       },
       {
         category_id: category7.id,
-        code: "G11",
+        code: "G10",
         level: 3,
         question:
           "Apakah dilakukan pengumpulan, analisis, dan perluasan pada metrik untuk menyetarakan tingkat keberhasilan mitigasi risiko?",
       },
       {
         category_id: category7.id,
-        code: "G12",
+        code: "G11",
         level: 4,
         question:
           "Apakah seluruh proses monitoring risiko telah terdokumentasi dan dilakukan sepenuhnya?",
       },
       {
         category_id: category7.id,
-        code: "G13",
+        code: "G12",
         level: 4,
         question:
           "Apakah sistem pengendalian risiko telah terintegrasi dengan control system dari organisasi, program monitoring, program manajemen biaya, dan program manajemen waktu?",
       },
       {
         category_id: category7.id,
-        code: "G14",
+        code: "G13",
         level: 4,
         question:
           "Apakah dilakukan pengumpulkan informasi historis seperti item risiko umum dan pemicu risiko dan mengorganisir informasi tersebut dalam basis data historis?",
       },
       {
         category_id: category7.id,
-        code: "G15",
+        code: "G14",
         level: 5,
         question:
           "Apakah ada proses kontinyu untuk peningkatan proses pengendalian risiko?",
       },
       {
         category_id: category7.id,
-        code: "G16",
+        code: "G15",
         level: 5,
         question:
           "Apakah terdapat proses terdokumentasi menggunakan penilaian risiko dan data status risiko saat ini untuk membantu pengambilan keputusan manajemen selama pelaksanaan proyek?",
       },
       {
         category_id: category7.id,
-        code: "G17",
+        code: "G16",
         level: 5,
         question:
           "Apakah lesson learned dikumpulkan dan digunakan untuk meningkatkan usaha monitoring dan controlling risiko proyek?",
       },
       {
         category_id: category7.id,
-        code: "G18",
+        code: "G17",
         level: 5,
         question:
           "Apakah ada evaluasi risiko yang diintegrasikan dan dimasukkan dalam penentuan efisiensi dan efektivitas proyek?",
