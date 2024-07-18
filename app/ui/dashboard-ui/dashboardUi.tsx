@@ -28,11 +28,11 @@ const DashboardUi: React.FC<DashboardProps> = ({ session, ahpResult, maturityRes
 
   console.log('ini maturity reesult dashboard --- ', maturityResultData);
 
-  // useEffect(() => {
-  //   if(session?.user.jabatan !== "Admin") {
-  //     router.replace("/dashboard"); 
-  //   }
-  // }, [session]);
+  useEffect(() => {
+    if(session?.user.jabatan !== "Admin") {
+      router.replace("/dashboard"); 
+    }
+  }, [session]);
 
   return (
     <main className="flex flex-col w-full min-h-screen items-center">
