@@ -58,7 +58,7 @@ type Category = {
   updatedAt: Date;
 };
 
-type UserMaturity = {
+export type UserMaturity = {
   id: string;
   user_id: string;
   question_maturity_id: string;
@@ -68,7 +68,7 @@ type UserMaturity = {
   updatedAt: Date;
 };
 
-type QuestionMaturity = {
+export type QuestionMaturity = {
   id: string;
   category_id: string;
   code: string;
@@ -80,7 +80,7 @@ type QuestionMaturity = {
   usersMaturity: UserMaturity[];
 };
 
-type Question = {
+export type Question = {
   id: string;
   kode: string;
   question: string;
@@ -90,19 +90,19 @@ type Question = {
   is_acc: boolean;
 };
 
-type Detail = {
+export type Detail = {
   level: number;
   recommend: string;
   question?: Question[];
 };
 
-type QuestionPerSection = {
+export type QuestionPerSection = {
   title: string;
   category_id: string;
   detail: Detail[];
 };
 
-type RecommendMaturity = {
+export type RecommendMaturity = {
   id: string;
   category_id: string;
   level: number;
