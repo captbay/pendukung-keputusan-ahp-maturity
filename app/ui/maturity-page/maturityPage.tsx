@@ -1,5 +1,5 @@
 "use client"
-import MaturityRecapTable from '@/app/components/maturity-recap-table/maturityRecapTable';
+import MaturityRecapTable, { TableRowMaturity } from '@/app/components/maturity-recap-table/maturityRecapTable';
 import MaturityTable from '@/app/components/maturity-table/maturityTable';
 import NotFoundIcon from '@/app/icon/NotFoundIcon';
 import { RecommendMaturity, getQuestionMaturity } from '@/lib/actions';
@@ -54,7 +54,7 @@ const MaturityPage: React.FC<MaturityPageProps> = ({ session, questionMaturity, 
     });
   }  
 
-  const filteredDataRecommendations = maturityResult.length > 0 ? getFilteredRecommendations(maturityResult, session?.user.name) : null;
+  const filteredDataRecommendations = (maturityResult.length > 0 ? getFilteredRecommendations(maturityResult, session?.user.name) : null) as TableRowMaturity[];
   const userData = [
     {
       name: "Kriteria",
