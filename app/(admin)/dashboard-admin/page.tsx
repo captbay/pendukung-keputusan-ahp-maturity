@@ -7,14 +7,14 @@ export default async function DashboardAdmin() {
   const session = await auth();
   const user = await getAllUser();
   const ahpResult = await getAhpData();
-  // const maturityResult = await getResultMaturityAll();
+  const maturityResult = await getResultMaturityAll();
   return (
     // <></>
     <DashboardUiAdmin 
       session={session} 
       data={user!.data}
       ahpResult={ahpResult!.data}
-      // maturityResult={maturityResult!.data}
+      maturityResult={maturityResult!.data}
     />
   );
 }
