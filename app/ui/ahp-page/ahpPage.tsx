@@ -142,7 +142,7 @@ const AHPPage: React.FC<AHPPageProps> = ({ session, userAhpData }) => {
             ) : !userAhpData && !startAhpForm ? (
               <div className='flex justify-center items-center flex-col gap-4'>
                 <NotFoundIcon />
-                <p className="text-center text-xl max-w-[500px]">No AHP data found. Press START button above to fill the Analytical Hierarchy Process form.</p>
+                <p className="text-center text-xl max-w-[500px] mt-[-30px]">No AHP data found. Press START button above to fill the Analytical Hierarchy Process form.</p>
               </div>
             ) : (
               <>
