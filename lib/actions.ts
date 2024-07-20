@@ -1070,6 +1070,16 @@ export async function getResultMaturityAll() {
       }
     });
 
+    headerTabel.forEach((header) => {
+      if (header.name !== "Kriteria" && header.name !== "Hasil Rata Rata" && header.name !== "Hasil Rekomendasi") {
+        for (const category in groupedData) {
+          if (!groupedData[category].users[header.name]) {
+            groupedData[category].users[header.name] = 0;
+          }
+        }
+      }
+    });
+
     for (const category in groupedData) {
       const avgLevel = calculateAverage(groupedData[category].levels);
       groupedData[category].avg_result = avgLevel;
