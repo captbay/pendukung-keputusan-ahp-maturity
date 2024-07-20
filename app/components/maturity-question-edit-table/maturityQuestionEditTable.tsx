@@ -8,6 +8,9 @@ import { EditIcon } from '@/app/icon/EditIcon';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Spacer, Tooltip, Button, useDisclosure, Checkbox, Input, Link, Textarea } from "@nextui-org/react";
 import ConfirmationModal from '@/app/ui/confirmation-modal/confirmationModal';
 import { on } from 'events';
+import { TrashIcon } from '@/app/icon/TrashIcon';
+import { PlusIcon } from '@/app/icon/PlusIcon';
+import { useRouter } from 'next/navigation';
 
 interface MaturityTableProps {
   maturityQuestion: QuestionPerSection[];
@@ -20,11 +23,16 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
   const eachLevelQuestion = questions[currentCheckpoint];
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onOpenChange: onEditModalOpenChange } = useDisclosure();
+  const { isOpen: isAddModalOpen, onOpen: onAddModalOpen, onOpenChange: onAddModalOpenChange } = useDisclosure();
   const { isOpen: isConfirmationModalOpen, onOpen: onConfirmationModalOpen, onOpenChange: onConfirmationModalOpenChange } = useDisclosure();
+  const { isOpen: isConfirmationAddModalOpen, onOpen: onConfirmationAddModalOpen, onOpenChange: onConfirmationAddModalOpenChange } = useDisclosure();
   const [newQuestion, setNewQuestion] = useState('');
   const clickedData = useRef<{ id: string, kode: string, question: string } | null>(null);
+  const clickedCategory = useRef<string>("");
+  const clickedLevel = useRef<number>(0);
   let questionCounter = 1;
   const prefixKode = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  const router = useRouter();
 
   const handleCheckpointClick = (index: number) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -42,6 +50,30 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
     window.scrollTo({ top: 0, behavior: 'smooth' });
     questionCounter = 1;
     setCurrentCheckpoint(currentCheckpoint - 1);
+  };
+
+  const handleAddQuestion = async() => {
+    setIsLoading(true);
+    const newKode = `${prefixKode[currentCheckpoint]}${questionCounter.toString().padStart(2, '0')}`;
+    const newQuestionData = { code: "Dummy aja", question: newQuestion, category_id: clickedCategory.current, level: clickedLevel.current, id: "Dummy juga nih bos" };
+    console.log('this is new question data to be added --- ', newQuestionData);
+    const formData = new FormData();
+    formData.append("question", JSON.stringify([newQuestionData]));
+    setNewQuestion('');
+    try{
+      const response = await postQuestionMaturityAdmin(formData);
+
+      if(response?.success){
+        toast.success("Question added successfully");
+        window.location.reload();
+      } else{
+        toast.error("Failed to add question");
+      }
+      setIsLoading(false);
+    } catch(error){
+      toast.error("Failed to add question");
+      setIsLoading(false);
+    }
   };
 
   const handleEditQuestion = async () => {
@@ -102,7 +134,22 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
           <table className="border-collapse border border-gray-400 w-full sm:min-w-full mb-6">
             <thead className="bg-primary top-0 z-10">
               <tr>
-                <th colSpan={6} className="border border-amber-700 px-4 py-2 text-secondary">Level {questionSet.level}</th>
+                <th colSpan={2} className="border border-amber-700 px-4 py-2 text-secondary">Level {questionSet.level}</th>
+                <th className="border border-amber-700 px-4 py-2 text-secondary">
+                  <Button
+                    onPress={() => {
+                      console.log('lalala clicked add question')
+                      onAddModalOpen();
+                      clickedCategory.current = eachLevelQuestion.category_id;
+                      clickedLevel.current = questionSet.level;
+                    }}
+                    className='bg-primary hover:bg-red-700 hover:text-white text-secondary'
+                    prefix='plus'
+                  >
+                    <PlusIcon />
+                    Add Question
+                  </Button>
+                </th>
               </tr>
               <tr>
                 <th className="border border-amber-700 px-4 py-2 text-secondary w-[5%]">Kode</th>
@@ -175,7 +222,10 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
                 />
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="flat" onPress={onClose}>
+                <Button color="danger" variant="flat" onPress={() => {
+                  onClose();
+                  setNewQuestion('');
+                }}>
                   Close
                 </Button>
                 <Button
@@ -184,6 +234,79 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
                   isDisabled={newQuestion.length == 0}
                 >
                   Edit
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={isAddModalOpen}
+        onOpenChange={onAddModalOpenChange}
+        placement="bottom-center"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Add question</ModalHeader>
+              <ModalBody>
+                <Textarea
+                  autoFocus
+                  label="New question"
+                  placeholder="Enter the new question here"
+                  variant="bordered"
+                  value={newQuestion}
+                  onChange={(e) => setNewQuestion(e.target.value)}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="flat" onPress={() => {
+                  onClose();
+                  setNewQuestion('');
+                }}>
+                  Close
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={onConfirmationAddModalOpen}
+                  isDisabled={newQuestion.length == 0}
+                >
+                  Add
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        size={'lg'}
+        isOpen={isConfirmationAddModalOpen}
+        onOpenChange={onConfirmationAddModalOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Confirmation Add Question</ModalHeader>
+              <ModalBody>
+                <p>
+                  Apakah Anda yakin ingin menambah pertanyaan ini?
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Tidak
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={async () => {
+                    onConfirmationAddModalOpenChange();
+                    onAddModalOpenChange();
+                    await handleAddQuestion();
+                  }}
+                >
+                  Ya
                 </Button>
               </ModalFooter>
             </>
