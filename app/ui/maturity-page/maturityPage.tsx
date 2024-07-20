@@ -4,7 +4,11 @@ import MaturityRecapTable, {
 } from "@/app/components/maturity-recap-table/maturityRecapTable";
 import MaturityTable from "@/app/components/maturity-table/maturityTable";
 import NotFoundIcon from "@/app/icon/NotFoundIcon";
-import { RecommendMaturity, fetchRecommendation, getQuestionMaturity } from "@/lib/actions";
+import {
+  RecommendMaturity,
+  fetchRecommendation,
+  getQuestionMaturity,
+} from "@/lib/actions";
 import { Button } from "@nextui-org/react";
 import React, { useState, useEffect } from "react";
 import { QuestionPerSection } from "@/lib/actions";
@@ -21,8 +25,10 @@ const MaturityPage: React.FC<MaturityPageProps> = ({
   maturityResult,
 }) => {
   const [startMaturityForm, setStartMaturityForm] = useState(false);
-  const [filteredRecommendations, setFilteredRecommendations] = useState<TableRowMaturity[]>([]);
-  
+  const [filteredRecommendations, setFilteredRecommendations] = useState<
+    TableRowMaturity[]
+  >([]);
+
   useEffect(() => {
     async function getFilteredRecommendations(
       maturityResult: QuestionPerSection[],
@@ -130,7 +136,9 @@ const MaturityPage: React.FC<MaturityPageProps> = ({
             </div>
 
             <div className="flex flex-col w-full h-full justify-center items-center max-lg:p-8 mb-[40px]">
-              {maturityResult.length > 0 && !startMaturityForm ? (
+              {maturityResult.length > 0 &&
+              !startMaturityForm &&
+              filteredRecommendations.length > 0 ? (
                 <MaturityRecapTable
                   data={filteredRecommendations}
                   users={userData}
@@ -144,12 +152,20 @@ const MaturityPage: React.FC<MaturityPageProps> = ({
                     Maturity Measurement form.
                   </p>
                 </div>
-              ) : (
+              ) : startMaturityForm ? (
                 <div className="flex flex-col w-full h-full justify-center items-center">
                   <MaturityTable
                     maturityQuestion={questionMaturity}
                     session={session}
                   />
+                </div>
+              ) : (
+                <div className="flex flex-col w-full h-full justify-center items-center">
+                  {/* <MaturityTable
+                    maturityQuestion={questionMaturity}
+                    session={session}
+                  /> */}
+                  <p>Loading data...</p>
                 </div>
               )}
             </div>
