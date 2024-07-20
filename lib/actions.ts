@@ -981,12 +981,16 @@ export type HeaderTabelResultMaturity = {
 
 // Function to calculate average level
 const calculateAverage = (levels: number[]): number => {
-  const total = levels.reduce((sum, level) => sum + level, 0);
-  return Math.round(total / levels.length);
+  // Calculate the sum of levels
+  const total = levels.flat().reduce((acc, val) => acc + val, 0);
+  return Math.ceil(total / levels.length);
 };
 
 // Mock function to fetch recommendation based on average level
-const fetchRecommendation = async (avgLevel: number): Promise<string> => {
+const fetchRecommendation = async (
+  avgLevel: number,
+  name: string
+): Promise<string> => {
   // Replace this with actual DB call
   const recommendations = await prisma.recommendMaturity.findFirst({
     select: {
@@ -994,6 +998,9 @@ const fetchRecommendation = async (avgLevel: number): Promise<string> => {
     },
     where: {
       level: avgLevel,
+      category: {
+        value: name,
+      },
     },
   });
 
@@ -1002,6 +1009,16 @@ const fetchRecommendation = async (avgLevel: number): Promise<string> => {
 
 export async function getResultMaturityAll() {
   try {
+    const allKriteria = [
+      "Plan Risk Management",
+      "Identify Risks",
+      "Perform Qualitative Risk Analysis",
+      "Perform Quantitative Risk Analysis",
+      "Plan Risk Responses",
+      "Implement Risk Responses",
+      "Monitor Risks",
+    ];
+
     const data = await prisma.usersMaturity.findMany({
       include: {
         questionMaturity: {
@@ -1023,13 +1040,6 @@ export async function getResultMaturityAll() {
         },
       },
     });
-
-    if (!data) {
-      return {
-        success: false,
-        message: "There is no data found",
-      };
-    }
 
     const headerTabel: HeaderTabelResultMaturity[] = [];
 
@@ -1057,8 +1067,29 @@ export async function getResultMaturityAll() {
       name: "Hasil Rekomendasi",
     });
 
-    // Transform the data
+    if (data.length === 0) {
+      return {
+        success: false,
+        data: {
+          header: headerTabel,
+          data: [],
+        },
+        message: "There is no data found",
+      };
+    }
+
     const groupedData: { [key: string]: any } = {};
+    allKriteria.forEach((category) => {
+      groupedData[category] = {
+        kriteria: category,
+        users: {},
+        levels: [],
+        avg_result: 0,
+        recommendation: "",
+      };
+    });
+
+    const userLevels: { [key: string]: { [key: string]: number[] } } = {};
 
     data.forEach((item) => {
       const category = item.questionMaturity!.category!.value;
@@ -1066,41 +1097,57 @@ export async function getResultMaturityAll() {
       const level = item.questionMaturity!.level;
       const evidence = item.evidence;
 
-      if (item.answer && evidence) {
-        if (!groupedData[category]) {
-          groupedData[category] = {
-            kriteria: category,
-            users: {},
-            levels: [],
-            avg_result: 0,
-            recommendation: "",
-          };
-        }
-        groupedData[category].users[userName] = level;
-        groupedData[category].levels.push(level);
+      if (!userLevels[userName]) {
+        userLevels[userName] = {};
+      }
+
+      if (!userLevels[userName][category]) {
+        userLevels[userName][category] = [];
+      }
+
+      if (item.answer && evidence && evidence !== "") {
+        userLevels[userName][category].push(level);
       }
     });
 
-    headerTabel.forEach((header) => {
-      if (
-        header.name !== "Kriteria" &&
-        header.name !== "Hasil Rata Rata" &&
-        header.name !== "Hasil Rekomendasi"
-      ) {
-        for (const category in groupedData) {
-          if (!groupedData[category].users[header.name]) {
-            groupedData[category].users[header.name] = 0;
-            groupedData[category].levels.push(0);
+    for (const userName in userLevels) {
+      for (const category in userLevels[userName]) {
+        const levels = userLevels[userName][category];
+        let validLevel = 0;
+
+        // Validate levels sequentially
+        for (let i = 1; i <= 5; i++) {
+          if (levels.includes(i)) {
+            validLevel = i;
+          } else {
+            break;
           }
         }
+
+        // Ensure levels are sequentially valid
+        if (validLevel === 5 && levels.length < 5) {
+          validLevel = 0;
+        }
+
+        userLevels[userName][category] = [validLevel];
       }
-    });
+    }
+
+    for (const category in groupedData) {
+      for (const userName in userLevels) {
+        const levels = userLevels[userName][category] || [0];
+        groupedData[category].users[userName] = levels;
+        groupedData[category].levels.push(levels);
+      }
+    }
 
     for (const category in groupedData) {
       const avgLevel = calculateAverage(groupedData[category].levels);
       groupedData[category].avg_result = avgLevel;
+
       groupedData[category].recommendation = await fetchRecommendation(
-        avgLevel
+        avgLevel,
+        category
       );
     }
 

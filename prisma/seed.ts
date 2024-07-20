@@ -994,165 +994,192 @@ async function main() {
         user_id: user2.id,
         question_maturity_id: questionSection1[0].id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user2.id,
         question_maturity_id: questionSection1[1].id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user2.id,
         question_maturity_id: questionSection1[2].id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user2.id,
         question_maturity_id: questionSection2!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user2.id,
         question_maturity_id: questionSection3!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user2.id,
         question_maturity_id: questionSection4!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user2.id,
         question_maturity_id: questionSection5!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user2.id,
         question_maturity_id: questionSection6!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user2.id,
         question_maturity_id: questionSection7!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       //
       {
         user_id: user3.id,
         question_maturity_id: questionSection1[0].id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user3.id,
         question_maturity_id: questionSection1[1].id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user3.id,
         question_maturity_id: questionSection1[2].id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user3.id,
         question_maturity_id: questionSection2!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user3.id,
         question_maturity_id: questionSection3!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user3.id,
         question_maturity_id: questionSection4!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user3.id,
         question_maturity_id: questionSection5!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user3.id,
         question_maturity_id: questionSection6!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user3.id,
         question_maturity_id: questionSection7!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       //
       {
         user_id: user4.id,
         question_maturity_id: questionSection1[0].id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user4.id,
         question_maturity_id: questionSection1[1].id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user4.id,
         question_maturity_id: questionSection1[2].id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user4.id,
         question_maturity_id: questionSection2!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user4.id,
         question_maturity_id: questionSection3!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user4.id,
         question_maturity_id: questionSection4!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user4.id,
         question_maturity_id: questionSection5!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user4.id,
         question_maturity_id: questionSection6!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
       {
         user_id: user4.id,
         question_maturity_id: questionSection7!.id,
         answer: true,
-        evidence: "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
+        evidence:
+          "https://firebasestorage.googleapis.com/v0/b/spk-citra.appspot.com/o/evidences%2FBLK_MEKS1716360490231.jpg?alt=media&token=02b511aa-04f9-4cbb-a181-b44023060cb7",
       },
     ],
   });
@@ -1223,7 +1250,7 @@ async function main() {
         category_id: category3.id,
         level: 1,
         recommend:
-          "Terapkan dan wajibkan penggunaan proses standar untuk menilai probabilitas dan dampak risiko di semua proyek. Terapkan dan wajibkan penggunaan proses standar untuk menilai probabilitas dan dampak risiko di semua proyek.",
+          "Terapkan dan wajibkan penggunaan proses standar untuk menilai probabilitas dan dampak risiko di semua proyek.",
       },
       {
         category_id: category3.id,
