@@ -1,11 +1,13 @@
-"use client"
-import MaturityRecapTable, { TableRowMaturity } from '@/app/components/maturity-recap-table/maturityRecapTable';
-import MaturityTable from '@/app/components/maturity-table/maturityTable';
-import NotFoundIcon from '@/app/icon/NotFoundIcon';
-import { RecommendMaturity, getQuestionMaturity } from '@/lib/actions';
-import { Button } from '@nextui-org/react';
-import React, { useState } from 'react';
-import { QuestionPerSection } from '@/lib/actions';
+"use client";
+import MaturityRecapTable, {
+  TableRowMaturity,
+} from "@/app/components/maturity-recap-table/maturityRecapTable";
+import MaturityTable from "@/app/components/maturity-table/maturityTable";
+import NotFoundIcon from "@/app/icon/NotFoundIcon";
+import { RecommendMaturity, getQuestionMaturity } from "@/lib/actions";
+import { Button } from "@nextui-org/react";
+import React, { useState } from "react";
+import { QuestionPerSection } from "@/lib/actions";
 
 interface MaturityPageProps {
   session: any;
@@ -13,18 +15,29 @@ interface MaturityPageProps {
   maturityResult: QuestionPerSection[];
 }
 
-const MaturityPage: React.FC<MaturityPageProps> = ({ session, questionMaturity, maturityResult }) => {
+const MaturityPage: React.FC<MaturityPageProps> = ({
+  session,
+  questionMaturity,
+  maturityResult,
+}) => {
   const [startMaturityForm, setStartMaturityForm] = useState(false);
-  console.log('maturityResult ---- ', maturityResult);
+  console.log("maturityResult ---- ", maturityResult);
 
-  function getFilteredRecommendations(maturityResult: QuestionPerSection[], userName: string) {
-    return maturityResult.map(entry => {
-      const validDetails = entry.detail.filter(detail => detail.recommend !== "Belum ada");
-      console.log('validDetails ---- ', entry.title, validDetails);
-  
+  function getFilteredRecommendations(
+    maturityResult: QuestionPerSection[],
+    userName: string
+  ) {
+    return maturityResult.map((entry) => {
+      const validDetails = entry.detail.filter(
+        (detail) => detail.recommend !== "Belum ada"
+      );
+      console.log("validDetails ---- ", entry.title, validDetails);
+
       if (validDetails.length > 0) {
-        const levels = validDetails.map(detail => detail.level).sort((a, b) => a - b);
-        let highestConsecutiveLevel = 0;
+        const levels = validDetails
+          .map((detail) => detail.level)
+          .sort((a, b) => a - b);
+        let highestConsecutiveLevel = 1;
 
         if (levels[0] == 1) {
           highestConsecutiveLevel = 1;
@@ -36,88 +49,100 @@ const MaturityPage: React.FC<MaturityPageProps> = ({ session, questionMaturity, 
             }
           }
         }
-  
-        const highestLevelDetail = validDetails.find(detail => detail.level === highestConsecutiveLevel);
-        console.log('lalalal -- ', entry.title, highestConsecutiveLevel);
-  
+
+        const highestLevelDetail = validDetails.find(
+          (detail) => detail.level === highestConsecutiveLevel
+        );
+        console.log("lalalal -- ", entry.title, highestConsecutiveLevel);
+
         return {
           kriteria: entry.title,
           [userName]: highestConsecutiveLevel.toString(),
           avg_result: highestConsecutiveLevel.toString(),
-          recommendation: highestLevelDetail ? highestLevelDetail.recommend : "Belum ada"
+          recommendation: highestLevelDetail
+            ? highestLevelDetail.recommend
+            : "Belum ada", // ini pake fetchRecommendation(1, entry.title) untuk dapetin rekomendasi level 1 nya
         };
       }
-  
+
       return {
         kriteria: entry.title,
-        [userName]: "0",
-        avg_result: "0",
-        recommendation: "Belum ada"
+        [userName]: "1",
+        avg_result: "1",
+        recommendation: "Belum ada", // ini pake fetchRecommendation(1, entry.title) untuk dapetin rekomendasi level 1 nya
       };
     });
-  }  
+  }
 
-  const filteredDataRecommendations = (maturityResult.length > 0 ? getFilteredRecommendations(maturityResult, session?.user.name) : null) as TableRowMaturity[];
+  const filteredDataRecommendations = (
+    maturityResult.length > 0
+      ? getFilteredRecommendations(maturityResult, session?.user.name)
+      : null
+  ) as TableRowMaturity[];
   const userData = [
     {
       name: "Kriteria",
       email: "",
-      jabatan: ""
+      jabatan: "",
     },
     {
       name: session?.user.name,
       email: session?.user.email,
-      jabatan: session?.user.jabatan
+      jabatan: session?.user.jabatan,
     },
     {
       name: "Hasil Rata Rata",
       email: "",
-      jabatan: ""
+      jabatan: "",
     },
     {
       name: "Hasil Rekomendasi",
       email: "",
-      jabatan: ""
-    }
-  ]
+      jabatan: "",
+    },
+  ];
 
-  console.log('getFilteredRecommendations ---- ', filteredDataRecommendations);
+  console.log("getFilteredRecommendations ---- ", filteredDataRecommendations);
 
   return (
     <main className="flex w-full min-h-screen bg-secondary z-0 justify-center">
       <div className="flex flex-col lg:flex-row bg-secondary rounded-lg w-full lg:w-[80%]">
         <div className="flex flex-col w-full h-full items-center">
-          
-          <div className='flex flex-col w-full h-full items-center mt-10 max-lg:mt-20'>
-            <div className='rounded-2xl flex'>
-              <h1 className="text-2xl lg:text-3xl font-bold text-center text-tertiary p-4">Maturity Measurement</h1>
+          <div className="flex flex-col w-full h-full items-center mt-10 max-lg:mt-20">
+            <div className="rounded-2xl flex">
+              <h1 className="text-2xl lg:text-3xl font-bold text-center text-tertiary p-4">
+                Maturity Measurement
+              </h1>
             </div>
 
-            <div className='flex justify-center'>
+            <div className="flex justify-center">
               <Button
                 onClick={() => setStartMaturityForm(!startMaturityForm)}
                 className="text-secondary w-24 text-center hover:bg-red-700 hover:text-white bg-primary"
                 shadow-md
               >
-                {startMaturityForm ? 'Close' : 'Start'}
+                {startMaturityForm ? "Close" : "Start"}
               </Button>
             </div>
 
-            <div className='flex flex-col w-full h-full justify-center items-center max-lg:p-8 mb-[40px]'>
+            <div className="flex flex-col w-full h-full justify-center items-center max-lg:p-8 mb-[40px]">
               {maturityResult.length > 0 && !startMaturityForm ? (
-                <MaturityRecapTable 
+                <MaturityRecapTable
                   data={filteredDataRecommendations}
                   users={userData}
                   session={session}
                 />
               ) : maturityResult.length == 0 && !startMaturityForm ? (
-                <div className='flex justify-center items-center flex-col gap-4'>
+                <div className="flex justify-center items-center flex-col gap-4">
                   <NotFoundIcon />
-                <p className="text-center text-xl max-w-[500px] mt-[-30px]">No Maturity data found. Press START button above to fill the Maturity Measurement form.</p>
-              </div>
+                  <p className="text-center text-xl max-w-[500px] mt-[-30px]">
+                    No Maturity data found. Press START button above to fill the
+                    Maturity Measurement form.
+                  </p>
+                </div>
               ) : (
-                <div className='flex flex-col w-full h-full justify-center items-center'>
-                  <MaturityTable 
+                <div className="flex flex-col w-full h-full justify-center items-center">
+                  <MaturityTable
                     maturityQuestion={questionMaturity}
                     session={session}
                   />
@@ -129,6 +154,6 @@ const MaturityPage: React.FC<MaturityPageProps> = ({ session, questionMaturity, 
       </div>
     </main>
   );
-}
+};
 
-export default MaturityPage
+export default MaturityPage;

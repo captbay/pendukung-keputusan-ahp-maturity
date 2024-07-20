@@ -352,7 +352,13 @@ export async function getAhpData() {
 
 export async function getAllUser() {
   try {
-    const data = await prisma.user.findMany({});
+    const data = await prisma.user.findMany({
+      where: {
+        jabatan: {
+          not: "Admin",
+        },
+      },
+    });
 
     if (!data) {
       return {
@@ -670,6 +676,7 @@ export async function getQuestionMaturity(idUser: string) {
                 is_acc:
                   item.usersMaturity != null
                     ? item.usersMaturity.evidence != null &&
+                      item.usersMaturity.evidence != "" &&
                       item.usersMaturity.answer
                       ? true
                       : false
@@ -699,6 +706,7 @@ export async function getQuestionMaturity(idUser: string) {
             is_acc:
               item.usersMaturity != null
                 ? item.usersMaturity.evidence != null &&
+                  item.usersMaturity.evidence != "" &&
                   item.usersMaturity.answer
                   ? true
                   : false
@@ -720,13 +728,15 @@ export async function getQuestionMaturity(idUser: string) {
             const allAnsweredAndEvidence = allItems.every((item) =>
               item.usersMaturity
                 ? item.usersMaturity.answer &&
-                  item.usersMaturity.evidence !== null
+                  item.usersMaturity.evidence !== null &&
+                  item.usersMaturity.evidence !== ""
                 : false
             );
             const anyUnansweredOrNoEvidence = allItems.some((item) =>
               item.usersMaturity
                 ? !item.usersMaturity.answer ||
-                  item.usersMaturity.evidence === null
+                  item.usersMaturity.evidence === null ||
+                  item.usersMaturity.evidence === ""
                 : true
             );
             if (anyUnansweredOrNoEvidence) {
@@ -808,7 +818,6 @@ export async function resetMaturityData() {
   }
 }
 
-// Mau yang kayak gini?
 export async function getResultMaturityUser(user_id: string) {
   try {
     const checkIfUserNotSubmit = await prisma.usersMaturity.findMany({
@@ -916,12 +925,14 @@ export async function getResultMaturityUser(user_id: string) {
             const allAnsweredAndEvidence = allItems.every((item) =>
               item.usersMaturity
                 ? item.usersMaturity.answer &&
+                  item.usersMaturity.evidence !== "" &&
                   item.usersMaturity.evidence !== null
                 : false
             );
             const anyUnansweredOrNoEvidence = allItems.some((item) =>
               item.usersMaturity
                 ? !item.usersMaturity.answer ||
+                  item.usersMaturity.evidence === "" ||
                   item.usersMaturity.evidence === null
                 : true
             );
@@ -940,6 +951,8 @@ export async function getResultMaturityUser(user_id: string) {
         );
       })
     );
+
+    console.log(sections);
 
     // loop sections check if all detail.recommend is "Belum ada" and set sections to []
     // sections.forEach((section) => {
@@ -987,7 +1000,7 @@ const calculateAverage = (levels: number[]): number => {
 };
 
 // Mock function to fetch recommendation based on average level
-const fetchRecommendation = async (
+export const fetchRecommendation = async (
   avgLevel: number,
   name: string
 ): Promise<string> => {
@@ -1113,7 +1126,7 @@ export async function getResultMaturityAll() {
     for (const userName in userLevels) {
       for (const category in userLevels[userName]) {
         const levels = userLevels[userName][category];
-        let validLevel = 0;
+        let validLevel = 1;
 
         // Validate levels sequentially
         for (let i = 1; i <= 5; i++) {
@@ -1126,7 +1139,7 @@ export async function getResultMaturityAll() {
 
         // Ensure levels are sequentially valid
         if (validLevel === 5 && levels.length < 5) {
-          validLevel = 0;
+          validLevel = 1;
         }
 
         userLevels[userName][category] = [validLevel];
@@ -1135,7 +1148,7 @@ export async function getResultMaturityAll() {
 
     for (const category in groupedData) {
       for (const userName in userLevels) {
-        const levels = userLevels[userName][category] || [0];
+        const levels = userLevels[userName][category] || [1];
         groupedData[category].users[userName] = levels;
         groupedData[category].levels.push(levels);
       }
@@ -1322,6 +1335,32 @@ export async function postQuestionMaturityAdmin(formData: FormData) {
     return {
       success: true,
       message: "Data saved successfully",
+    };
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: e.message,
+        };
+      }
+      return {
+        message: e.message,
+      };
+    }
+  }
+}
+
+export async function deleteUser(id_user: string) {
+  try {
+    await prisma.user.delete({
+      where: {
+        id: id_user,
+      },
+    });
+
+    return {
+      success: true,
+      message: "Data deleted successfully",
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
