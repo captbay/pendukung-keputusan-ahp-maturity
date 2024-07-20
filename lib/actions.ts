@@ -565,29 +565,32 @@ export async function resetAhpData() {
   }
 }
 
-interface TransformedQuestionMaturity extends Omit<QuestionMaturity, 'usersMaturity'> {
+interface TransformedQuestionMaturity
+  extends Omit<QuestionMaturity, "usersMaturity"> {
   usersMaturity: UserMaturity | null; // Transform to a single object
 }
 
 export async function getQuestionMaturity(idUser: string) {
   try {
-    const getData: QuestionMaturity[] = (await prisma.questionMaturity.findMany({
-      include: {
-        category: true,
-        usersMaturity: {
-          where: {
-            user_id: idUser,
+    const getData: QuestionMaturity[] = (await prisma.questionMaturity.findMany(
+      {
+        include: {
+          category: true,
+          usersMaturity: {
+            where: {
+              user_id: idUser,
+            },
+            take: 1,
+            orderBy: {
+              createdAt: "desc",
+            },
           },
-          take: 1,
-          orderBy: {
-            createdAt: "desc",
-          }
         },
-      },
-      orderBy: {
-        code: "asc",
-      },
-    })) as unknown as QuestionMaturity[];
+        orderBy: {
+          code: "asc",
+        },
+      }
+    )) as unknown as QuestionMaturity[];
 
     if (!getData) {
       return {
@@ -596,9 +599,10 @@ export async function getQuestionMaturity(idUser: string) {
       };
     }
 
-    const data: TransformedQuestionMaturity[] = getData.map(item => ({
+    const data: TransformedQuestionMaturity[] = getData.map((item) => ({
       ...item,
-      usersMaturity: item.usersMaturity.length > 0 ? item.usersMaturity[0] : null,
+      usersMaturity:
+        item.usersMaturity.length > 0 ? item.usersMaturity[0] : null,
     }));
 
     const sections: QuestionPerSection[] = [
@@ -809,8 +813,8 @@ export async function getResultMaturityUser(user_id: string) {
   try {
     const checkIfUserNotSubmit = await prisma.usersMaturity.findMany({
       where: {
-        user_id: user_id
-      }
+        user_id: user_id,
+      },
     });
 
     if (checkIfUserNotSubmit.length == 0) {
@@ -821,23 +825,25 @@ export async function getResultMaturityUser(user_id: string) {
       };
     }
 
-    const getData: QuestionMaturity[] = (await prisma.questionMaturity.findMany({
-      include: {
-        category: true,
-        usersMaturity: {
-          where: {
-            user_id: user_id,
+    const getData: QuestionMaturity[] = (await prisma.questionMaturity.findMany(
+      {
+        include: {
+          category: true,
+          usersMaturity: {
+            where: {
+              user_id: user_id,
+            },
+            take: 1,
+            orderBy: {
+              createdAt: "desc",
+            },
           },
-          take: 1,
-          orderBy: {
-            createdAt: "desc",
-          }
         },
-      },
-      orderBy: {
-        code: "asc",
-      },
-    })) as unknown as QuestionMaturity[];
+        orderBy: {
+          code: "asc",
+        },
+      }
+    )) as unknown as QuestionMaturity[];
 
     if (!getData) {
       return {
@@ -846,9 +852,10 @@ export async function getResultMaturityUser(user_id: string) {
       };
     }
 
-    const data: TransformedQuestionMaturity[] = getData.map(item => ({
+    const data: TransformedQuestionMaturity[] = getData.map((item) => ({
       ...item,
-      usersMaturity: item.usersMaturity.length > 0 ? item.usersMaturity[0] : null,
+      usersMaturity:
+        item.usersMaturity.length > 0 ? item.usersMaturity[0] : null,
     }));
 
     const sections: QuestionPerSection[] = [
@@ -948,7 +955,7 @@ export async function getResultMaturityUser(user_id: string) {
     //     i--;
     //   }
     // }
-    
+
     return {
       success: true,
       data: sections,
@@ -970,7 +977,7 @@ export async function getResultMaturityUser(user_id: string) {
 
 export type HeaderTabelResultMaturity = {
   name: string;
-}
+};
 
 // Function to calculate average level
 const calculateAverage = (levels: number[]): number => {
@@ -990,7 +997,7 @@ const fetchRecommendation = async (avgLevel: number): Promise<string> => {
     },
   });
 
-  return recommendations?.recommend || 'Belum ada';
+  return recommendations?.recommend || "Belum ada";
 };
 
 export async function getResultMaturityAll() {
@@ -1000,7 +1007,7 @@ export async function getResultMaturityAll() {
         questionMaturity: {
           include: {
             category: true,
-          }
+          },
         },
         users: true,
       },
@@ -1015,7 +1022,7 @@ export async function getResultMaturityAll() {
           name: "asc",
         },
       },
-    }) ;
+    });
 
     if (!data) {
       return {
@@ -1024,31 +1031,31 @@ export async function getResultMaturityAll() {
       };
     }
 
-    const headerTabel : HeaderTabelResultMaturity[] =[];
+    const headerTabel: HeaderTabelResultMaturity[] = [];
 
     data.forEach((item) => {
       const indexUser = headerTabel.findIndex(
         (header) => header.name === item.users!.name
-      )
+      );
 
-      if(indexUser === -1){
+      if (indexUser === -1) {
         headerTabel.push({
-          name: item.users!.name
+          name: item.users!.name,
         });
       }
-    })
+    });
 
     headerTabel.unshift({
-      name: "Kriteria"
-    })
+      name: "Kriteria",
+    });
 
     headerTabel.push({
-      name: "Hasil Rata Rata"
-    })
+      name: "Hasil Rata Rata",
+    });
 
     headerTabel.push({
-      name: "Hasil Rekomendasi"
-    })
+      name: "Hasil Rekomendasi",
+    });
 
     // Transform the data
     const groupedData: { [key: string]: any } = {};
@@ -1066,7 +1073,7 @@ export async function getResultMaturityAll() {
             users: {},
             levels: [],
             avg_result: 0,
-            recommendation: '',
+            recommendation: "",
           };
         }
         groupedData[category].users[userName] = level;
@@ -1075,7 +1082,11 @@ export async function getResultMaturityAll() {
     });
 
     headerTabel.forEach((header) => {
-      if (header.name !== "Kriteria" && header.name !== "Hasil Rata Rata" && header.name !== "Hasil Rekomendasi") {
+      if (
+        header.name !== "Kriteria" &&
+        header.name !== "Hasil Rata Rata" &&
+        header.name !== "Hasil Rekomendasi"
+      ) {
         for (const category in groupedData) {
           if (!groupedData[category].users[header.name]) {
             groupedData[category].users[header.name] = 0;
@@ -1088,7 +1099,9 @@ export async function getResultMaturityAll() {
     for (const category in groupedData) {
       const avgLevel = calculateAverage(groupedData[category].levels);
       groupedData[category].avg_result = avgLevel;
-      groupedData[category].recommendation = await fetchRecommendation(avgLevel);
+      groupedData[category].recommendation = await fetchRecommendation(
+        avgLevel
+      );
     }
 
     const transformedData = Object.values(groupedData).map((item: any) => ({
@@ -1104,7 +1117,7 @@ export async function getResultMaturityAll() {
         header: headerTabel,
         data: transformedData,
       },
-      message: 'Data found',
+      message: "Data found",
     };
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -1120,9 +1133,9 @@ export async function getResultMaturityAll() {
   }
 }
 
-export async function getQuestionMaturityAdmin(){
-  try{
-    const data : QuestionMaturity[] = (await prisma.questionMaturity.findMany({
+export async function getQuestionMaturityAdmin() {
+  try {
+    const data: QuestionMaturity[] = (await prisma.questionMaturity.findMany({
       include: {
         category: true,
       },
@@ -1131,7 +1144,7 @@ export async function getQuestionMaturityAdmin(){
       },
     })) as unknown as QuestionMaturity[];
 
-    if(!data){
+    if (!data) {
       return {
         success: false,
         message: "There is no data found",
@@ -1190,7 +1203,7 @@ export async function getQuestionMaturityAdmin(){
           section.detail[detailIndex].question?.push({
             id: item.id,
             kode: item.code,
-            question: item.question
+            question: item.question,
           });
         }
       }
@@ -1201,7 +1214,6 @@ export async function getQuestionMaturityAdmin(){
       data: sections,
       message: "Data found",
     };
-
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
@@ -1232,22 +1244,22 @@ export async function postQuestionMaturityAdmin(formData: FormData) {
   }
 
   try {
-    validatedFields.data.forEach( async (item) => {
+    validatedFields.data.forEach(async (item) => {
       const data = await prisma.questionMaturity.findFirst({
         where: {
-          id: item.id
-        }
-      })
+          id: item.id,
+        },
+      });
 
-      if(data != null){
+      if (data != null) {
         await prisma.questionMaturity.update({
           where: {
-            id: item.id
+            id: item.id,
           },
           data: {
             question: item.question,
-          }
-        })
+          },
+        });
       } else {
         await prisma.questionMaturity.create({
           data: {
@@ -1255,8 +1267,8 @@ export async function postQuestionMaturityAdmin(formData: FormData) {
             code: item.code,
             level: item.level,
             question: item.question,
-          }
-        })
+          },
+        });
       }
     });
 
@@ -1264,7 +1276,6 @@ export async function postQuestionMaturityAdmin(formData: FormData) {
       success: true,
       message: "Data saved successfully",
     };
-
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
