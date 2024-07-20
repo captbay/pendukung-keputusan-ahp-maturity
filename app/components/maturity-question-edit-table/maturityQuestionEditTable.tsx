@@ -23,19 +23,24 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
   const { isOpen: isConfirmationModalOpen, onOpen: onConfirmationModalOpen, onOpenChange: onConfirmationModalOpenChange } = useDisclosure();
   const [newQuestion, setNewQuestion] = useState('');
   const clickedData = useRef<{ id: string, kode: string, question: string } | null>(null);
+  let questionCounter = 1;
+  const prefixKode = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
   const handleCheckpointClick = (index: number) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    questionCounter = 1;
     setCurrentCheckpoint(index);
   };
 
   const handleNextButton = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    questionCounter = 1;
     setCurrentCheckpoint(currentCheckpoint + 1);
   };
 
   const handlePreviousButton = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    questionCounter = 1;
     setCurrentCheckpoint(currentCheckpoint - 1);
   };
 
@@ -91,7 +96,8 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
       </div>
       <Spacer y={8} />
       <p className='font-bold text-xl text-tertiary mb-2'>{eachLevelQuestion.title}</p>
-      {eachLevelQuestion.detail.map((questionSet, index) => (
+      {eachLevelQuestion.detail.map((questionSet, index) => {
+        return (
         <div className='w-full' key={index}>
           <table className="border-collapse border border-gray-400 w-full sm:min-w-full mb-6">
             <thead className="bg-primary top-0 z-10">
@@ -105,9 +111,12 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
               </tr>
             </thead>
             <tbody>
-              {questionSet.question?.map((data, qIndex) => (
+              {questionSet.question?.map((data, qIndex) => {
+                const newKode = `${prefixKode[currentCheckpoint]}${questionCounter.toString().padStart(2, '0')}`;
+                questionCounter += 1;
+                return (
                 <tr key={qIndex}>
-                  <td className="border border-gray-400 px-4 py-2">{data.kode}</td>
+                  <td className="border border-gray-400 px-4 py-2">{newKode}</td>
                   <td className="border border-gray-400 px-4 py-2">{data.question}</td>
                   <td className="border border-gray-400 px-4 py-2 text-center">
                     <Tooltip placement='top' content='Edit'>
@@ -124,11 +133,11 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
                     </Tooltip>
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>
-      ))}
+      )})}
       <div className='flex justify-end gap-2'>
         <Button
           disabled={currentCheckpoint === 0}

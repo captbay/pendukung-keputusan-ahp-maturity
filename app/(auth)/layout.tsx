@@ -26,8 +26,7 @@ export default function RootLayout({
       >
        <div className="flex flex-col justify-center items-center h-full gap-20">
           <div className="flex flex-col items-center gap-2">
-            <h1 className="font-bold text-secondary text-3xl">Sistem Pendukung Keputusan</h1>
-            <h1 className="text-secondary text-xl">Analytical Hierarchy Process and Maturity Measurement</h1>
+            <h1 className="font-bold text-secondary text-3xl">Risk Management Maturity Measurement Dashboard</h1>
           </div>
           <NextUIProvider>{children}</NextUIProvider>
        </div>
