@@ -47,7 +47,7 @@ model UsersAhpForm {
   createdAt             DateTime    @default(now()) @map(name: "created_at")
   updatedAt             DateTime    @updatedAt @map(name: "updated_at")
 
-  users                 User?       @relation(fields: [user_id], references: [id])
+  users                 User?       @relation(fields: [user_id], references: [id], onDelete: Cascade )
 
   @@map(name:"users-ahp-form")
 }
@@ -59,7 +59,7 @@ model AhpResult {
   createdAt             DateTime    @default(now()) @map(name: "created_at")
   updatedAt             DateTime    @updatedAt @map(name: "updated_at")
 
-  category              Category?   @relation(fields: [category_id], references: [id])
+  category              Category?   @relation(fields: [category_id], references: [id], onDelete: Cascade)
 
   @@map(name:"ahp-result")
 }
@@ -75,7 +75,7 @@ model QuestionMaturity{
 
   usersMaturity         UsersMaturity[]
 
-  category              Category?  @relation(fields: [category_id], references: [id]) 
+  category              Category?  @relation(fields: [category_id], references: [id], onDelete: Cascade) 
 
   @@map("question-maturity")
 }
@@ -91,8 +91,8 @@ model UsersMaturity {
 
   // usersProgressMaturity UsersProgressMaturity[]
 
-  users                 User?       @relation(fields: [user_id], references: [id])
-  questionMaturity      QuestionMaturity?   @relation(fields: [question_maturity_id], references: [id])
+  users                 User?       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  questionMaturity      QuestionMaturity?   @relation(fields: [question_maturity_id], references: [id], onDelete: Cascade)
 
   @@map(name:"users-maturity")
 }
@@ -105,7 +105,7 @@ model RecommendMaturity {
   createdAt             DateTime    @default(now()) @map(name: "created_at")
   updatedAt             DateTime    @updatedAt @map(name: "updated_at")
 
-  category              Category?   @relation(fields: [category_id], references: [id])
+  category              Category?   @relation(fields: [category_id], references: [id], onDelete: Cascade)
 
   @@map(name:"recommend-maturity")
 }

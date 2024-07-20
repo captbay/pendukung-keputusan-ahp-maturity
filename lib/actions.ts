@@ -1369,6 +1369,7 @@ export async function deleteUser(id_user: string) {
       message: "Data deleted successfully",
     };
   } catch (e) {
+    console.log(e);
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
         return {
