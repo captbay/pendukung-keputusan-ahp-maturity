@@ -26,6 +26,8 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
   const formDataMaturity = new FormData();
   const [textProgress, setTextProgress] = useState("Mengunggah evidence...");
   const [progressValue, setProgressValue] = useState(0);
+  let questionCounter = 1;
+  const prefixKode = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
   useEffect(() => {
     // initialize form data with default values
@@ -57,12 +59,14 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
   const handleCheckpointClick = (index: number) => {
     if (index > currentCheckpoint) return;
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    questionCounter = 1;
     setCurrentCheckpoint(index);
   };
 
   const handleNextButton = () => {
     console.log('Form Data: ', formData);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    questionCounter = 1;
     if(validateAnswer()){
       setCurrentCheckpoint(currentCheckpoint + 1);
     }
@@ -70,6 +74,7 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
 
   const handlePreviousButton = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    questionCounter = 1;
     setCurrentCheckpoint(currentCheckpoint - 1);
   };
 
@@ -197,9 +202,12 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
               </tr>
             </thead>
             <tbody>
-              {questionSet.question?.map((data, qIndex) => (
+              {questionSet.question?.map((data, qIndex) => {
+                const newKode = `${prefixKode[currentCheckpoint]}${questionCounter.toString().padStart(2, '0')}`;
+                questionCounter += 1;
+                return (
                 <tr key={qIndex}>
-                  <td className="border border-gray-400 px-4 py-2">{data.kode}</td>
+                  <td className="border border-gray-400 px-4 py-2">{newKode}</td>
                   <td className="border border-gray-400 px-4 py-2">{data.question}</td>
                   <td className="border border-gray-400 px-4 py-2 text-center">
                     <input
@@ -267,7 +275,7 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
                     </td>
                   )}
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>

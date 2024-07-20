@@ -54,7 +54,6 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
 
   const handleAddQuestion = async() => {
     setIsLoading(true);
-    const newKode = `${prefixKode[currentCheckpoint]}${questionCounter.toString().padStart(2, '0')}`;
     const newQuestionData = { code: "Dummy aja", question: newQuestion, category_id: clickedCategory.current, level: clickedLevel.current, id: "Dummy juga nih bos" };
     console.log('this is new question data to be added --- ', newQuestionData);
     const formData = new FormData();
