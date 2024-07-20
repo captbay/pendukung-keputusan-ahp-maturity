@@ -4,9 +4,9 @@ import MaturityRecapTable, {
 } from "@/app/components/maturity-recap-table/maturityRecapTable";
 import MaturityTable from "@/app/components/maturity-table/maturityTable";
 import NotFoundIcon from "@/app/icon/NotFoundIcon";
-import { RecommendMaturity, getQuestionMaturity } from "@/lib/actions";
+import { RecommendMaturity, fetchRecommendation, getQuestionMaturity } from "@/lib/actions";
 import { Button } from "@nextui-org/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { QuestionPerSection } from "@/lib/actions";
 
 interface MaturityPageProps {
@@ -21,64 +21,70 @@ const MaturityPage: React.FC<MaturityPageProps> = ({
   maturityResult,
 }) => {
   const [startMaturityForm, setStartMaturityForm] = useState(false);
-  console.log("maturityResult ---- ", maturityResult);
+  const [filteredRecommendations, setFilteredRecommendations] = useState<TableRowMaturity[]>([]);
+  
+  useEffect(() => {
+    async function getFilteredRecommendations(
+      maturityResult: QuestionPerSection[],
+      userName: string
+    ): Promise<TableRowMaturity[]> {
+      const recommendations = await Promise.all(
+        maturityResult.map(async (entry) => {
+          const validDetails = entry.detail.filter(
+            (detail) => detail.recommend !== "Belum ada"
+          );
+          const firstRecommendation = await fetchRecommendation(1, entry.title);
 
-  function getFilteredRecommendations(
-    maturityResult: QuestionPerSection[],
-    userName: string
-  ) {
-    return maturityResult.map((entry) => {
-      const validDetails = entry.detail.filter(
-        (detail) => detail.recommend !== "Belum ada"
-      );
-      console.log("validDetails ---- ", entry.title, validDetails);
+          if (validDetails.length > 0) {
+            const levels = validDetails
+              .map((detail) => detail.level)
+              .sort((a, b) => a - b);
+            let highestConsecutiveLevel = 1;
 
-      if (validDetails.length > 0) {
-        const levels = validDetails
-          .map((detail) => detail.level)
-          .sort((a, b) => a - b);
-        let highestConsecutiveLevel = 1;
-
-        if (levels[0] == 1) {
-          highestConsecutiveLevel = 1;
-          for (let i = 1; i < levels.length; i++) {
-            if (levels[i] == highestConsecutiveLevel + 1) {
-              highestConsecutiveLevel = levels[i];
-            } else {
-              break;
+            if (levels[0] === 1) {
+              highestConsecutiveLevel = 1;
+              for (let i = 1; i < levels.length; i++) {
+                if (levels[i] === highestConsecutiveLevel + 1) {
+                  highestConsecutiveLevel = levels[i];
+                } else {
+                  break;
+                }
+              }
             }
+
+            const highestLevelDetail = validDetails.find(
+              (detail) => detail.level === highestConsecutiveLevel
+            );
+
+            return {
+              kriteria: entry.title,
+              [userName]: highestConsecutiveLevel.toString(),
+              avg_result: highestConsecutiveLevel.toString(),
+              recommendation: highestLevelDetail
+                ? highestLevelDetail.recommend
+                : firstRecommendation,
+            };
           }
-        }
 
-        const highestLevelDetail = validDetails.find(
-          (detail) => detail.level === highestConsecutiveLevel
-        );
-        console.log("lalalal -- ", entry.title, highestConsecutiveLevel);
+          return {
+            kriteria: entry.title,
+            [userName]: "1",
+            avg_result: "1",
+            recommendation: firstRecommendation,
+          };
+        })
+      );
 
-        return {
-          kriteria: entry.title,
-          [userName]: highestConsecutiveLevel.toString(),
-          avg_result: highestConsecutiveLevel.toString(),
-          recommendation: highestLevelDetail
-            ? highestLevelDetail.recommend
-            : "Belum ada", // ini pake fetchRecommendation(1, entry.title) untuk dapetin rekomendasi level 1 nya
-        };
-      }
+      return recommendations as TableRowMaturity[];
+    }
 
-      return {
-        kriteria: entry.title,
-        [userName]: "1",
-        avg_result: "1",
-        recommendation: "Belum ada", // ini pake fetchRecommendation(1, entry.title) untuk dapetin rekomendasi level 1 nya
-      };
-    });
-  }
+    if (maturityResult.length > 0) {
+      getFilteredRecommendations(maturityResult, session?.user.name).then(
+        (data) => setFilteredRecommendations(data)
+      );
+    }
+  }, [maturityResult, session?.user.name]);
 
-  const filteredDataRecommendations = (
-    maturityResult.length > 0
-      ? getFilteredRecommendations(maturityResult, session?.user.name)
-      : null
-  ) as TableRowMaturity[];
   const userData = [
     {
       name: "Kriteria",
@@ -101,8 +107,6 @@ const MaturityPage: React.FC<MaturityPageProps> = ({
       jabatan: "",
     },
   ];
-
-  console.log("getFilteredRecommendations ---- ", filteredDataRecommendations);
 
   return (
     <main className="flex w-full min-h-screen bg-secondary z-0 justify-center">
@@ -128,11 +132,11 @@ const MaturityPage: React.FC<MaturityPageProps> = ({
             <div className="flex flex-col w-full h-full justify-center items-center max-lg:p-8 mb-[40px]">
               {maturityResult.length > 0 && !startMaturityForm ? (
                 <MaturityRecapTable
-                  data={filteredDataRecommendations}
+                  data={filteredRecommendations}
                   users={userData}
                   session={session}
                 />
-              ) : maturityResult.length == 0 && !startMaturityForm ? (
+              ) : maturityResult.length === 0 && !startMaturityForm ? (
                 <div className="flex justify-center items-center flex-col gap-4">
                   <NotFoundIcon />
                   <p className="text-center text-xl max-w-[500px] mt-[-30px]">

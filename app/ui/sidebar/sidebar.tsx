@@ -117,6 +117,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, session }) => {
                   <MaturityIcon />
                   <h2 className="text-secondary">Maturity Question Edit</h2>
                 </Button>
+                <Button
+                  onClick={() => handleButtonClick("user-recap")}
+                  className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${
+                    isActive("/user-recap") ? "bg-red-700 text-white" : ""
+                  }`}
+                  shadow-md
+                >
+                  <MaturityIcon />
+                  <h2 className="text-secondary">User Recap</h2>
+                </Button>
               </>
             ) : (
               <>

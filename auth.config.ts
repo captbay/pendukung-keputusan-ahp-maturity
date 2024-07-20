@@ -42,7 +42,7 @@ export const authConfig = {
             nextUrl.pathname !== "/dashboard-admin" &&
             nextUrl.pathname !== "/maturity-question-edit" &&
             nextUrl.pathname !== "/ahp-recap" &&
-            nextUrl.pathname !== "/playground"
+            nextUrl.pathname !== "/user-recap"
           ) {
             return Response.redirect(new URL("/dashboard-admin", nextUrl)); // Redirect Admin to /dashboard-admin
           }
