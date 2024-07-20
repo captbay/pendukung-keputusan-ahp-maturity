@@ -45,7 +45,7 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
             emptyContent="No data found."
           >
             {(item) => (
-              <TableRow key={item.key}>
+              <TableRow key={item.kriteria1}>
                 {keys.map((key, cellIndex) => (
                   <TableCell key={cellIndex}>{item[key]}</TableCell>
                 ))}
@@ -68,7 +68,7 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
             emptyContent="No data found."
           >
             {(item) => (
-              <TableRow key={item.key}>
+              <TableRow key={item.kriteria1}>
                 {keys.map((key, cellIndex) => (
                   <TableCell key={cellIndex}>{item[key]}</TableCell>
                 ))}
@@ -91,7 +91,7 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
             emptyContent="No data found."
           >
             {(item) => (
-              <TableRow key={item.key}>
+              <TableRow key={item.kriteria1}>
                 {keys.map((key, cellIndex) => (
                   <TableCell key={cellIndex}>{item[key]}</TableCell>
                 ))}
@@ -114,7 +114,7 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
             emptyContent="No data found."
           >
             {(item) => (
-              <TableRow key={item.key}>
+              <TableRow key={item.kriteria1}>
                 {keys.map((key, cellIndex) => (
                   <TableCell key={cellIndex}>{item[key]}</TableCell>
                 ))}
@@ -137,7 +137,7 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
             emptyContent="No data found."
           >
             {(item) => (
-              <TableRow key={item.key}>
+              <TableRow key={item.kriteria1}>
                 {keys.map((key, cellIndex) => (
                   <TableCell key={cellIndex}>{item[key]}</TableCell>
                 ))}

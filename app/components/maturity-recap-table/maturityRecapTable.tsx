@@ -70,7 +70,7 @@ const MaturityRecapTable: React.FC<MaturityRecapTableProps> = ({ session, data, 
             emptyContent="No data found."
           >
             {(item) => (
-              <TableRow key={item.key}>
+              <TableRow key={item.recommendation}>
               {keys.map((key, cellIndex) => (
                 <TableCell key={cellIndex}>{item[key]}</TableCell>
               ))}
