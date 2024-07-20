@@ -9,7 +9,6 @@ export default async function DashboardAdmin() {
   const ahpResult = await getAhpData();
   const maturityResult = await getResultMaturityAll();
   return (
-    // <></>
     <DashboardUiAdmin 
       session={session} 
       data={user!.data}

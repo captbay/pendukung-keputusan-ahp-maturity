@@ -10,17 +10,6 @@ export default async function Dashboard() {
   const maturityResultAll = await getResultMaturityAll();
   const maturityResultData = maturityResultAll!.data;
 
-  // print maturityResultData1
-  // console.log('maturityResultData1 --- ', maturityResultData1);
-  
-  // const maturityResultData : {
-  //   header: HeaderTabelResultMaturity[],
-  //   data: any[]
-  // } = {
-  //   header: [],
-  //   data: []
-  // }
-
   return (
     <>
       <DashboardUi 

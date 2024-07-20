@@ -55,6 +55,7 @@ const DashboardUiAdmin: React.FC<DashboardProps> = ({ session, data, ahpResult, 
       <MaturityRecapTable
         users={maturityResultHeader}
         data={maturityResultData}
+        session={session}
       />
     </main>
   );

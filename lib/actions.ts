@@ -395,9 +395,13 @@ export async function getAllUserFormAhp() {
       },
     })) as unknown as UserAhpForm[];
 
-    if (!data) {
+    if (data.length == 0) {
       return {
         success: false,
+        data: {
+          tableData: [],
+          users: [],
+        },
         message: "There is no data found",
       };
     }
@@ -1075,6 +1079,7 @@ export async function getResultMaturityAll() {
         for (const category in groupedData) {
           if (!groupedData[category].users[header.name]) {
             groupedData[category].users[header.name] = 0;
+            groupedData[category].levels.push(0);
           }
         }
       }

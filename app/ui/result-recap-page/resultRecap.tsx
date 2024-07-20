@@ -10,9 +10,10 @@ interface ResultRecapPageProps {
     header: HeaderTabelResultMaturity[],
     data: any[];
   } | undefined;
+  session: any;
 }
 
-const ResultRecapPage: React.FC<ResultRecapPageProps> = ({ maturityResult }) => {
+const ResultRecapPage: React.FC<ResultRecapPageProps> = ({ session, maturityResult }) => {
   const maturityResultData = maturityResult!.data as TableRowMaturity[];
   const maturityResultHeader = maturityResult!.header as User[];
 
@@ -24,6 +25,7 @@ const ResultRecapPage: React.FC<ResultRecapPageProps> = ({ maturityResult }) => 
       <MaturityRecapTable 
         users={maturityResultHeader}
         data={maturityResultData}
+        session={session}
       />
     </main>
   )

@@ -108,6 +108,7 @@ const MaturityPage: React.FC<MaturityPageProps> = ({ session, questionMaturity, 
                 <MaturityRecapTable 
                   data={filteredDataRecommendations}
                   users={userData}
+                  session={session}
                 />
               ) : maturityResult.length == 0 && !startMaturityForm ? (
                 <div className='flex justify-center items-center flex-col gap-4'>

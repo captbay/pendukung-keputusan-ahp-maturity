@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue } from "@nextui-org/react";
+import NotFoundIcon from "@/app/icon/NotFoundIcon";
 
 interface TableRow {
   kriteria1: string;
@@ -18,7 +19,16 @@ interface UserRecapTableProps {
 }
 
 const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
-  const keys = Object.keys(data[0]);
+
+  if (data.length == 0){
+    return (
+      <div className='flex justify-center items-center flex-col gap-4'>
+        <NotFoundIcon />
+        <p className="text-center text-xl max-w-[500px] min-w-[500px] mt-[-30px]">No AHP data found.</p>
+      </div>
+    )
+  }
+  const keys = data.length > 0 ? Object.keys(data[0]) : [];
 
   return (
     <div className="w-[70%] max-lg:w-[90%] flex flex-col gap-14 mt-10 text-center">
@@ -31,15 +41,16 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
               ))}
           </TableHeader>
           <TableBody
+            items={data.slice(0, 6)}
             emptyContent="No data found."
           >
-            {data.slice(0, 6).map((item, rowIndex) => (
-              <TableRow key={rowIndex}>
+            {(item) => (
+              <TableRow key={item.key}>
                 {keys.map((key, cellIndex) => (
                   <TableCell key={cellIndex}>{item[key]}</TableCell>
                 ))}
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
@@ -53,15 +64,16 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
               ))}
           </TableHeader>
           <TableBody
+            items={data.slice(6, 27)}
             emptyContent="No data found."
           >
-            {data.slice(6, 27).map((item, rowIndex) => (
-              <TableRow key={rowIndex}>
+            {(item) => (
+              <TableRow key={item.key}>
                 {keys.map((key, cellIndex) => (
                   <TableCell key={cellIndex}>{item[key]}</TableCell>
                 ))}
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
@@ -75,15 +87,16 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
               ))}
           </TableHeader>
           <TableBody
+            items={data.slice(27, 48)}
             emptyContent="No data found."
           >
-            {data.slice(27, 48).map((item, rowIndex) => (
-              <TableRow key={rowIndex}>
+            {(item) => (
+              <TableRow key={item.key}>
                 {keys.map((key, cellIndex) => (
                   <TableCell key={cellIndex}>{item[key]}</TableCell>
                 ))}
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
@@ -97,15 +110,16 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
               ))}
           </TableHeader>
           <TableBody
+            items={data.slice(48, 69)}
             emptyContent="No data found."
           >
-            {data.slice(48, 69).map((item, rowIndex) => (
-              <TableRow key={rowIndex}>
+            {(item) => (
+              <TableRow key={item.key}>
                 {keys.map((key, cellIndex) => (
                   <TableCell key={cellIndex}>{item[key]}</TableCell>
                 ))}
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
@@ -119,15 +133,16 @@ const UserRecapTable: React.FC<UserRecapTableProps> = ({ data, users }) => {
               ))}
           </TableHeader>
           <TableBody
+            items={data.slice(69, 90)}
             emptyContent="No data found."
           >
-            {data.slice(69, 90).map((item, rowIndex) => (
-              <TableRow key={rowIndex}>
+            {(item) => (
+              <TableRow key={item.key}>
                 {keys.map((key, cellIndex) => (
                   <TableCell key={cellIndex}>{item[key]}</TableCell>
                 ))}
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>

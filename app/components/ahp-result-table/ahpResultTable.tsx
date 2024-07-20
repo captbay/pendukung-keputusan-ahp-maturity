@@ -100,7 +100,7 @@ const AHPResultTable: React.FC<AHPResultTableProps> = ({ ahpResult, session }) =
             </TableBody>
           </Table>
         </div>
-        {rows && session.user.jabatan == "Admin" && (
+        {rows.length > 0 && session.user.jabatan == "Admin" && (
           <div className="flex justify-end w-full">
             <Button
               size="sm"
