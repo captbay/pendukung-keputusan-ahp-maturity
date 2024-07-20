@@ -24,13 +24,16 @@ const MaturityPage: React.FC<MaturityPageProps> = ({ session, questionMaturity, 
   
       if (validDetails.length > 0) {
         const levels = validDetails.map(detail => detail.level).sort((a, b) => a - b);
-        let highestConsecutiveLevel = levels[0];
-  
-        for (let i = 1; i < levels.length; i++) {
-          if (levels[i] === highestConsecutiveLevel + 1) {
-            highestConsecutiveLevel = levels[i];
-          } else {
-            break;
+        let highestConsecutiveLevel = 0;
+
+        if (levels[0] == 1) {
+          highestConsecutiveLevel = 1;
+          for (let i = 1; i < levels.length; i++) {
+            if (levels[i] == highestConsecutiveLevel + 1) {
+              highestConsecutiveLevel = levels[i];
+            } else {
+              break;
+            }
           }
         }
   

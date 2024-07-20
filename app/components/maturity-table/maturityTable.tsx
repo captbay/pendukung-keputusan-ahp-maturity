@@ -137,17 +137,29 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
         formDataMaturity
       );
 
-      setTimeout(() => {
-        if (result!.success) {
-          setProgressValue(100);
-          toast.success("Form submitted successfully!");
+      if (result!.success) {
+        setProgressValue(100);
+        toast.success("Form submitted successfully!");
+        setTimeout(() => {
           window.location.reload();
-        } else {
-          toast.error("Failed to submit form. Please try again later.");
-        }
+        }, 2000);
+      } else {
+        toast.error("Failed to submit form. Please try again later.");
+      }
+
+      // setTimeout(() => {
+      //   if (result!.success) {
+      //     setProgressValue(100);
+      //     toast.success("Form submitted successfully!");
+      //     setTimeout(() => {
+      //       window.location.reload();
+      //     }, 1000);
+      //   } else {
+      //     toast.error("Failed to submit form. Please try again later.");
+      //   }
   
-        setIsLoading(false);
-      }, 2000);
+      //   setIsLoading(false);
+      // }, 5000);
     } catch (error) {
       console.error('Error uploading files:', error);
       toast.error('Gagal untuk mengunggah evidence. Silakan coba lagi.');
