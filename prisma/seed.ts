@@ -15,16 +15,19 @@ async function main() {
         email: "user_one@mail.com",
         password: await bcrypt.hash("password", 10),
         name: "User One",
+        jabatan: "Karyawan",
       },
       {
         email: "user_two@mail.com",
         password: await bcrypt.hash("password", 10),
         name: "User Two",
+        jabatan: "Karyawan",
       },
       {
         email: "user_three@mail.com",
         password: await bcrypt.hash("password", 10),
         name: "User Three",
+        jabatan: "Karyawan",
       },
     ],
   });

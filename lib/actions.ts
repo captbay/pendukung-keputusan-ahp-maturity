@@ -360,7 +360,7 @@ export async function getAllUser() {
       },
     });
 
-    if (!data) {
+    if (data.length == 0) {
       return {
         success: false,
         message: "There is no user registered",
