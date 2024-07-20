@@ -718,6 +718,10 @@ export async function getQuestionMaturity(idUser: string) {
 
     await Promise.all(
       sections.map(async (section) => {
+        let canRecommend = true; // Flag to determine if recommendations can be made sequentially
+        // Sort details by level to ensure sequential processing
+        section.detail.sort((a, b) => a.level - b.level);
+
         await Promise.all(
           section.detail.map(async (detail) => {
             const allItems = data.filter(
@@ -732,6 +736,7 @@ export async function getQuestionMaturity(idUser: string) {
                   item.usersMaturity.evidence !== ""
                 : false
             );
+
             const anyUnansweredOrNoEvidence = allItems.some((item) =>
               item.usersMaturity
                 ? !item.usersMaturity.answer ||
@@ -739,8 +744,11 @@ export async function getQuestionMaturity(idUser: string) {
                   item.usersMaturity.evidence === ""
                 : true
             );
-            if (anyUnansweredOrNoEvidence) {
+
+            // Only provide a recommendation if previous levels are complete
+            if (!canRecommend || anyUnansweredOrNoEvidence) {
               detail.recommend = "Belum ada";
+              canRecommend = false; // Prevent subsequent recommendations
             } else if (allAnsweredAndEvidence) {
               const result = await getRecommendMaturity(
                 detail.level,
@@ -951,8 +959,6 @@ export async function getResultMaturityUser(user_id: string) {
         );
       })
     );
-
-    console.log(sections);
 
     // loop sections check if all detail.recommend is "Belum ada" and set sections to []
     // sections.forEach((section) => {
