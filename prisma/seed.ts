@@ -326,35 +326,35 @@ async function main() {
       {
         category_id: category2.id,
         code: "B07",
-        level: 3,
+        level: 2,
         question:
           "Apakah dilakukan pemeriksaan terhadap procurement management dan staffing management plan untuk mengidentifikasi risiko proyek?",
       },
       {
         category_id: category2.id,
         code: "B08",
-        level: 3,
+        level: 2,
         question:
           "Apakah project scope, schedule, dan cost menjadi focus bahasan dalam diskusi mengenai risiko pada proyek?",
       },
       {
         category_id: category2.id,
         code: "B09",
-        level: 3,
+        level: 2,
         question:
           "Apakah top level risk sudah masuk dalam rencana manajemen risiko?",
       },
       {
         category_id: category2.id,
         code: "B10",
-        level: 3,
+        level: 2,
         question:
           "Apakah penilaian dari ahli dan lesson learned digunakan dalam identifikasi risiko?",
       },
       {
         category_id: category2.id,
         code: "B11",
-        level: 3,
+        level: 2,
         question:
           "Apakah terdapat dokumentasi untuk risiko yang telah teridentifikasi untuk monitoring pada proyek besar dan kompleks?",
       },
@@ -698,7 +698,7 @@ async function main() {
       {
         category_id: category5.id,
         code: "E07",
-        level: 2,
+        level: 3,
         question:
           "Apakah pihak-pihak yang bertanggung jawab selalu diidentifikasi untuk semua risiko yang diperlukan?",
       },
