@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Toaster, toast } from 'sonner';
 import ProgressBar from '@/app/ui/progress-bar/progressBar';
 import LoadingScreen from '../loading-screen/loadingScreen';
-import { Question, QuestionPerSection, StateMaturity, postQuestionMaturityAdmin, submitMaturity } from '@/lib/actions';
+import { Question, QuestionPerSection, StateMaturity, deleteQuestionMaturity, postQuestionMaturityAdmin, submitMaturity } from '@/lib/actions';
 import { EditIcon } from '@/app/icon/EditIcon';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Spacer, Tooltip, Button, useDisclosure, Checkbox, Input, Link, Textarea } from "@nextui-org/react";
 import ConfirmationModal from '@/app/ui/confirmation-modal/confirmationModal';
@@ -26,13 +26,15 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
   const { isOpen: isAddModalOpen, onOpen: onAddModalOpen, onOpenChange: onAddModalOpenChange } = useDisclosure();
   const { isOpen: isConfirmationModalOpen, onOpen: onConfirmationModalOpen, onOpenChange: onConfirmationModalOpenChange } = useDisclosure();
   const { isOpen: isConfirmationAddModalOpen, onOpen: onConfirmationAddModalOpen, onOpenChange: onConfirmationAddModalOpenChange } = useDisclosure();
+  const { isOpen: isConfirmationDeleteModalOpen, onOpen: onConfirmationDeleteModalOpen, onOpenChange: onConfirmationDeleteModalOpenChange } = useDisclosure();
   const [newQuestion, setNewQuestion] = useState('');
   const clickedData = useRef<{ id: string, kode: string, question: string } | null>(null);
   const clickedCategory = useRef<string>("");
   const clickedLevel = useRef<number>(0);
+  const clickedId = useRef<string>("");
   let questionCounter = 1;
   const prefixKode = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-  const router = useRouter();
+  const [dynamicText, setDynamicText] = useState('');
 
   const handleCheckpointClick = (index: number) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -50,6 +52,28 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
     window.scrollTo({ top: 0, behavior: 'smooth' });
     questionCounter = 1;
     setCurrentCheckpoint(currentCheckpoint - 1);
+  };
+
+  const handleDeleteQuestion = async() => {
+    // setIsLoading(true);
+    console.log('handle delete clicked --- ', clickedId.current);
+    onConfirmationDeleteModalOpenChange();
+    setIsLoading(true);
+    try{
+      const response = await deleteQuestionMaturity(clickedId.current);
+
+      if(response?.success){
+        toast.success("Question deleted successfully");
+        clickedId.current = "";
+        window.location.reload();
+      } else{
+        toast.error("Failed to delete question");
+      }
+      setIsLoading(false);
+    } catch(error){
+      toast.error("Failed to delete question");
+      setIsLoading(false);
+    }
   };
 
   const handleAddQuestion = async() => {
@@ -177,6 +201,18 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
                         <EditIcon />
                       </Button>
                     </Tooltip>
+
+                    <Tooltip placement='top' content='Delete'>
+                      <Button
+                        className='bg-secondary'
+                        onClick={() => {
+                          clickedId.current = data.id;
+                          onConfirmationDeleteModalOpen();
+                        }}
+                      >
+                        <TrashIcon />
+                      </Button>
+                    </Tooltip>
                   </td>
                 </tr>
               )})}
@@ -302,6 +338,7 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
                   onPress={async () => {
                     onConfirmationAddModalOpenChange();
                     onAddModalOpenChange();
+                    setDynamicText('Menambah pertanyaan...');
                     await handleAddQuestion();
                   }}
                 >
@@ -336,7 +373,42 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
                   onPress={async () => {
                     onConfirmationModalOpenChange();
                     onEditModalOpenChange();
+                    setDynamicText('Mengubah pertanyaan...');
                     await handleEditQuestion();
+                  }}
+                >
+                  Ya
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        size={'lg'}
+        isOpen={isConfirmationDeleteModalOpen}
+        onOpenChange={onConfirmationDeleteModalOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Confirmation Delete Question</ModalHeader>
+              <ModalBody>
+                <p>
+                  Apakah Anda yakin ingin menghapus pertanyaan ini?
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Tidak
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={async () => {
+                    onConfirmationDeleteModalOpen();
+                    setDynamicText('Menghapus pertanyaan...');
+                    await handleDeleteQuestion();
                   }}
                 >
                   Ya
@@ -351,7 +423,7 @@ const MaturityQuestionEditTable: React.FC<MaturityTableProps> = ({ maturityQuest
         richColors
         position="top-center"
       />
-      <LoadingScreen isLoading={isLoading} text={"Mengubah pertanyaan..."} />
+      <LoadingScreen isLoading={isLoading} text={dynamicText} />
     </div>
   );
 };

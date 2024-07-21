@@ -1382,3 +1382,30 @@ export async function deleteUser(id_user: string) {
     }
   }
 }
+
+export async function deleteQuestionMaturity(id_question: string) {
+  try {
+    await prisma.questionMaturity.delete({
+      where: {
+        id: id_question,
+      },
+    });
+    
+    return {
+      success: true,
+      message: "Data deleted successfully",
+    };
+  } catch (e) {
+    console.log(e);
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        return {
+          message: e.message,
+        };
+      }
+      return {
+        message: e.message,
+      };
+    }
+  }
+}

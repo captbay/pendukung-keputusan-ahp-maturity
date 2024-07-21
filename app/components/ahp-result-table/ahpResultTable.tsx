@@ -76,7 +76,7 @@ const AHPResultTable: React.FC<AHPResultTableProps> = ({ ahpResult, session }) =
   };
 
   return (
-    <div className="flex flex-row max-lg:flex-col max-lg:gap-10 w-[70%] max-lg:w-[90%] justify-center items-center mt-8">
+    <div className="flex flex-row max-lg:flex-col max-lg:gap-10 w-[40%] max-lg:w-[90%] justify-center items-center mt-8">
       <div className="flex flex-col w-full justify-center items-center">
         <div className="flex p-2 justify-center">
           <h1 className="text-lg">

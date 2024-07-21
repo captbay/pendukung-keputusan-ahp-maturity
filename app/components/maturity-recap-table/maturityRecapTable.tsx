@@ -51,7 +51,7 @@ const MaturityRecapTable: React.FC<MaturityRecapTableProps> = ({ session, data, 
   const keys = data.length > 0 ? Object.keys(data[0]) : [];
 
   return (
-    <div className="w-[70%] max-lg:w-[90%] flex flex-col text-center">
+    <div className="w-[90%] max-lg:w-[90%] flex flex-col text-center">
       <div>
         <p className="text-lg p-2 mt-8">Maturity Measurement Result Overall</p>
         <Table aria-label="Example static collection table">
