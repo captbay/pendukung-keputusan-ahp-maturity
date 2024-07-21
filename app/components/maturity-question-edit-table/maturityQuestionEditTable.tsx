@@ -6,11 +6,8 @@ import LoadingScreen from '../loading-screen/loadingScreen';
 import { Question, QuestionPerSection, StateMaturity, deleteQuestionMaturity, postQuestionMaturityAdmin, submitMaturity } from '@/lib/actions';
 import { EditIcon } from '@/app/icon/EditIcon';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Spacer, Tooltip, Button, useDisclosure, Checkbox, Input, Link, Textarea } from "@nextui-org/react";
-import ConfirmationModal from '@/app/ui/confirmation-modal/confirmationModal';
-import { on } from 'events';
 import { TrashIcon } from '@/app/icon/TrashIcon';
 import { PlusIcon } from '@/app/icon/PlusIcon';
-import { useRouter } from 'next/navigation';
 
 interface MaturityTableProps {
   maturityQuestion: QuestionPerSection[];

@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect, useRef, useState } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue, Button } from "@nextui-org/react";
 import { ActionEyeIcon } from "@/app/icon/ActionEyeIcon";
@@ -5,8 +7,10 @@ import { TrashIcon } from "@/app/icon/TrashIcon";
 import ConfirmationModal from "@/app/ui/confirmation-modal/confirmationModal";
 import { Toaster, toast } from "sonner";
 import LoadingScreen from "../loading-screen/loadingScreen";
-import { deleteUser } from "@/lib/actions";
+import { deleteUser, getQuestionMaturity, getResultMaturityUser } from "@/lib/actions";
 import { useRouter } from "next/navigation";
+import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, RadioGroup, Radio} from "@nextui-org/react";
+import MaturityTable from "../maturity-table/maturityTable";
 
 interface UserTableProps {
   data: Array<{
@@ -18,18 +22,35 @@ interface UserTableProps {
     jabatan?: string | null;
     status?: string;
   }> | undefined;
+  isAdmin?: boolean;
+  session: any;
 }
 
-const UserTable: React.FC<UserTableProps> = ({ data }) => {
+const UserTable: React.FC<UserTableProps> = ({ data, isAdmin, session }) => {
   const [isDeleteClicked, setIsDeleteClicked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const clickedUser = useRef();
   const router = useRouter();
+  const [selectedUser, setSelectedUser] = useState<any>();
+  const [maturityData, setMaturityData] = useState<any>();
+  const [dynamicText, setDynamicText] = useState<string>("");
   const columnsUser = [
     { name: "NAME", uid: "name" },
     { name: "ROLE", uid: "role" },
     { name: "ACTIONS", uid: "actions" },
   ];
+
+  useEffect(() => {
+    if(selectedUser){
+      getMaturityData(selectedUser.id);
+    }
+  }, [selectedUser]);
+
+  const getMaturityData = async(id: string) => {
+    const response = await getQuestionMaturity(id);
+    setMaturityData(response?.data);
+  };
   
   const handleDeleteUser = async() => {
     setIsLoading(true);
@@ -73,18 +94,39 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
       case "actions":
         return (
           <div className="flex justify-center">
-            <Tooltip content="Delete User" placement="top">
-              <Button
-                className="bg-secondary"
-                onPress={() => {
-                  clickedUser.current = data.id;
-                  setIsDeleteClicked(true);
-                  console.log('clicked user --- ', clickedUser.current);
-                }}
-              >
-                <TrashIcon />
-              </Button>
-            </Tooltip>
+            {!isAdmin ? (
+              <Tooltip content="Delete User" placement="top">
+                <Button
+                  className="bg-secondary"
+                  onPress={() => {
+                    clickedUser.current = data.id;
+                    setIsDeleteClicked(true);
+                    console.log('clicked user --- ', clickedUser.current);
+                  }}
+                >
+                  <TrashIcon />
+                </Button>
+              </Tooltip>
+            ) : (
+              <Tooltip content="View Maturity" placement="top">
+                <Button
+                  className="bg-secondary"
+                  onPress={() => {
+                    clickedUser.current = data.id;
+                    setSelectedUser(data);
+                    setIsLoading(true);
+                    setDynamicText("Mengambil maturity data...");
+                    setTimeout(() => {
+                      onOpen();
+                      setIsLoading(false);
+                    }, 2000);
+                    console.log('clicked user --- ', clickedUser.current);
+                  }}
+                >
+                  <ActionEyeIcon />
+                </Button>
+              </Tooltip>
+            )}
           </div>
         );
       default:
@@ -119,18 +161,46 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
         message="Are you sure you want to delete this user?"
         onConfirm={() => {
           setIsDeleteClicked(false);
+          setDynamicText("Menghapus pengguna...");
           handleDeleteUser();
         }}
       />
       <LoadingScreen
         isLoading={isLoading}
-        text="Deleting user..."
+        text={dynamicText}
       />
       <Toaster 
         expand={true} 
         richColors 
         position="top-center"
       />
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        scrollBehavior={"inside"}
+        size={"5xl"}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Maturity Recap for {selectedUser.name}
+              </ModalHeader>
+              <ModalBody>
+                <div className="px-6">
+                  <MaturityTable
+                    maturityQuestion={maturityData}
+                    session={session}
+                    isAdmin={true}
+                  />
+                </div>
+              </ModalBody>
+              <ModalFooter>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }

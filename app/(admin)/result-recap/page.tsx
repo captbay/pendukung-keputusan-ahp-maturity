@@ -5,15 +5,13 @@ import { auth } from "@/auth";
 
 export default async function ResultRecap() {
   const user = await getAllUser();
-  const maturityResultAll = await getResultMaturityAll();
-  const maturityResultData = maturityResultAll!.data;
   const session = await auth();
 
   return (
     <div>
       <ResultRecapPage 
-        maturityResult={maturityResultData}
         session={session}
+        users={user!.data}
       />
     </div>
   );

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Spacer } from "@nextui-org/react";
 import { Toaster, toast } from 'sonner';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -13,9 +13,10 @@ import { useRouter } from 'next/navigation';
 interface MaturityTableProps {
   maturityQuestion: QuestionPerSection[];
   session: any;
+  isAdmin?: boolean;
 }
 
-const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session }) => {
+const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session, isAdmin }) => {
   const storage = getStorage(app);
   const [currentCheckpoint, setCurrentCheckpoint] = useState(0);
   const [totalCheckpoint, setTotalCheckpoint] = useState(maturityQuestion.length - 1);
@@ -28,6 +29,7 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
   const [progressValue, setProgressValue] = useState(0);
   let questionCounter = 1;
   const prefixKode = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  const modalContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // initialize form data with default values
@@ -57,7 +59,9 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
   };
 
   const handleCheckpointClick = (index: number) => {
-    if (index > currentCheckpoint) return;
+    if(!isAdmin){
+      if (index > currentCheckpoint) return;
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
     questionCounter = 1;
     setCurrentCheckpoint(index);
@@ -67,8 +71,13 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
     console.log('Form Data: ', formData);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     questionCounter = 1;
-    if(validateAnswer()){
+    if(isAdmin){
       setCurrentCheckpoint(currentCheckpoint + 1);
+      modalContentRef!.current?.scrollIntoView({ block:'nearest' });
+    } else {
+      if(validateAnswer()){
+        setCurrentCheckpoint(currentCheckpoint + 1);
+      }
     }
   };
 
@@ -216,7 +225,7 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
                       name={`row-${data.id}-ya`}
                       checked={formData.find(item => item.id_question === data.id)?.ya || false}
                       onChange={() => handleRadioChange(data.id, true)}
-                      disabled={formData.find(item => item.id_question === data.id)?.is_acc}
+                      disabled={isAdmin ? true : formData.find(item => item.id_question === data.id)?.is_acc}
                     />
                   </td>
                   <td className="border border-gray-400 px-4 py-2 text-center">
@@ -226,7 +235,7 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
                       name={`row-${data.id}-tidak`}
                       checked={formData.find(item => item.id_question === data.id)?.tidak || false}
                       onChange={() => handleRadioChange(data.id, false)}
-                      disabled={formData.find(item => item.id_question === data.id)?.is_acc}
+                      disabled={isAdmin ? true : formData.find(item => item.id_question === data.id)?.is_acc}
                     />
                   </td>
                   <td className="border border-gray-400 px-4 py-2 text-center">
@@ -289,26 +298,39 @@ const MaturityTable: React.FC<MaturityTableProps> = ({ maturityQuestion, session
           Previous
         </Button>
         <Button
+          isDisabled={isAdmin && currentCheckpoint === totalCheckpoint}
           className={`text-secondary w-24 text-center ${currentCheckpoint === totalCheckpoint ? 'hover:bg-red-700 hover:text-white bg-primary' : 'hover:bg-red-700 hover:text-white bg-primary'}`}
           onClick={() => {
             if (currentCheckpoint === totalCheckpoint) {
-              if(validateAnswer()){
-                setIsConfirmationModalOpen(true);
-              } else{
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                toast.error('Silakan pilih jawaban untuk semua pertanyaan sebelum melanjutkan');
+              if(isAdmin){
+                handleNextButton();
+              } else {
+                if(validateAnswer()){
+                  setIsConfirmationModalOpen(true);
+                } else{
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  toast.error('Silakan pilih jawaban untuk semua pertanyaan sebelum melanjutkan');
+                }
               }
             } else {
-              if(!validateAnswer()){
-                toast.error('Silakan pilih jawaban untuk semua pertanyaan sebelum melanjutkan');
+              if(isAdmin){
+                handleNextButton();
+              } else {
+                if(!validateAnswer()){
+                  toast.error('Silakan pilih jawaban untuk semua pertanyaan sebelum melanjutkan');
+                } else {
+                  handleNextButton();
+                }
               }
-
-              handleNextButton();
             }
           }}
         >
           <h2 className={`text-secondary ${currentCheckpoint === totalCheckpoint ? 'font-bold' : ''}`}>
-            {currentCheckpoint === totalCheckpoint ? 'Submit' : 'Next'}
+            {
+              isAdmin ? 
+                'Next'
+              : currentCheckpoint === totalCheckpoint ? 'Submit' : 'Next'
+            }
           </h2>
         </Button>
       </div>

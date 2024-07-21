@@ -10,6 +10,8 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import ConfirmationModal from "../confirmation-modal/confirmationModal";
 import { logout } from "@/lib/authentication";
+import { QuestionIcon } from "@/app/icon/QuestionIcon";
+import { UserIcon } from "@/app/icon/UserIcon";
 
 interface SidebarProps {
   isAdmin: boolean;
@@ -108,13 +110,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, session }) => {
                   <h2 className="text-secondary">AHP Recap</h2>
                 </Button>
                 <Button
+                  onClick={() => handleButtonClick("result-recap")}
+                  className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${
+                    isActive("/result-recap") ? "bg-red-700 text-white" : ""
+                  }`}
+                  shadow-md
+                >
+                  <MaturityIcon />
+                  <h2 className="text-secondary">Maturity Recap</h2>
+                </Button>
+                <Button
                   onClick={() => handleButtonClick("maturity-question-edit")}
                   className={`text-secondary w-full justify-start bg-primary hover:bg-red-700 hover:text-white ${
                     isActive("/maturity-question-edit") ? "bg-red-700 text-white" : ""
                   }`}
                   shadow-md
                 >
-                  <MaturityIcon />
+                  <QuestionIcon />
                   <h2 className="text-secondary">Maturity Question Edit</h2>
                 </Button>
                 <Button
@@ -124,7 +136,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isAdmin, session }) => {
                   }`}
                   shadow-md
                 >
-                  <MaturityIcon />
+                  <UserIcon />
                   <h2 className="text-secondary">User Recap</h2>
                 </Button>
               </>
