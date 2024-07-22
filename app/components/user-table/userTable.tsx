@@ -1,27 +1,55 @@
-"use client"
+"use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, User, Chip, Tooltip, getKeyValue, Button } from "@nextui-org/react";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  User,
+  Chip,
+  Tooltip,
+  getKeyValue,
+  Button,
+} from "@nextui-org/react";
 import { ActionEyeIcon } from "@/app/icon/ActionEyeIcon";
 import { TrashIcon } from "@/app/icon/TrashIcon";
 import ConfirmationModal from "@/app/ui/confirmation-modal/confirmationModal";
 import { Toaster, toast } from "sonner";
 import LoadingScreen from "../loading-screen/loadingScreen";
-import { deleteUser, getQuestionMaturity, getResultMaturityUser } from "@/lib/actions";
+import {
+  deleteUser,
+  getQuestionMaturity,
+  getResultMaturityUser,
+} from "@/lib/actions";
 import { useRouter } from "next/navigation";
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, RadioGroup, Radio} from "@nextui-org/react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  RadioGroup,
+  Radio,
+} from "@nextui-org/react";
 import MaturityTable from "../maturity-table/maturityTable";
+import NotFoundIcon from "@/app/icon/NotFoundIcon";
 
 interface UserTableProps {
-  data: Array<{
-    id: string;
-    name?: string;
-    email?: string;
-    avatar?: string;
-    role?: string;
-    jabatan?: string | null;
-    status?: string;
-  }> | undefined;
+  data:
+    | Array<{
+        id: string;
+        name?: string;
+        email?: string;
+        avatar?: string;
+        role?: string;
+        jabatan?: string | null;
+        status?: string;
+      }>
+    | undefined;
   isAdmin?: boolean;
   session: any;
 }
@@ -29,7 +57,7 @@ interface UserTableProps {
 const UserTable: React.FC<UserTableProps> = ({ data, isAdmin, session }) => {
   const [isDeleteClicked, setIsDeleteClicked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const clickedUser = useRef();
   const router = useRouter();
   const [selectedUser, setSelectedUser] = useState<any>();
@@ -42,30 +70,30 @@ const UserTable: React.FC<UserTableProps> = ({ data, isAdmin, session }) => {
   ];
 
   useEffect(() => {
-    if(selectedUser){
+    if (selectedUser) {
       getMaturityData(selectedUser.id);
     }
   }, [selectedUser]);
 
-  const getMaturityData = async(id: string) => {
+  const getMaturityData = async (id: string) => {
     const response = await getQuestionMaturity(id);
     setMaturityData(response?.data);
   };
-  
-  const handleDeleteUser = async() => {
+
+  const handleDeleteUser = async () => {
     setIsLoading(true);
-    try{
+    try {
       const response = await deleteUser(clickedUser.current!);
 
-      if(response?.success){
+      if (response?.success) {
         setIsLoading(false);
         router.refresh();
         toast.success("User has been deleted");
-      } else{
+      } else {
         setIsLoading(false);
         toast.error("Failed to delete user");
       }
-    } catch(error){
+    } catch (error) {
       setIsLoading(false);
       toast.error("Failed to delete user");
     }
@@ -88,7 +116,9 @@ const UserTable: React.FC<UserTableProps> = ({ data, isAdmin, session }) => {
         return (
           <div className="flex flex-col">
             <p className="text-bold text-sm capitalize">{cellValue}</p>
-            <p className="text-bold text-sm capitalize text-default-400">{data.jabatan ? data.jabatan : "null"}</p>
+            <p className="text-bold text-sm capitalize text-default-400">
+              {data.jabatan ? data.jabatan : "null"}
+            </p>
           </div>
         );
       case "actions":
@@ -101,7 +131,7 @@ const UserTable: React.FC<UserTableProps> = ({ data, isAdmin, session }) => {
                   onPress={() => {
                     clickedUser.current = data.id;
                     setIsDeleteClicked(true);
-                    console.log('clicked user --- ', clickedUser.current);
+                    console.log("clicked user --- ", clickedUser.current);
                   }}
                 >
                   <TrashIcon />
@@ -120,7 +150,7 @@ const UserTable: React.FC<UserTableProps> = ({ data, isAdmin, session }) => {
                       onOpen();
                       setIsLoading(false);
                     }, 2000);
-                    console.log('clicked user --- ', clickedUser.current);
+                    console.log("clicked user --- ", clickedUser.current);
                   }}
                 >
                   <ActionEyeIcon />
@@ -140,7 +170,10 @@ const UserTable: React.FC<UserTableProps> = ({ data, isAdmin, session }) => {
         <Table aria-label="Maturity Table">
           <TableHeader columns={columnsUser}>
             {(column) => (
-              <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
+              <TableColumn
+                key={column.uid}
+                align={column.uid === "actions" ? "center" : "start"}
+              >
                 {column.name}
               </TableColumn>
             )}
@@ -148,12 +181,22 @@ const UserTable: React.FC<UserTableProps> = ({ data, isAdmin, session }) => {
           <TableBody items={data}>
             {(item) => (
               <TableRow key={item.id}>
-                {(columnKey) => <TableCell>{renderCell(item, columnKey.toString())}</TableCell>}
+                {(columnKey) => (
+                  <TableCell>
+                    {renderCell(item, columnKey.toString())}
+                  </TableCell>
+                )}
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
+      {data?.length === 0 && (
+        <div className="flex justify-center items-center flex-col gap-4 w-96">
+          <NotFoundIcon />
+          <p className="text-center text-xl mt-[-30px]">No user found</p>
+        </div>
+      )}
       <ConfirmationModal
         isOpen={isDeleteClicked}
         onClose={() => setIsDeleteClicked(false)}
@@ -165,15 +208,8 @@ const UserTable: React.FC<UserTableProps> = ({ data, isAdmin, session }) => {
           handleDeleteUser();
         }}
       />
-      <LoadingScreen
-        isLoading={isLoading}
-        text={dynamicText}
-      />
-      <Toaster 
-        expand={true} 
-        richColors 
-        position="top-center"
-      />
+      <LoadingScreen isLoading={isLoading} text={dynamicText} />
+      <Toaster expand={true} richColors position="top-center" />
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -195,14 +231,13 @@ const UserTable: React.FC<UserTableProps> = ({ data, isAdmin, session }) => {
                   />
                 </div>
               </ModalBody>
-              <ModalFooter>
-              </ModalFooter>
+              <ModalFooter></ModalFooter>
             </>
           )}
         </ModalContent>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
 export default UserTable;

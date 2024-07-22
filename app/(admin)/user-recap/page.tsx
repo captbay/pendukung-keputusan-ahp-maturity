@@ -10,12 +10,10 @@ export default async function UserRecap() {
   const maturityResultData = maturityResultAll!.data;
   const session = await auth();
 
-  console.log('all user --- ', user);
+  console.log("all user --- ", user);
   return (
     <div>
-      <UserRecapPage 
-        users={user!.data}
-      />
+      <UserRecapPage users={user!.data} />
     </div>
   );
 }

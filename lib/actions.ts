@@ -363,6 +363,7 @@ export async function getAllUser() {
     if (data.length == 0) {
       return {
         success: false,
+        data: [],
         message: "There is no user registered",
       };
     }
@@ -1390,7 +1391,7 @@ export async function deleteQuestionMaturity(id_question: string) {
         id: id_question,
       },
     });
-    
+
     return {
       success: true,
       message: "Data deleted successfully",
