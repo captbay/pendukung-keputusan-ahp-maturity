@@ -1137,7 +1137,18 @@ export async function getResultMaturityAll() {
 
         // Validate levels sequentially
         for (let i = 1; i <= 5; i++) {
-          if (levels.includes(i)) {
+          // ngambil seluruh question level
+          const perLevels = await prisma.questionMaturity.count({
+            where: {
+              category: {
+                value: category,
+              },
+              level: i,
+            },
+          });
+
+          // check if per level is same count in perLevels
+          if (levels.filter((level) => level === i).length === perLevels) {
             validLevel = i;
           } else {
             break;
