@@ -511,7 +511,7 @@ function geometricMean(numbers: number[]): number {
   const geomean = Math.pow(product, 1 / n);
 
   // Round to two decimal places
-  const roundedGeomean = Math.round(geomean * 100) / 100;
+  const roundedGeomean = Math.round(geomean * 1000) / 1000;
 
   return roundedGeomean;
 }
@@ -528,19 +528,19 @@ function createPairwiseComparisonMatrixSectionOne(
         row.push(1);
       } else if (i - j > 0) {
         if (j == 0) {
-          row.push(Math.round((1 / section[i - 1]) * 100) / 100);
+          row.push(Math.round((1 / section[i - 1]) * 1000) / 1000);
         } else if (j == 1 || j == 2) {
-          row.push(Math.round((1 / section[i + j]) * 100) / 100);
+          row.push(Math.round((1 / section[i + j]) * 1000) / 1000);
         } else {
-          row.push(Math.round((1 / section[i]) * 100) / 100);
+          row.push(Math.round((1 / section[i]) * 1000) / 1000);
         }
       } else {
         if (i == 0) {
-          row.push(Math.round(section[j - 1] * 100) / 100);
+          row.push(Math.round(section[j - 1] * 1000) / 1000);
         } else if (i == 1 || i == 2) {
-          row.push(Math.round(section[i + j] * 100) / 100);
+          row.push(Math.round(section[i + j] * 1000) / 1000);
         } else {
-          row.push(Math.round(section[j] * 100) / 100);
+          row.push(Math.round(section[j] * 1000) / 1000);
         }
       }
     }
@@ -561,35 +561,35 @@ function createPairwiseComparisonMatrix(
         row.push(1);
       } else if (i - j > 0) {
         if (j == 0) {
-          row.push(Math.round((1 / section[i - 1]) * 100) / 100);
+          row.push(Math.round((1 / section[i - 1]) * 1000) / 1000);
         } else if (j == 1) {
-          row.push(Math.round((1 / section[i + j + 3]) * 100) / 100);
+          row.push(Math.round((1 / section[i + j + 3]) * 1000) / 1000);
         } else if (j == 2) {
-          row.push(Math.round((1 / section[i + j + 6]) * 100) / 100);
+          row.push(Math.round((1 / section[i + j + 6]) * 1000) / 1000);
         } else if (j == 3) {
-          row.push(Math.round((1 / section[i + j + 8]) * 100) / 100);
+          row.push(Math.round((1 / section[i + j + 8]) * 1000) / 1000);
         } else if (j == 4) {
-          row.push(Math.round((1 / section[i + j + 9]) * 100) / 100);
+          row.push(Math.round((1 / section[i + j + 9]) * 1000) / 1000);
         } else if (j == 5) {
-          row.push(Math.round((1 / section[i + j + 9]) * 100) / 100);
+          row.push(Math.round((1 / section[i + j + 9]) * 1000) / 1000);
         } else {
-          row.push(Math.round(section[i] * 100) / 100);
+          row.push(Math.round(section[i] * 1000) / 1000);
         }
       } else {
         if (i == 0) {
-          row.push(Math.round(section[j - 1] * 100) / 100);
+          row.push(Math.round(section[j - 1] * 1000) / 1000);
         } else if (i == 1) {
-          row.push(Math.round(section[i + j + 3] * 100) / 100);
+          row.push(Math.round(section[i + j + 3] * 1000) / 1000);
         } else if (i == 2) {
-          row.push(Math.round(section[i + j + 6] * 100) / 100);
+          row.push(Math.round(section[i + j + 6] * 1000) / 1000);
         } else if (i == 3) {
-          row.push(Math.round(section[i + j + 8] * 100) / 100);
+          row.push(Math.round(section[i + j + 8] * 1000) / 1000);
         } else if (i == 4) {
-          row.push(Math.round(section[i + j + 9] * 100) / 100);
+          row.push(Math.round(section[i + j + 9] * 1000) / 1000);
         } else if (i == 5) {
-          row.push(Math.round(section[i + j + 9] * 100) / 100);
+          row.push(Math.round(section[i + j + 9] * 1000) / 1000);
         } else {
-          row.push(Math.round(section[j] * 100) / 100);
+          row.push(Math.round(section[j] * 1000) / 1000);
         }
       }
     }
@@ -601,7 +601,7 @@ function createPairwiseComparisonMatrix(
 function printMatrix(matrix: number[][], sectionName: string) {
   console.log(`Pairwise comparison matrix for ${sectionName}:`);
   matrix.forEach((row) => {
-    console.log(row.map((value) => Math.round(value * 100) / 100).join("\t"));
+    console.log(row.map((value) => Math.round(value * 1000) / 1000).join("\t"));
   });
   console.log("\n");
 }
@@ -620,7 +620,7 @@ function sumPerColumn(matrix: number[][]): number[] {
 
   // Round the column sums to two decimal places
   for (let i = 0; i < columnSums.length; i++) {
-    columnSums[i] = Math.round(columnSums[i] * 100) / 100;
+    columnSums[i] = Math.round(columnSums[i] * 1000) / 1000;
   }
 
   return columnSums;
@@ -635,7 +635,7 @@ function normalizeMatrix(matrix: number[][], columnSums: number[]): number[][] {
     const normalizedRow: number[] = [];
     for (let col = 0; col < numCols; col++) {
       const normalizedValue = matrix[row][col] / columnSums[col];
-      normalizedRow.push(Math.round(normalizedValue * 100) / 100);
+      normalizedRow.push(Math.round(normalizedValue * 1000) / 1000);
     }
     normalizedMatrix.push(normalizedRow);
   }
@@ -651,7 +651,7 @@ function calculateRowAverages(matrix: number[][]): number[] {
   for (let row = 0; row < numRows; row++) {
     const sum = matrix[row].reduce((acc, val) => acc + val, 0);
     const average = sum / numCols;
-    rowAverages.push(Math.round(average * 100) / 100);
+    rowAverages.push(Math.round(average * 1000) / 1000);
   }
 
   return rowAverages;
